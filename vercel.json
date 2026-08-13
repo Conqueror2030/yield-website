@@ -1,0 +1,31 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "index.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "connect/index.html",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/connect",
+      "dest": "/connect/index.html"
+    },
+    {
+      "src": "/connect/",
+      "dest": "/connect/index.html"
+    },
+    {
+      "src": "/api/whatsapp/config",
+      "dest": "https://api.yieldai.space/api/whatsapp/config"
+    },
+    {
+      "src": "/api/whatsapp/auth/exchange-token",
+      "dest": "https://api.yieldai.space/auth/exchange-token"
+    }
+  ]
+}
