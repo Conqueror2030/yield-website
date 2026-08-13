@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy | Yield.ai — WhatsApp AI Automation</title>
+    <meta name="description" content="YIELD AI Privacy Policy. Learn how we handle WhatsApp Business API data, our zero-data-selling commitment, and your rights as a B2B client.">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            dark: '#050505', card: '#0f0f0f',
+                            border: '#222222', accent: '#10B981', accentLight: '#34D399',
+                        }
+                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        body {
+            background-color: #050505; color: #F8FAFC; overflow-x: hidden; font-family: 'Inter', sans-serif;
+            background-image: radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.05) 0%, transparent 50%);
+        }
+        .glass-nav {
+            background: rgba(5, 5, 5, 0.8); backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%); color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.1); transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.25);
+        }
+        .btn-primary:hover { box-shadow: 0 6px 25px rgba(16, 185, 129, 0.4); transform: translateY(-1px); }
+        .btn-glass {
+            background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #ffffff; backdrop-filter: blur(8px); transition: all 0.3s ease;
+        }
+        .btn-glass:hover { background: rgba(255, 255, 255, 0.08); }
+
+        /* Prose styles */
+        .prose h1 { color: #ffffff; font-size: 2.75rem; font-weight: 700; margin-bottom: 1rem; line-height: 1.1; }
+        .prose h2 {
+            color: #ffffff; font-size: 1.3rem; font-weight: 600;
+            border-bottom: 1px solid rgba(255,255,255,0.07); padding-bottom: 0.6rem;
+            margin-top: 2.5rem; margin-bottom: 1rem;
+        }
+        .prose h3 { color: #e4e4e7; font-size: 1.05rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.5rem; }
+        .prose p { color: #a1a1aa; margin-bottom: 1rem; line-height: 1.75; }
+        .prose ul { color: #a1a1aa; list-style-type: disc; margin-left: 1.5rem; margin-bottom: 1rem; line-height: 1.75; }
+        .prose li { margin-bottom: 0.4rem; }
+        .prose strong { color: #e4e4e7; font-weight: 600; }
+        .prose a { color: #34D399; text-decoration: none; }
+        .prose a:hover { text-decoration: underline; }
+        .prose .highlight-box {
+            background: rgba(16, 185, 129, 0.07); border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 12px; padding: 1.25rem 1.5rem; margin: 1.5rem 0;
+        }
+        .prose .highlight-box p { color: #6ee7b7; margin: 0; font-size: 0.9rem; }
+    </style>
+</head>
+<body class="antialiased selection:bg-brand-accent selection:text-white">
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 glass-nav" id="navbar">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <a href="/" class="font-semibold text-xl tracking-tight text-white flex items-center gap-1">
+                Yield<span class="text-brand-accentLight">.ai</span>
+            </a>
+            <div class="hidden md:flex items-center space-x-8 text-sm font-medium text-gray-400">
+                <a href="/#features" class="hover:text-white transition-colors">Features</a>
+                <a href="/#platform" class="hover:text-white transition-colors">Platform</a>
+                <a href="/#book-demo" class="hover:text-white transition-colors">Book a Demo</a>
+            </div>
+            <div class="hidden md:flex items-center gap-3">
+                <a href="/connect" class="inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium rounded-full btn-glass">Client Login</a>
+                <a href="/#book-demo" class="inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium rounded-full btn-primary">Book a Demo</a>
+            </div>
+            <button class="md:hidden text-gray-400 hover:text-white" id="mobile-menu-btn" aria-label="Menu">
+                <i data-lucide="menu"></i>
+            </button>
+        </div>
+        <div id="mobile-menu" class="hidden md:hidden bg-[#080808] border-b border-[#1a1a1a] pb-5 px-6">
+            <div class="flex flex-col space-y-4 pt-3">
+                <a href="/#features" class="text-sm font-medium text-gray-400 hover:text-white">Features</a>
+                <a href="/#platform" class="text-sm font-medium text-gray-400 hover:text-white">Platform</a>
+                <a href="/connect" class="text-sm font-medium text-gray-400 hover:text-white">Client Login</a>
+                <a href="/#book-demo" class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-full btn-primary mt-1">Book a Demo</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-36 pb-24 px-6 min-h-screen">
+        <div class="max-w-3xl mx-auto prose">
+
+            <p class="text-xs font-medium text-brand-accentLight uppercase tracking-widest mb-4">Legal</p>
+            <h1>Privacy Policy</h1>
+            <p class="text-sm text-gray-500 mb-8">Last updated: August 2026 &nbsp;|&nbsp; Version 2.0 &nbsp;|&nbsp; Effective immediately</p>
+
+            <div class="highlight-box">
+                <p><strong>Zero-Data-Selling Commitment:</strong> YIELD AI does not sell, rent, trade, or lease any personal data or business data to third parties. This is an unconditional policy — no exceptions.</p>
+            </div>
+
+            <h2>1. Introduction &amp; Scope</h2>
+            <p>YIELD AI ("we", "us", "our") is an enterprise WhatsApp AI automation platform operated by YIELD AI, registered at Torna Complex, Rajgurunagar, Pune, Maharashtra, India - 410505. This Privacy Policy describes how we collect, use, store, and protect information when you:</p>
+            <ul>
+                <li>Visit our website at <strong>yieldai.space</strong></li>
+                <li>Use our WhatsApp AI automation services via the Meta Business API</li>
+                <li>Connect your WhatsApp Business Account through our onboarding portal</li>
+                <li>Interact with us via email or other communication channels</li>
+            </ul>
+            <p>This policy applies to all data collected through our services and complies with applicable data protection laws, including India's <strong>Digital Personal Data Protection Act, 2023 (DPDPA)</strong> and the EU <strong>General Data Protection Regulation (GDPR)</strong> where applicable.</p>
+
+            <h2>2. Data We Collect</h2>
+
+            <h3>2.1 Business Client Data</h3>
+            <p>When you onboard as a B2B client, we collect:</p>
+            <ul>
+                <li><strong>Identity Data:</strong> Business name, contact person name, designation</li>
+                <li><strong>Contact Data:</strong> Work email address, business phone number</li>
+                <li><strong>Account Data:</strong> Meta Business Account ID, WhatsApp Business Account (WABA) ID, phone number IDs linked to your account</li>
+                <li><strong>Configuration Data:</strong> AI system instructions, automation flow settings, lead qualification criteria</li>
+                <li><strong>Billing Data:</strong> Subscription plan details (payment processing handled by third-party processors; we do not store raw card details)</li>
+            </ul>
+
+            <h3>2.2 WhatsApp API Conversation Data</h3>
+            <p>When your AI agent operates via the Meta WhatsApp Business API, we process:</p>
+            <ul>
+                <li><strong>Message Content:</strong> Inbound and outbound message text, media metadata (not raw media files unless explicitly configured)</li>
+                <li><strong>Contact Metadata:</strong> Lead phone numbers (hashed where possible), interaction timestamps, conversation state</li>
+                <li><strong>Qualification Data:</strong> BANT signals, lead scores, and conversation outcomes generated by the AI agent</li>
+                <li><strong>Webhook Events:</strong> Message status updates (sent, delivered, read) from Meta's infrastructure</li>
+            </ul>
+            <p><strong>Important:</strong> All WhatsApp conversation data belongs to you (the B2B client). We act as a data processor on your behalf. Your end-users' data (leads) is processed under your authority as the data controller.</p>
+
+            <h3>2.3 Technical &amp; Usage Data</h3>
+            <ul>
+                <li>IP addresses, browser type, operating system (collected for security and fraud prevention)</li>
+                <li>API request logs (retained for 30 days for debugging purposes)</li>
+                <li>Dashboard usage analytics (anonymized, used to improve our product)</li>
+            </ul>
+
+            <h2>3. How We Use Your Data</h2>
+            <ul>
+                <li><strong>Service Delivery:</strong> Operating the AI agent, processing WhatsApp messages, and delivering automation workflows on your behalf</li>
+                <li><strong>Account Management:</strong> Managing your subscription, providing customer support, and communicating service updates</li>
+                <li><strong>Security &amp; Compliance:</strong> Detecting fraudulent activity, enforcing our Terms of Service, and complying with Meta's WhatsApp Business Policy</li>
+                <li><strong>Product Improvement:</strong> Analyzing anonymized, aggregated usage patterns to improve AI accuracy and platform performance</li>
+                <li><strong>Legal Obligations:</strong> Responding to valid legal requests from competent authorities as required by law</li>
+            </ul>
+            <p>We will <strong>never</strong> use your data or your leads' data for advertising targeting, profiling for third-party benefit, or any purpose not explicitly stated above.</p>
+
+            <h2>4. Data Storage &amp; Security</h2>
+            <p>We implement industry-standard security measures to protect all data under our control:</p>
+            <ul>
+                <li><strong>Encryption at Rest:</strong> All stored data is encrypted using AES-256</li>
+                <li><strong>Encryption in Transit:</strong> All API communications use TLS 1.3</li>
+                <li><strong>Access Controls:</strong> Role-based access controls (RBAC) ensure only authorized personnel can access client data</li>
+                <li><strong>Infrastructure:</strong> Our backend services are hosted on secured cloud infrastructure. Data is processed primarily in India and/or the EU</li>
+                <li><strong>Backups:</strong> Encrypted backups are retained for 30 days and then permanently deleted</li>
+                <li><strong>Audit Logs:</strong> All access to client data is logged and regularly audited</li>
+            </ul>
+
+            <h2>5. Third-Party Data Processors</h2>
+            <p>We share data with the following third-party processors to deliver our service. All processors are bound by data processing agreements:</p>
+            <ul>
+                <li><strong>Meta Platforms, Inc.:</strong> WhatsApp Business API infrastructure (message routing, delivery). Governed by Meta's Data Processing Terms.</li>
+                <li><strong>PocketBase:</strong> Database and real-time data synchronization backend</li>
+                <li><strong>HubSpot / Salesforce:</strong> CRM synchronization (only when you explicitly configure CRM integration)</li>
+                <li><strong>Custom Webhook Endpoints:</strong> Data is forwarded to your specified webhook URLs only upon your explicit configuration</li>
+            </ul>
+            <p>We do not use advertising networks, data brokers, or analytics platforms that retain your business or lead data.</p>
+
+            <h2>6. Data Retention</h2>
+            <ul>
+                <li><strong>Active client accounts:</strong> Data retained for the duration of your subscription plus 90 days after termination</li>
+                <li><strong>WhatsApp conversation logs:</strong> Retained for 90 days by default; configurable to shorter periods upon request</li>
+                <li><strong>API request logs:</strong> Retained for 30 days, then automatically purged</li>
+                <li><strong>Billing records:</strong> Retained for 7 years as required by Indian financial regulations</li>
+                <li>Upon account deletion, all personal and business data is permanently deleted within 30 days, except where retention is legally required</li>
+            </ul>
+
+            <h2>7. Your Rights</h2>
+            <p>As a data subject under applicable laws (DPDPA, GDPR), you have the right to:</p>
+            <ul>
+                <li><strong>Access:</strong> Request a copy of all data we hold about you or your business</li>
+                <li><strong>Correction:</strong> Request correction of inaccurate data</li>
+                <li><strong>Deletion:</strong> Request deletion of your data ("right to be forgotten")</li>
+                <li><strong>Portability:</strong> Receive your data in a machine-readable format</li>
+                <li><strong>Objection:</strong> Object to specific types of processing</li>
+                <li><strong>Restriction:</strong> Request restriction of processing in certain circumstances</li>
+                <li><strong>Withdrawal of Consent:</strong> Where processing is based on consent, withdraw it at any time</li>
+            </ul>
+            <p>To exercise any of these rights, email us at <a href="mailto:support.yieldai@gmail.com">support.yieldai@gmail.com</a>. We will respond within 30 days.</p>
+
+            <h2>8. WhatsApp API Specific Policies</h2>
+            <p>Our use of the Meta WhatsApp Business API is subject to Meta's Platform Terms and Policies. Key commitments:</p>
+            <ul>
+                <li>We only send messages to users who have opted in to receive communications from your business</li>
+                <li>We do not send unsolicited bulk messages or spam</li>
+                <li>All message templates are pre-approved by Meta before use</li>
+                <li>We maintain opt-out mechanisms as required by Meta's Messaging Policy</li>
+                <li>We do not use WhatsApp data to target users with ads on any platform</li>
+            </ul>
+
+            <h2>9. Cookies &amp; Tracking</h2>
+            <p>Our marketing website uses minimal, privacy-respecting tracking:</p>
+            <ul>
+                <li><strong>Strictly necessary cookies:</strong> Session management for the client portal (required for functionality)</li>
+                <li><strong>No third-party advertising cookies</strong></li>
+                <li>We do not use Facebook Pixel, Google Ads, or similar advertising trackers on client portal pages</li>
+            </ul>
+
+            <h2>10. International Data Transfers</h2>
+            <p>If you are located outside India, your data may be transferred to and processed in India. Such transfers are made with appropriate safeguards in place to ensure your data remains protected to the standard required by your local data protection laws.</p>
+
+            <h2>11. Changes to This Policy</h2>
+            <p>We may update this Privacy Policy periodically to reflect changes in our practices or legal requirements. We will notify active clients by email at least 14 days before material changes take effect. Continued use of the service after the effective date constitutes acceptance of the updated policy.</p>
+
+            <h2>12. Contact Us</h2>
+            <p>For privacy inquiries, data subject requests, or concerns:</p>
+            <p>
+                <strong>Enterprise Name:</strong> YIELD AI<br>
+                <strong>Registered Address:</strong> Torna Complex, Rajgurunagar, Pune, Maharashtra, India - 410505<br>
+                <strong>Privacy Contact Email:</strong> <a href="mailto:support.yieldai@gmail.com">support.yieldai@gmail.com</a><br>
+                <strong>Response Time:</strong> Within 30 business days
+            </p>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/[0.06] bg-[#030303] py-12 px-6">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mb-8">
+            <div class="flex flex-col">
+                <a href="/" class="font-semibold text-xl tracking-tight text-white mb-2 flex items-center gap-1">
+                    Yield<span class="text-brand-accentLight">.ai</span>
+                </a>
+                <p class="text-sm font-semibold text-white">YIELD AI</p>
+                <p class="text-sm text-gray-500">Torna Complex, Rajgurunagar, Pune, Maharashtra, India - 410505</p>
+                <p class="text-sm text-gray-500 mt-1"><a href="mailto:support.yieldai@gmail.com" class="hover:text-white transition-colors">support.yieldai@gmail.com</a></p>
+            </div>
+            <div class="flex flex-col gap-2.5 text-sm text-gray-500 md:text-right">
+                <h4 class="text-white font-medium mb-1">Legal</h4>
+                <a href="/privacy" class="hover:text-white transition-colors">Privacy Policy</a>
+                <a href="/terms" class="hover:text-white transition-colors">Terms of Service</a>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto border-t border-white/[0.06] pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-600">
+            <div>© 2026 YIELD AI. Built for revenue.</div>
+            <div class="flex items-center gap-4">
+                <a href="#" class="hover:text-white transition-colors" aria-label="LinkedIn">
+                    <i data-lucide="linkedin" class="w-5 h-5"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        mobileMenuBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+    </script>
+</body>
+</html>

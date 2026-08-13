@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Onboarding Portal | Yield.ai</title>
+    <meta name="description" content="Connect your WhatsApp Business Account to Yield.ai and start automating your lead qualification in minutes.">
+    <!-- Prevent search engine indexing during beta -->
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="canonical" href="https://yieldai.space/connect/">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            dark: '#050505',
+                            card: '#0f0f0f',
+                            border: '#222222',
+                            accent: '#10B981',
+                            accentLight: '#34D399',
+                        }
+                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!--
+        Shared environment config — single source of truth for all API endpoints.
+        Edit /config.js to swap between local dev and production without touching
+        page source files. Silently 404s when opened as file://, which is fine —
+        the inline ENV_BACKEND_API_URL fallback below keeps the page working.
+    -->
+    <script src="/config.js"></script>
+
+    <!--
+        =========================================================
+        ENVIRONMENT CONFIGURATION
+        =========================================================
+        API endpoint is resolved in this priority order:
+
+          1. URL query param  :  /connect?api=https://your-server.com/api/whatsapp/callback
+          2. Input field      :  typed at runtime on the page (local dev / ngrok)
+          3. ENV_BACKEND_API_URL below  :  hardcode this string for production
+
+        TO SWAP ENVIRONMENTS:
+          Local dev   -> paste your ngrok URL into the Backend API Config input,
+                         or append ?api=https://xxxx.ngrok-free.app/... to the page URL.
+          Production  -> ENV_BACKEND_API_URL below already points to the live cloud
+                         backend: 'http://34.24.209.173:3000/api/whatsapp/callback'
+        =========================================================
+    -->
+    <script>
+        // ---- META APP CREDENTIALS ------------------------------------------
+        // Find these at: developers.facebook.com -> Your App -> Settings -> Basic
+        window.META_APP_ID    = '1339291521251289';
+        window.META_CONFIG_ID = '1737485564173405';
+
+        // ---- BACKEND API ENDPOINT (SWAP THIS LINE TO CHANGE ENVIRONMENTS) --
+        // Edit /config.js to swap globally, or change ENV_BACKEND_API_URL here.
+        const ENV_BACKEND_API_URL = 'https://api.yieldai.space/auth/exchange-token';  // live cloud (Node on GCP VPS)
+
+        // Runtime resolution (priority: ?api= URL param > config.js > ENV_BACKEND_API_URL)
+        window.BACKEND_API_URL =
+            new URLSearchParams(window.location.search).get('api')
+            || (window.YIELD_CONFIG && window.YIELD_CONFIG.WHATSAPP_CALLBACK_ENDPOINT)
+            || ENV_BACKEND_API_URL
+            || '';
+    </script>
+
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            background-color: #050505;
+            color: #F8FAFC;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            min-height: 100vh;
+            background-image:
+                radial-gradient(circle at 30% 20%, rgba(16, 185, 129, 0.06) 0%, transparent 50%),
+                radial-gradient(circle at 70% 80%, rgba(16, 185, 129, 0.04) 0%, transparent 50%);
+        }
+
+        .glass-nav {
+            background: rgba(5, 5, 5, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.25);
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 6px 25px rgba(16, 185, 129, 0.4);
+            transform: translateY(-1px);
+        }
+
+        .btn-glass {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #ffffff;
+            backdrop-filter: blur(8px);
+            transition: all 0.3s ease;
+        }
+
+        .btn-glass:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .portal-card {
+            background: rgba(255, 255, 255, 0.025);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        input, textarea {
+            background-color: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #10B981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        input::placeholder, textarea::placeholder {
+            color: #404048;
+        }
+
+        .step-badge {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            color: #34D399;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+        }
+
+        .divider-label {
+            position: relative;
+            text-align: center;
+            margin: 1.5rem 0;
+        }
+        .divider-label::before {
+            content: '';
+            position: absolute;
+            top: 50%; left: 0; right: 0;
+            height: 1px;
+            background: rgba(255,255,255,0.07);
+        }
+        .divider-label span {
+            position: relative;
+            background: transparent;
+            padding: 0 1rem;
+            font-size: 12px;
+            color: #52525b;
+        }
+
+        /* Dev Config Collapsible */
+        .dev-config-panel {
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.07);
+            background: rgba(255,255,255,0.02);
+            overflow: hidden;
+        }
+        .dev-config-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.2s ease;
+        }
+        .dev-config-toggle:hover { background: rgba(255,255,255,0.03); }
+        .dev-config-body { padding: 0 1rem 1rem 1rem; display: none; }
+        .dev-config-body.open { display: block; }
+        .toggle-chevron { transition: transform 0.3s ease; color: #52525b; }
+        .toggle-chevron.open { transform: rotate(180deg); }
+
+        /* Input error state */
+        input.input-error {
+            border-color: #f87171 !important;
+            box-shadow: 0 0 0 3px rgba(248,113,113,0.12) !important;
+        }
+
+        /* Status Panel — Connection State Machine */
+        .status-panel {
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            font-size: 0.875rem;
+            display: flex;               /* always flex, hidden via opacity+pointer-events */
+            align-items: flex-start;
+            gap: 0.75rem;
+            margin-top: 1rem;
+            opacity: 0;
+            transform: translateY(6px);
+            pointer-events: none;
+            max-height: 0;
+            overflow: hidden;
+            transition: opacity 0.35s ease, transform 0.35s ease, max-height 0.35s ease;
+        }
+        .status-panel.visible {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+            max-height: 120px;
+        }
+        .status-panel.state-loading { background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.2); color: #fbbf24; }
+        .status-panel.state-success { background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.25); color: #34D399; }
+        .status-panel.state-error   { background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.25); color: #f87171; }
+
+        /* Meta button loading shimmer */
+        #meta-connect-btn { position: relative; overflow: hidden; }
+        #meta-connect-btn.loading::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            animation: shimmer 1.2s infinite;
+        }
+        @keyframes shimmer { to { left: 100%; } }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .spin { animation: spin 0.8s linear infinite; display: inline-block; }
+
+        /* Trust Badges */
+        .trust-badge {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.625rem;
+            font-size: 0.75rem;
+            color: #71717a;
+        }
+
+        /* Success Card (shown after token sync) */
+        .success-card {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 2rem 1rem 1rem;
+            gap: 0.875rem;
+        }
+        .success-card.visible { display: flex; }
+        .success-ring {
+            width: 72px; height: 72px;
+            border-radius: 50%;
+            background: rgba(16,185,129,0.08);
+            border: 1px solid rgba(16,185,129,0.2);
+            display: flex; align-items: center; justify-content: center;
+            animation: pulse-green 2s ease-in-out infinite;
+        }
+        @keyframes pulse-green {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(16,185,129,0.3); }
+            50%       { box-shadow: 0 0 0 14px rgba(16,185,129,0); }
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-brand-accent selection:text-white">
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 glass-nav" id="navbar">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <a href="/" class="font-semibold text-xl tracking-tight text-white flex items-center gap-1">
+                Yield<span class="text-brand-accentLight">.ai</span>
+            </a>
+            <div class="hidden md:flex items-center space-x-8 text-sm font-medium text-gray-400">
+                <a href="/#features" class="hover:text-white transition-colors">Features</a>
+                <a href="/#platform" class="hover:text-white transition-colors">Platform</a>
+                <a href="/#book-demo" class="hover:text-white transition-colors">Book a Demo</a>
+            </div>
+            <div class="hidden md:flex items-center gap-3">
+                <a href="/connect" class="inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium rounded-full btn-primary">
+                    Client Login
+                </a>
+                <a href="/#book-demo" class="inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium rounded-full btn-glass">
+                    Book a Demo
+                </a>
+            </div>
+            <button class="md:hidden text-gray-400 hover:text-white" id="mobile-menu-btn" aria-label="Menu">
+                <i data-lucide="menu"></i>
+            </button>
+        </div>
+        <div id="mobile-menu" class="hidden md:hidden bg-[#080808] border-b border-[#1a1a1a] pb-5 px-6">
+            <div class="flex flex-col space-y-4 pt-3">
+                <a href="/#features" class="text-sm font-medium text-gray-400 hover:text-white">Features</a>
+                <a href="/#platform" class="text-sm font-medium text-gray-400 hover:text-white">Platform</a>
+                <a href="/#book-demo" class="text-sm font-medium text-gray-400 hover:text-white">Book a Demo</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-32 pb-24 px-6 min-h-screen flex items-center justify-center">
+        <div class="w-full max-w-lg">
+
+            <!-- Header -->
+            <div class="text-center mb-10">
+                <div class="inline-flex items-center px-3 py-1.5 rounded-full bg-brand-accent/10 border border-brand-accent/20 text-brand-accentLight text-xs font-medium mb-6">
+                    <i data-lucide="shield-check" class="w-3 h-3 mr-2"></i>
+                    Secure Onboarding Portal
+                </div>
+                <h1 class="text-3xl md:text-4xl font-semibold mb-3 leading-tight">Connect your WhatsApp<br>Business Account</h1>
+                <p class="text-gray-400 font-light leading-relaxed">Link your Meta Business account to activate your AI agent in minutes. Your data is encrypted end-to-end.</p>
+            </div>
+
+            <!-- Portal Card -->
+            <div class="portal-card rounded-3xl p-8 shadow-2xl">
+
+                <!-- FORM VIEW (default, hidden by JS on success) -->
+                <div id="form-view">
+
+                <!-- Step 1: Business Details -->
+                <div class="mb-6">
+                    <div class="flex items-center gap-2 mb-5">
+                        <span class="step-badge px-2.5 py-1 rounded-full uppercase">Step 1</span>
+                        <span class="text-sm text-gray-400">Your Business Details</span>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div>
+                            <label for="business-name" class="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-1.5">
+                                Business Name <span class="text-red-500/70">*</span>
+                            </label>
+                            <input
+                                type="text"
+                                id="business-name"
+                                name="business_name"
+                                class="w-full px-4 py-3 rounded-xl text-sm"
+                                placeholder="e.g. Prestige Realty Group"
+                                autocomplete="organization"
+                            >
+                        </div>
+
+                        <div>
+                            <label for="contact-phone" class="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-1.5">
+                                Contact WhatsApp Number
+                                <span class="ml-1 text-gray-600 normal-case font-normal">(optional)</span>
+                            </label>
+                            <div class="relative">
+                                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-sm select-none">+</span>
+                                <input
+                                    type="tel"
+                                    id="contact-phone"
+                                    name="contact_phone"
+                                    class="w-full pl-7 pr-4 py-3 rounded-xl text-sm"
+                                    placeholder="91 98765 43210"
+                                    autocomplete="tel"
+                                >
+                            </div>
+                            <p class="text-xs text-gray-600 mt-1.5">Your WhatsApp number for account notifications and setup confirmation.</p>
+                        </div>
+
+                        <div>
+                            <label for="ai-instructions" class="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-1.5">
+                                AI System Instructions
+                                <span class="ml-1 text-gray-600 normal-case font-normal">(optional)</span>
+                            </label>
+                            <textarea
+                                id="ai-instructions"
+                                name="ai_instructions"
+                                rows="4"
+                                class="w-full px-4 py-3 rounded-xl text-sm resize-none leading-relaxed"
+                                placeholder="e.g. You are a professional real estate assistant for Prestige Realty. Qualify leads using BANT criteria. Always be polite, concise, and professional. Escalate high-intent leads to the sales manager..."
+                            ></textarea>
+                            <p class="text-xs text-gray-600 mt-1.5">These instructions guide how your AI agent responds to customers.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Backend API Config (collapsible, for dev / testing) -->
+                <div class="dev-config-panel" id="dev-config-panel">
+                    <div class="dev-config-toggle" id="dev-config-toggle"
+                         role="button" aria-expanded="false" aria-controls="dev-config-body" tabindex="0">
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="terminal" class="w-3.5 h-3.5 text-brand-accent"></i>
+                            <span class="text-xs font-medium text-gray-500 uppercase tracking-wider">Backend API Config</span>
+                            <span class="text-[10px] font-medium px-1.5 py-0.5 rounded" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);color:#52525b;">Dev</span>
+                        </div>
+                        <i data-lucide="chevron-down" class="w-4 h-4 toggle-chevron" id="toggle-chevron"></i>
+                    </div>
+                    <div class="dev-config-body" id="dev-config-body">
+                        <p class="text-[11px] text-gray-600 mb-3 leading-relaxed">
+                            After Meta authorization, the token payload POSTs here.
+                            Resolution order: <strong class="text-gray-500">?api= URL param</strong>
+                            &rarr; <strong class="text-gray-500">this field</strong>
+                            &rarr; <strong class="text-gray-500">ENV_BACKEND_API_URL</strong> (source file).
+                        </p>
+                        <label for="backend-url" class="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1.5">
+                            Webhook Endpoint URL
+                        </label>
+                        <input
+                            type="url"
+                            id="backend-url"
+                            class="w-full px-3 py-2.5 rounded-lg text-xs font-mono"
+                            placeholder="http://34.24.209.173:3000/api/whatsapp/callback"
+                            autocomplete="off"
+                            spellcheck="false"
+                        >
+                        <!-- Environment indicator updated by JS -->
+                        <div id="env-indicator" class="mt-2 text-[10px] text-gray-700 flex items-center gap-1.5">
+                            <i data-lucide="info" class="w-3 h-3" id="env-icon"></i>
+                            <span id="env-indicator-text">Endpoint pre-configured — connected to live cloud backend.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Divider -->
+                <div class="divider-label">
+                    <span>then authorize with Meta</span>
+                </div>
+
+                <!-- Step 2: Authorize with Meta -->
+                <div class="mb-2">
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="step-badge px-2.5 py-1 rounded-full uppercase">Step 2</span>
+                        <span class="text-sm text-gray-400">Authorize with Meta</span>
+                    </div>
+
+                    <p class="text-sm text-gray-500 mb-5 leading-relaxed">
+                        Securely authorize Yield.ai to manage messages on your WhatsApp Business number via the official Meta API.
+                    </p>
+
+                    <!-- Meta Embedded Signup Button -->
+                    <button
+                        id="meta-connect-btn"
+                        onclick="launchWhatsAppSignup()"
+                        class="w-full py-3.5 rounded-xl text-white font-medium text-sm flex items-center justify-center gap-3 transition-all duration-300"
+                        style="background: linear-gradient(135deg, #1877F2 0%, #0a5cc7 100%); border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 4px 15px rgba(24,119,242,0.3);"
+                        aria-label="Connect with Facebook"
+                    >
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                        </svg>
+                        <span id="meta-btn-label">Connect with Facebook</span>
+                    </button>
+
+                    <!--
+                        STATUS PANEL — Connection State Machine
+                        States: state-loading | state-success | state-error
+                        Class 'visible' triggers the fade-in. Driven by setConnectionState() in JS.
+                    -->
+                    <div id="status-panel" class="status-panel" role="alert" aria-live="polite">
+                        <div class="flex-shrink-0 mt-0.5">
+                            <i data-lucide="loader-2" class="w-5 h-5" id="status-icon"></i>
+                        </div>
+                        <div>
+                            <p class="font-medium text-sm leading-snug" id="status-title"></p>
+                            <p class="text-xs mt-0.5 opacity-80 leading-relaxed" id="status-text"></p>
+                        </div>
+                    </div>
+                </div>
+                <!-- END Step 2 -->
+                </div>
+                <!-- END FORM VIEW -->
+
+                <!-- SUCCESS VIEW (revealed after token sync) -->
+                <div class="success-card" id="success-view" aria-live="polite">
+                    <div class="success-ring">
+                        <i data-lucide="check" class="w-8 h-8 text-brand-accentLight"></i>
+                    </div>
+                    <h2 class="text-xl font-semibold text-white mt-2">You're connected!</h2>
+                    <p class="text-gray-400 text-sm leading-relaxed max-w-xs">
+                        Your WhatsApp Business Account has been authorized and synced.
+                        Your AI agent is being configured &mdash; expect confirmation shortly.
+                    </p>
+
+                    <!-- Linked account IDs (populated by JS after token sync) -->
+                    <div id="linked-ids" class="hidden w-full rounded-xl border border-white/[0.07] bg-white/[0.02] px-4 py-3 text-left space-y-2">
+                        <p class="text-[10px] font-semibold uppercase tracking-wider text-gray-600">Linked Account</p>
+                        <div class="flex items-center justify-between text-xs">
+                            <span class="text-gray-500">WABA ID</span>
+                            <span id="linked-waba-id" class="font-mono text-brand-accentLight">—</span>
+                        </div>
+                        <div class="flex items-center justify-between text-xs">
+                            <span class="text-gray-500">Phone Number ID</span>
+                            <span id="linked-phone-id" class="font-mono text-brand-accentLight">—</span>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-2 mt-1 px-4 py-2 rounded-full bg-brand-accent/10 border border-brand-accent/20 text-brand-accentLight text-xs font-medium">
+                        <span class="w-1.5 h-1.5 rounded-full bg-brand-accent animate-pulse inline-block"></span>
+                        Agent activation in progress
+                    </div>
+                    <a href="/" class="mt-3 px-6 py-2.5 rounded-full btn-glass text-sm font-medium inline-flex items-center gap-2">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        Back to homepage
+                    </a>
+                </div>
+
+                <!-- Trust Badges -->
+                <div class="grid grid-cols-3 gap-2 mt-6 pt-6 border-t border-white/[0.06]">
+                    <div class="trust-badge">
+                        <i data-lucide="lock" class="w-3.5 h-3.5 text-brand-accent flex-shrink-0"></i>
+                        <span>E2E encrypted</span>
+                    </div>
+                    <div class="trust-badge">
+                        <i data-lucide="shield" class="w-3.5 h-3.5 text-brand-accent flex-shrink-0"></i>
+                        <span>Meta Official API</span>
+                    </div>
+                    <div class="trust-badge">
+                        <i data-lucide="eye-off" class="w-3.5 h-3.5 text-brand-accent flex-shrink-0"></i>
+                        <span>Zero data selling</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer note -->
+            <p class="text-center text-xs text-gray-600 mt-6 leading-relaxed">
+                By connecting, you agree to our <a href="/terms" class="text-gray-500 hover:text-white transition-colors">Terms of Service</a> and <a href="/privacy" class="text-gray-500 hover:text-white transition-colors">Privacy Policy</a>.<br>
+                Need help? <a href="mailto:support.yieldai@gmail.com" class="text-gray-500 hover:text-white transition-colors">support.yieldai@gmail.com</a>
+            </p>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/[0.06] bg-[#030303] py-10 px-6">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6 text-sm text-gray-600">
+            <div>
+                <span class="font-semibold text-white">YIELD AI</span> &mdash;
+                Torna Complex, Rajgurunagar, Pune, Maharashtra, India - 410505
+            </div>
+            <div class="flex items-center gap-6">
+                <a href="/privacy" class="hover:text-white transition-colors">Privacy Policy</a>
+                <a href="/terms" class="hover:text-white transition-colors">Terms of Service</a>
+                <a href="mailto:support.yieldai@gmail.com" class="hover:text-white transition-colors">support.yieldai@gmail.com</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Meta Facebook JavaScript SDK (async) -->
+    <script>
+        window.fbAsyncInit = function () {
+            FB.init({
+                appId: window.META_APP_ID,
+                autoLogAppEvents: true,
+                xfbml: true,
+                version: 'v19.0'
+            });
+        };
+        (function (d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) return;
+            js = d.createElement(s); js.id = id;
+            js.src = 'https://connect.facebook.net/en_US/sdk.js';
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+    </script>
+
+    <!-- Main Application Script -->
+    <script>
+        lucide.createIcons();
+
+        // ---- MOBILE MENU ---------------------------------------------------
+        document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        });
+
+        // ---- AUTO-EXPAND DEV PANEL WHEN NO ENDPOINT IS SET ----------------
+        // Gives a subtle amber dot cue so devs know they need to configure the URL.
+        (function initDevPanelState() {
+            if (!window.BACKEND_API_URL) {
+                // Auto-open the panel so the user sees where to paste their URL
+                const body    = document.getElementById('dev-config-body');
+                const chevron = document.getElementById('toggle-chevron');
+                const toggle  = document.getElementById('dev-config-toggle');
+                body.classList.add('open');
+                chevron.classList.add('open');
+                toggle.setAttribute('aria-expanded', 'true');
+            }
+        })();
+
+        // ---- DEV CONFIG TOGGLE (collapsible backend URL panel) -------------
+        const devToggle = document.getElementById('dev-config-toggle');
+        const devBody   = document.getElementById('dev-config-body');
+        const chevron   = document.getElementById('toggle-chevron');
+
+        function toggleDevConfig() {
+            const isOpen = devBody.classList.toggle('open');
+            chevron.classList.toggle('open', isOpen);
+            devToggle.setAttribute('aria-expanded', String(isOpen));
+        }
+        devToggle.addEventListener('click', toggleDevConfig);
+        devToggle.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleDevConfig(); }
+        });
+
+        // ---- ENVIRONMENT INDICATOR -----------------------------------------
+        // Shows whether an endpoint was pre-configured via URL param or ENV var.
+        (function updateEnvIndicator() {
+            const text = document.getElementById('env-indicator-text');
+            const wrap = document.getElementById('env-indicator');
+            const icon = document.getElementById('env-icon');
+            if (window.BACKEND_API_URL) {
+                const src = new URLSearchParams(window.location.search).get('api')
+                    ? '?api= URL param'
+                    : 'ENV_BACKEND_API_URL (source file)';
+                text.textContent = 'Endpoint pre-set via ' + src + ': ' + window.BACKEND_API_URL;
+                icon.setAttribute('data-lucide', 'check-circle-2');
+                wrap.style.color = '#34D399';
+            } else {
+                text.textContent = 'No endpoint pre-configured — check ENV_BACKEND_API_URL in the source file.';
+            }
+            lucide.createIcons();
+        })();
+
+        // ---- CONNECTION STATE MACHINE --------------------------------------
+        //
+        //  States:  idle | loading | success | error
+        //
+        //  setConnectionState(state, title, detail)
+        //    Updates the status panel CSS, icon, and text.
+        //    On 'success', fades to the full success card after 1.8 s.
+        // -------------------------------------------------------------------
+        const STATUS_ICONS = { loading: 'loader-2', success: 'check-circle-2', error: 'alert-circle' };
+
+        function setConnectionState(state, title, detail) {
+            const panel   = document.getElementById('status-panel');
+            const icon    = document.getElementById('status-icon');
+            const titleEl = document.getElementById('status-title');
+            const textEl  = document.getElementById('status-text');
+            const metaBtn = document.getElementById('meta-connect-btn');
+            const btnLbl  = document.getElementById('meta-btn-label');
+
+            panel.className = 'status-panel';   // reset all state classes
+
+            if (state === 'idle') {
+                icon.classList.remove('spin');
+                metaBtn.classList.remove('loading');
+                metaBtn.disabled = false;
+                btnLbl.textContent = 'Connect with Facebook';
+                return;
+            }
+
+            icon.setAttribute('data-lucide', STATUS_ICONS[state] || 'info');
+            lucide.createIcons();
+            icon.classList.toggle('spin', state === 'loading');
+
+            titleEl.textContent = title  || '';
+            textEl.textContent  = detail || '';
+            panel.classList.add('state-' + state, 'visible');
+
+            if (state === 'loading') {
+                metaBtn.classList.add('loading');
+                metaBtn.disabled = true;
+                btnLbl.textContent = 'Connecting…';
+            } else {
+                metaBtn.classList.remove('loading');
+                metaBtn.disabled = (state === 'success');
+                btnLbl.textContent = 'Connect with Facebook';
+            }
+
+            if (state === 'success') setTimeout(showSuccessView, 1800);
+        }
+
+        function showSuccessView() {
+            document.getElementById('form-view').style.display = 'none';
+            const sv = document.getElementById('success-view');
+            sv.classList.add('visible');
+            lucide.createIcons();
+        }
+
+        // ---- META EMBEDDED SIGNUP — message listener -----------------------
+        window.addEventListener('message', function (event) {
+            if (event.origin !== 'https://www.facebook.com') return;
+            try {
+                const data = JSON.parse(event.data);
+                if (data.type === 'WA_EMBEDDED_SIGNUP') {
+                    if (data.event === 'FINISH') {
+                        const { phone_number_id, waba_id, code } = data.data;
+                        handleSignupSuccess({ 
+                            phone_number_id, 
+                            waba_id,
+                            code: code || null
+                        });
+                    } else if (data.event === 'CANCEL') {
+                        setConnectionState('error', 'Connection cancelled.', 'You can try again at any time.');
+                    } else if (data.event === 'ERROR') {
+                        setConnectionState('error', 'Something went wrong.', data.data.error_message || 'Unknown error from Meta.');
+                    }
+                }
+            } catch (_) {}
+        });
+
+        // ---- LAUNCH WHATSAPP EMBEDDED SIGNUP -------------------------------
+        function launchWhatsAppSignup() {
+            const nameInput    = document.getElementById('business-name');
+            const businessName = nameInput.value.trim();
+
+            if (!businessName) {
+                nameInput.classList.add('input-error');
+                nameInput.focus();
+                setTimeout(() => nameInput.classList.remove('input-error'), 2500);
+                return;
+            }
+
+            if (window.META_APP_ID === 'YOUR_META_APP_ID') {
+                setConnectionState('error', 'Meta App ID not configured.', 'Please contact support.yieldai@gmail.com.');
+                return;
+            }
+
+            setConnectionState('loading',
+                'Opening Meta authorization…',
+                'A popup will appear. Complete the steps to link your WhatsApp Business number.'
+            );
+
+            FB.login(function (response) {
+                if (response.authResponse) {
+                    handleSignupSuccess({ 
+                        code: response.authResponse.code,
+                        redirectUri: window.location.origin + window.location.pathname,
+                        originUri: window.location.origin
+                    });
+                } else {
+                    setConnectionState('error',
+                        'Authorization not granted.',
+                        'Please try again or check your Meta Business account permissions.'
+                    );
+                }
+            }, {
+                config_id: window.META_CONFIG_ID,
+                response_type: 'code',
+                override_default_response_type: true,
+                extras: { setup: {}, featureType: '', sessionInfoVersion: '3' }
+            });
+        }
+
+        // ---- HANDLE SIGNUP SUCCESS — POST token to backend -----------------
+        //
+        //  HOW TO SWAP ENVIRONMENTS:
+        //    Local dev  -> paste your ngrok URL in the Backend API Config panel,
+        //                  or append ?api=https://xxxx.ngrok-free.app/... to the URL.
+        //    Production -> set ENV_BACKEND_API_URL at the top of this file.
+        //
+        //  window.BACKEND_API_URL is already resolved at page load (see config block).
+        // -------------------------------------------------------------------
+        async function handleSignupSuccess(payload) {
+            const businessName   = document.getElementById('business-name').value.trim();
+            const aiInstructions = document.getElementById('ai-instructions').value.trim();
+            const contactPhone   = document.getElementById('contact-phone').value.trim();
+
+            const inputUrl    = document.getElementById('backend-url').value.trim();
+            const resolvedUrl = window.BACKEND_API_URL || inputUrl;
+
+            // Build the request body based on available data
+            const body = {
+                ...payload,
+                waba_id: payload.waba_id,
+                phone_number_id: payload.phone_number_id,
+                system_prompt: aiInstructions || undefined,
+                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                timestamp: new Date().toISOString(),
+                source: 'yieldai_embedded_signup',
+            };
+
+            // Remove null/undefined values
+            Object.keys(body).forEach(k => body[k] == null && delete body[k]);
+
+            // Always log to console for debugging
+            console.group('[Yield.ai] WhatsApp Embedded Signup — Token Payload');
+            console.log('Target URL :', resolvedUrl || '(NOT SET)');
+            console.log('Payload    :', JSON.stringify(body, null, 2));
+            console.groupEnd();
+
+            if (!resolvedUrl) {
+                setConnectionState('error',
+                    'Backend URL not set.',
+                    'Expand “Backend API Config” above, paste your local or ngrok endpoint, and try again. Token payload is in browser console (F12).'
+                );
+                if (!devBody.classList.contains('open')) toggleDevConfig();
+                setTimeout(() => document.getElementById('backend-url').focus(), 300);
+                return;
+            }
+
+            setConnectionState('loading', 'Syncing token to backend…', 'Sending to: ' + resolvedUrl);
+
+            try {
+                // ---- FETCH REQUEST -----------------------------------------
+                // Endpoint comes from window.BACKEND_API_URL (resolved at load time).
+                // To swap: change ENV_BACKEND_API_URL in the <script> config block
+                // at the top of this file, or use the ?api= URL param.
+                // ------------------------------------------------------------
+                const res = await fetch(resolvedUrl, {
+                    method:  'POST',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                    mode:    'cors',
+                    body:    JSON.stringify(body),
+                });
+
+                if (res.ok) {
+                    const responseData = await res.json().catch(() => ({}));
+                    console.log('[Yield.ai] Backend response:', responseData);
+
+                    // Surface WABA + Phone Number ID in the success card
+                    const waba_id       = payload.waba_id || responseData.waba_id || null;
+                    const phone_num_id  = payload.phone_number_id || responseData.phone_number_id || null;
+                    if (waba_id || phone_num_id) {
+                        const linkedIds = document.getElementById('linked-ids');
+                        if (waba_id)       document.getElementById('linked-waba-id').textContent  = waba_id;
+                        if (phone_num_id)  document.getElementById('linked-phone-id').textContent = phone_num_id;
+                        linkedIds.classList.remove('hidden');
+                    }
+
+                    setConnectionState('success',
+                        'Token synced successfully!',
+                        "Your AI agent is being configured. You'll receive confirmation shortly."
+                    );
+                } else {
+                    const errText = await res.text().catch(() => String(res.status));
+                    console.error('[Yield.ai] Backend error:', res.status, errText);
+                    setConnectionState('error',
+                        'Backend returned HTTP ' + res.status + '.',
+                        'Check your server logs. Token payload is in browser console (F12).'
+                    );
+                }
+            } catch (err) {
+                console.error('[Yield.ai] Fetch failed:', err.message);
+                setConnectionState('error',
+                    'Could not reach backend.',
+                    '"' + err.message + '" — Verify the URL, ensure CORS is enabled, and see token payload in browser console (F12).'
+                );
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms of Service | Yield.ai — WhatsApp AI Automation</title>
+    <meta name="description" content="YIELD AI Terms of Service. Understand the terms governing your use of our WhatsApp AI automation platform, including automated messaging compliance and Meta API usage.">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            dark: '#050505', card: '#0f0f0f',
+                            border: '#222222', accent: '#10B981', accentLight: '#34D399',
+                        }
+                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        body {
+            background-color: #050505; color: #F8FAFC; overflow-x: hidden; font-family: 'Inter', sans-serif;
+            background-image: radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.05) 0%, transparent 50%);
+        }
+        .glass-nav {
+            background: rgba(5, 5, 5, 0.8); backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%); color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.1); transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.25);
+        }
+        .btn-primary:hover { box-shadow: 0 6px 25px rgba(16, 185, 129, 0.4); transform: translateY(-1px); }
+        .btn-glass {
+            background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #ffffff; backdrop-filter: blur(8px); transition: all 0.3s ease;
+        }
+        .btn-glass:hover { background: rgba(255, 255, 255, 0.08); }
+
+        /* Prose styles */
+        .prose h1 { color: #ffffff; font-size: 2.75rem; font-weight: 700; margin-bottom: 1rem; line-height: 1.1; }
+        .prose h2 {
+            color: #ffffff; font-size: 1.3rem; font-weight: 600;
+            border-bottom: 1px solid rgba(255,255,255,0.07); padding-bottom: 0.6rem;
+            margin-top: 2.5rem; margin-bottom: 1rem;
+        }
+        .prose h3 { color: #e4e4e7; font-size: 1.05rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.5rem; }
+        .prose p { color: #a1a1aa; margin-bottom: 1rem; line-height: 1.75; }
+        .prose ul { color: #a1a1aa; list-style-type: disc; margin-left: 1.5rem; margin-bottom: 1rem; line-height: 1.75; }
+        .prose li { margin-bottom: 0.4rem; }
+        .prose strong { color: #e4e4e7; font-weight: 600; }
+        .prose a { color: #34D399; text-decoration: none; }
+        .prose a:hover { text-decoration: underline; }
+        .prose .highlight-box {
+            background: rgba(16, 185, 129, 0.07); border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 12px; padding: 1.25rem 1.5rem; margin: 1.5rem 0;
+        }
+        .prose .highlight-box p { color: #6ee7b7; margin: 0; font-size: 0.9rem; }
+        .prose .warning-box {
+            background: rgba(245, 158, 11, 0.06); border: 1px solid rgba(245, 158, 11, 0.2);
+            border-radius: 12px; padding: 1.25rem 1.5rem; margin: 1.5rem 0;
+        }
+        .prose .warning-box p { color: #fbbf24; margin: 0; font-size: 0.9rem; }
+    </style>
+</head>
+<body class="antialiased selection:bg-brand-accent selection:text-white">
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 glass-nav" id="navbar">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <a href="/" class="font-semibold text-xl tracking-tight text-white flex items-center gap-1">
+                Yield<span class="text-brand-accentLight">.ai</span>
+            </a>
+            <div class="hidden md:flex items-center space-x-8 text-sm font-medium text-gray-400">
+                <a href="/#features" class="hover:text-white transition-colors">Features</a>
+                <a href="/#platform" class="hover:text-white transition-colors">Platform</a>
+                <a href="/#book-demo" class="hover:text-white transition-colors">Book a Demo</a>
+            </div>
+            <div class="hidden md:flex items-center gap-3">
+                <a href="/connect" class="inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium rounded-full btn-glass">Client Login</a>
+                <a href="/#book-demo" class="inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium rounded-full btn-primary">Book a Demo</a>
+            </div>
+            <button class="md:hidden text-gray-400 hover:text-white" id="mobile-menu-btn" aria-label="Menu">
+                <i data-lucide="menu"></i>
+            </button>
+        </div>
+        <div id="mobile-menu" class="hidden md:hidden bg-[#080808] border-b border-[#1a1a1a] pb-5 px-6">
+            <div class="flex flex-col space-y-4 pt-3">
+                <a href="/#features" class="text-sm font-medium text-gray-400 hover:text-white">Features</a>
+                <a href="/#platform" class="text-sm font-medium text-gray-400 hover:text-white">Platform</a>
+                <a href="/connect" class="text-sm font-medium text-gray-400 hover:text-white">Client Login</a>
+                <a href="/#book-demo" class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-full btn-primary mt-1">Book a Demo</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-36 pb-24 px-6 min-h-screen">
+        <div class="max-w-3xl mx-auto prose">
+
+            <p class="text-xs font-medium text-brand-accentLight uppercase tracking-widest mb-4">Legal</p>
+            <h1>Terms of Service</h1>
+            <p class="text-sm text-gray-500 mb-8">Last updated: August 2026 &nbsp;|&nbsp; Version 2.0 &nbsp;|&nbsp; Effective immediately</p>
+
+            <div class="highlight-box">
+                <p><strong>Summary:</strong> These Terms govern your use of YIELD AI's WhatsApp AI automation platform. By connecting your account or using our services, you agree to these terms. Please read them carefully.</p>
+            </div>
+
+            <h2>1. Agreement to Terms</h2>
+            <p>By accessing or using YIELD AI's services, website, or client portal (collectively, "the Service"), you agree to be bound by these Terms of Service ("Terms"). These Terms constitute a legally binding agreement between you (or the business entity you represent, "Client") and YIELD AI.</p>
+            <p>If you are entering into this agreement on behalf of a business, you represent that you have the authority to bind that business to these Terms. If you do not agree to all Terms, you may not access or use the Service.</p>
+
+            <h2>2. Description of Service</h2>
+            <p>YIELD AI provides an enterprise AI automation platform ("the Service") that enables businesses to:</p>
+            <ul>
+                <li>Deploy AI-powered agents on WhatsApp via the Meta WhatsApp Business API</li>
+                <li>Automate lead qualification, appointment scheduling, and customer support conversations</li>
+                <li>Synchronize conversation data and lead records with CRM platforms (HubSpot, Salesforce, PocketBase, and others)</li>
+                <li>Access analytics and reporting on AI agent performance</li>
+            </ul>
+            <p>The Service is built on and operates through Meta's official WhatsApp Business Platform. Your use of the Service is therefore also subject to <strong>Meta's Terms of Service, WhatsApp Business Policy, and Commerce Policy</strong>.</p>
+
+            <h2>3. WhatsApp Business API Usage &amp; Automated Messaging Compliance</h2>
+
+            <div class="warning-box">
+                <p><strong>Compliance is your responsibility as the data controller.</strong> You must ensure all automated messages sent through our platform comply with applicable laws and Meta's policies.</p>
+            </div>
+
+            <h3>3.1 Opt-In Requirements</h3>
+            <p>You agree to only send WhatsApp messages to end-users (leads and customers) who have explicitly opted in to receive messages from your business. You are responsible for maintaining evidence of opt-in consent and honoring opt-out requests immediately.</p>
+
+            <h3>3.2 Message Template Compliance</h3>
+            <ul>
+                <li>All outbound message templates must be reviewed and approved by Meta before deployment</li>
+                <li>Templates must not contain misleading content, prohibited categories (gambling, weapons, adult content, etc.), or content that violates Meta's Commerce Policy</li>
+                <li>You are responsible for the content of all messages sent through your AI agent configuration</li>
+            </ul>
+
+            <h3>3.3 Prohibited Messaging Uses</h3>
+            <p>You may not use the Service to send:</p>
+            <ul>
+                <li>Unsolicited bulk messages ("spam") to users who have not opted in</li>
+                <li>Messages containing false, misleading, or fraudulent information</li>
+                <li>Promotional messages to users who have opted out</li>
+                <li>Content prohibited under applicable Indian law, including the Information Technology Act, 2000</li>
+                <li>Messages related to regulated financial products without appropriate disclosures</li>
+            </ul>
+
+            <h3>3.4 TCPA &amp; International Messaging Laws</h3>
+            <p>If you serve customers in jurisdictions outside India (including the United States, EU, UK, or GCC countries), you are responsible for ensuring your use of the Service complies with relevant messaging regulations including but not limited to: TCPA (US), PECR (UK), ePrivacy Directive (EU), and local telemarketing laws.</p>
+
+            <h2>4. Your Obligations</h2>
+            <ul>
+                <li><strong>Accurate Information:</strong> You must provide accurate business information during onboarding and keep it current</li>
+                <li><strong>Account Security:</strong> You are responsible for maintaining the security of your account credentials and API tokens</li>
+                <li><strong>Lawful Use:</strong> You must use the Service in compliance with all applicable laws, including data protection laws</li>
+                <li><strong>AI Instructions:</strong> You are responsible for the AI system instructions you configure. Instructions must not direct the AI to deceive, harass, or harm end-users</li>
+                <li><strong>Meta Policy Compliance:</strong> You must comply with Meta's WhatsApp Business Policy, Terms of Service, and any platform updates at all times</li>
+                <li><strong>Reporting:</strong> You must promptly report any security incidents, data breaches, or policy violations to us at support.yieldai@gmail.com</li>
+            </ul>
+
+            <h2>5. Prohibited Uses</h2>
+            <p>You may not use the Service to:</p>
+            <ul>
+                <li>Impersonate any person, business, or entity</li>
+                <li>Conduct phishing, fraud, or any criminal activity</li>
+                <li>Circumvent Meta's rate limits, spam detection, or quality scores</li>
+                <li>Reverse engineer, decompile, or attempt to extract the source code of our platform</li>
+                <li>Resell or sublicense access to the Service without our prior written consent</li>
+                <li>Use the Service for industries explicitly prohibited by Meta (weapons, tobacco, adult content, cryptocurrency with claims, etc.)</li>
+                <li>Interfere with or disrupt the integrity of our platform or servers</li>
+            </ul>
+
+            <h2>6. Intellectual Property</h2>
+            <p>The Service, including all underlying AI models, software, code, UI/UX designs, and documentation, is the exclusive intellectual property of YIELD AI. Your use of the Service does not grant you any ownership or license beyond the limited right to use the Service as described herein.</p>
+            <p><strong>Your Data:</strong> All conversation data, lead records, and business information you bring to the platform remain your property. We do not claim any ownership over your data.</p>
+
+            <h2>7. Service Level &amp; Uptime</h2>
+            <p>We target a monthly uptime of <strong>99.5%</strong> for our core automation infrastructure, excluding:</p>
+            <ul>
+                <li>Scheduled maintenance windows (communicated 48 hours in advance)</li>
+                <li>Meta WhatsApp API outages or platform-wide Meta incidents</li>
+                <li>Force majeure events</li>
+            </ul>
+            <p>In the event of extended downtime caused solely by our infrastructure, we will offer service credits as determined on a case-by-case basis. Credits are our sole liability for downtime.</p>
+
+            <h2>8. Fees &amp; Payment</h2>
+            <p>Subscription fees are billed as per the plan selected during onboarding. All fees are:</p>
+            <ul>
+                <li>Non-refundable unless a material service failure is attributable solely to YIELD AI</li>
+                <li>Subject to change with 30 days written notice for existing subscribers</li>
+                <li>Exclusive of applicable taxes (GST and other levies as applicable under Indian law)</li>
+            </ul>
+
+            <h2>9. Termination &amp; Account Suspension</h2>
+            <p><strong>By You:</strong> You may terminate your subscription at any time by contacting support.yieldai@gmail.com. Termination takes effect at the end of the current billing period.</p>
+            <p><strong>By YIELD AI:</strong> We reserve the right to immediately suspend or terminate your account if you:</p>
+            <ul>
+                <li>Violate these Terms or Meta's Platform Policies</li>
+                <li>Engage in fraudulent, abusive, or illegal activity</li>
+                <li>Fail to pay outstanding fees after a 7-day grace period</li>
+                <li>Receive excessive spam reports or quality score violations from Meta</li>
+            </ul>
+            <p>Upon termination, your access to the Service will be revoked. Your data will be retained for 30 days post-termination, during which you may request an export, after which it will be permanently deleted.</p>
+
+            <h2>10. Limitation of Liability</h2>
+            <p>To the maximum extent permitted by applicable law, YIELD AI's total cumulative liability to you for any claims arising from or related to the Service shall not exceed the amount you paid us in the three (3) months preceding the claim.</p>
+            <p>YIELD AI shall not be liable for any:</p>
+            <ul>
+                <li>Indirect, incidental, special, consequential, or punitive damages</li>
+                <li>Loss of profits, data, business, or goodwill</li>
+                <li>Service interruptions caused by Meta's WhatsApp API platform</li>
+                <li>Actions or inactions of end-users (leads) of your AI agent</li>
+            </ul>
+
+            <h2>11. Disclaimer of Warranties</h2>
+            <p>The Service is provided "as is" and "as available" without warranties of any kind, express or implied, including but not limited to implied warranties of merchantability, fitness for a particular purpose, or non-infringement. We do not warrant that the Service will be error-free, uninterrupted, or that AI responses will be perfectly accurate at all times.</p>
+
+            <h2>12. Governing Law &amp; Dispute Resolution</h2>
+            <p>These Terms shall be governed by and construed in accordance with the laws of <strong>India</strong>. Any disputes arising from these Terms or your use of the Service shall be subject to the exclusive jurisdiction of the courts in <strong>Pune, Maharashtra, India</strong>.</p>
+            <p>Before initiating formal legal proceedings, both parties agree to attempt resolution through good-faith negotiations for a period of 30 days.</p>
+
+            <h2>13. Modifications to Terms</h2>
+            <p>We reserve the right to modify these Terms at any time. Material changes will be communicated by email to active subscribers at least 14 days before taking effect. Continued use of the Service after the effective date constitutes acceptance of the updated Terms.</p>
+
+            <h2>14. Contact Us</h2>
+            <p>For questions about these Terms or to report violations:</p>
+            <p>
+                <strong>Enterprise Name:</strong> YIELD AI<br>
+                <strong>Registered Address:</strong> Torna Complex, Rajgurunagar, Pune, Maharashtra, India - 410505<br>
+                <strong>Legal Inquiries Email:</strong> <a href="mailto:support.yieldai@gmail.com">support.yieldai@gmail.com</a><br>
+                <strong>Response Time:</strong> Within 10 business days
+            </p>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/[0.06] bg-[#030303] py-12 px-6">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mb-8">
+            <div class="flex flex-col">
+                <a href="/" class="font-semibold text-xl tracking-tight text-white mb-2 flex items-center gap-1">
+                    Yield<span class="text-brand-accentLight">.ai</span>
+                </a>
+                <p class="text-sm font-semibold text-white">YIELD AI</p>
+                <p class="text-sm text-gray-500">Torna Complex, Rajgurunagar, Pune, Maharashtra, India - 410505</p>
+                <p class="text-sm text-gray-500 mt-1"><a href="mailto:support@yield.ai" class="hover:text-white transition-colors">support@yield.ai</a></p>
+            </div>
+            <div class="flex flex-col gap-2.5 text-sm text-gray-500 md:text-right">
+                <h4 class="text-white font-medium mb-1">Legal</h4>
+                <a href="/privacy" class="hover:text-white transition-colors">Privacy Policy</a>
+                <a href="/terms" class="hover:text-white transition-colors">Terms of Service</a>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto border-t border-white/[0.06] pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-600">
+            <div>© 2026 YIELD AI. Built for revenue.</div>
+            <div class="flex items-center gap-4">
+                <a href="#" class="hover:text-white transition-colors" aria-label="LinkedIn">
+                    <i data-lucide="linkedin" class="w-5 h-5"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        mobileMenuBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+    </script>
+</body>
+</html>

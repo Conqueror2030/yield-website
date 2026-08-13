@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yield.ai | WhatsApp AI Automation for High-Velocity Teams</title>
+    <meta name="description" content="The premium WhatsApp automation engine built for high-velocity teams. Qualify leads 24/7, book viewings instantly, and route top-tier prospects on complete autopilot.">
+    <link rel="canonical" href="https://yieldai.space/">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            dark: '#050505',
+                            card: '#0f0f0f',
+                            border: '#222222',
+                            accent: '#10B981',
+                            accentLight: '#34D399',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!--
+        Shared environment config — single source of truth for all API endpoints.
+        Edit /config.js to swap between local dev and production.
+        Silently 404s when opened as file://, which is fine — the inline
+        LEAD_FORM_ENDPOINT fallback below keeps the page working.
+    -->
+    <script src="/config.js"></script>
+
+    <style>
+        body {
+            background-color: #050505;
+            color: #F8FAFC;
+            overflow-x: hidden;
+            background-image:
+                radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.06) 0%, transparent 55%),
+                radial-gradient(circle at 80% 60%, rgba(16, 185, 129, 0.03) 0%, transparent 40%),
+                radial-gradient(circle at 20% 80%, rgba(16, 185, 129, 0.02) 0%, transparent 40%);
+        }
+
+        .glass-nav {
+            background: rgba(5, 5, 5, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.25);
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 6px 25px rgba(16, 185, 129, 0.4);
+            transform: translateY(-1px);
+        }
+
+        .btn-glass {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #ffffff;
+            backdrop-filter: blur(8px);
+            transition: all 0.3s ease;
+        }
+
+        .btn-glass:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            border: 1px solid #2a2a2a;
+            color: #ffffff;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background-color: rgba(255,255,255,0.05);
+            border-color: #444;
+        }
+
+        .card-glass {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            transition: all 0.4s ease;
+        }
+
+        .card-glass:hover {
+            border-color: rgba(16, 185, 129, 0.25);
+            transform: translateY(-3px);
+            box-shadow: 0 16px 48px -12px rgba(16, 185, 129, 0.1);
+        }
+
+        .card-hover {
+            background-color: #0f0f0f;
+            border: 1px solid #222222;
+            transition: all 0.4s ease;
+        }
+
+        .card-hover:hover {
+            border-color: rgba(16, 185, 129, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px -10px rgba(16, 185, 129, 0.05);
+        }
+
+        .icon-wrapper {
+            background: linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(5,150,105,0.05) 100%);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            color: #34D399;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #ffffff 0%, #a1a1aa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .badge-live {
+            background: rgba(16, 185, 129, 0.12);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #34D399;
+            box-shadow: 0 0 12px rgba(16, 185, 129, 0.2);
+        }
+
+        .badge-live .dot {
+            background: #10B981;
+            box-shadow: 0 0 6px rgba(16, 185, 129, 0.8);
+        }
+
+        .badge-soon {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #71717a;
+        }
+
+        input, select, textarea {
+            background-color: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #10B981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        input::placeholder, textarea::placeholder {
+            color: #4a4a52;
+        }
+
+        select option {
+            background-color: #0f0f0f;
+            color: #fff;
+        }
+
+        .phone-mockup {
+            border: 8px solid #1a1a1a;
+            border-radius: 2rem;
+            background-color: #050505;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 0 1px #2a2a2a, 0 0 40px rgba(16,185,129,0.04);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .chat-bubble-left {
+            background-color: #1a1a1a;
+            border-radius: 1rem 1rem 1rem 0.25rem;
+            padding: 0.75rem 1rem;
+            margin-bottom: 1rem;
+            max-width: 85%;
+            font-size: 0.875rem;
+            color: #e2e8f0;
+        }
+
+        .chat-bubble-right {
+            background-color: #064E3B;
+            border-radius: 1rem 1rem 0.25rem 1rem;
+            padding: 0.75rem 1rem;
+            margin-bottom: 1rem;
+            max-width: 85%;
+            margin-left: auto;
+            font-size: 0.875rem;
+            color: #ecfdf5;
+        }
+
+        /* Toast notification */
+        #toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 9999;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        #toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* Calendly Modal */
+        #calendly-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 9000;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(8px);
+            align-items: center;
+            justify-content: center;
+        }
+
+        #calendly-modal.open {
+            display: flex;
+        }
+
+        .calendly-inner {
+            background: #0f0f0f;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 1.5rem;
+            width: 90%;
+            max-width: 680px;
+            max-height: 90vh;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.7);
+        }
+
+        /* Animated glow ring on hero */
+        .hero-glow {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(16,185,129,0.08) 0%, transparent 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -70%);
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-brand-accent selection:text-white">
+
+    <!-- Toast Notification -->
+    <div id="toast" role="alert">
+        <div class="flex items-center gap-3 px-5 py-4 rounded-xl bg-[#0f1f17] border border-[#10B981]/40 shadow-xl shadow-black/40">
+            <div class="w-8 h-8 rounded-full bg-brand-accent/20 flex items-center justify-center flex-shrink-0">
+                <i data-lucide="check" class="w-4 h-4 text-brand-accentLight"></i>
+            </div>
+            <div>
+                <p class="text-white text-sm font-medium">Request received.</p>
+                <p class="text-gray-400 text-xs mt-0.5">An agent will contact you within 15 minutes.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Calendly Modal -->
+    <div id="calendly-modal" role="dialog" aria-modal="true" aria-label="Book a Demo">
+        <div class="calendly-inner">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-white/10">
+                <p class="text-white font-medium text-sm">Book your strategy call</p>
+                <button id="close-calendly" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 transition-colors text-gray-400 hover:text-white">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+            <!-- Calendly inline widget — replace href with your actual Calendly URL -->
+            <div class="calendly-inline-widget" data-url="https://calendly.com/pathanaman2030/30min?hide_gdpr_banner=1&background_color=050505&text_color=F8FAFC&primary_color=10B981" style="min-width:320px;height:600px;"></div>
+            <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 glass-nav" id="navbar">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <a href="/" class="font-semibold text-xl tracking-tight text-white flex items-center gap-1.5">
+                Yield<span class="text-brand-accentLight">.ai</span>
+            </a>
+
+            <div class="hidden md:flex items-center space-x-8 text-sm font-medium text-gray-400">
+                <a href="#features" class="hover:text-white transition-colors">Features</a>
+                <a href="#platform" class="hover:text-white transition-colors">Platform</a>
+                <a href="#book-demo" class="hover:text-white transition-colors">Book a Demo</a>
+            </div>
+
+            <!-- CTA Cluster -->
+            <div class="hidden md:flex items-center gap-3">
+                <a href="/connect" id="client-login-btn" class="inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium rounded-full btn-glass">
+                    Client Login
+                </a>
+                <a href="#book-demo" id="book-demo-nav-btn" class="inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium rounded-full btn-primary">
+                    Book a Demo
+                </a>
+            </div>
+
+            <!-- Mobile menu button -->
+            <button class="md:hidden text-gray-400 hover:text-white" id="mobile-menu-btn" aria-label="Menu">
+                <i data-lucide="menu"></i>
+            </button>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-[#080808] border-b border-[#1a1a1a] pb-5 px-6 shadow-xl">
+            <div class="flex flex-col space-y-4 pt-3">
+                <a href="#features" class="text-sm font-medium text-gray-400 hover:text-white transition-colors">Features</a>
+                <a href="#platform" class="text-sm font-medium text-gray-400 hover:text-white transition-colors">Platform</a>
+                <a href="#book-demo" class="text-sm font-medium text-gray-400 hover:text-white transition-colors">Book a Demo</a>
+                <div class="flex flex-col gap-3 pt-1">
+                    <a href="/connect" class="inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium rounded-full btn-glass">
+                        Client Login
+                    </a>
+                    <a href="#book-demo" class="inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium rounded-full btn-primary">
+                        Book a Demo
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative pt-36 pb-24 md:pt-52 md:pb-36 overflow-hidden px-6">
+        <div class="hero-glow"></div>
+        <div class="max-w-4xl mx-auto text-center relative z-10">
+            <div class="inline-flex items-center px-3 py-1.5 rounded-full bg-brand-accent/10 border border-brand-accent/20 text-brand-accentLight text-xs font-medium mb-8">
+                <span class="flex w-2 h-2 rounded-full bg-brand-accent mr-2 animate-pulse"></span>
+                WhatsApp AI Automation is Live
+            </div>
+
+            <h1 class="text-5xl md:text-7xl font-semibold tracking-tight mb-6 leading-[1.05] gradient-text">
+                Close more deals.<br>On autopilot.
+            </h1>
+
+            <p class="text-lg md:text-xl text-gray-400 mb-10 max-w-2xl mx-auto leading-relaxed font-light">
+                The premium WhatsApp automation engine built for high-velocity teams. Qualify leads 24/7, book viewings instantly, and route top-tier prospects on complete autopilot.
+            </p>
+
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <a href="/connect" id="hero-get-started-btn" class="w-full sm:w-auto px-8 py-4 text-sm font-medium rounded-full btn-primary flex items-center justify-center gap-2">
+                    Get Started Now
+                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </a>
+                <a href="#platform" class="w-full sm:w-auto px-8 py-4 text-sm font-medium rounded-full btn-secondary flex items-center justify-center gap-2">
+                    See How It Works
+                    <i data-lucide="play-circle" class="w-4 h-4"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Value Proposition Section -->
+    <section id="features" class="py-16 px-6 relative z-10">
+        <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+
+            <!-- Text Content -->
+            <div>
+                <h2 class="text-3xl md:text-4xl font-semibold mb-6 leading-tight">Turn conversations into conversions.</h2>
+                <p class="text-gray-400 mb-8 leading-relaxed font-light">
+                    Stop letting leads slip through the cracks. Yield.ai transforms your WhatsApp into a high-converting sales engine. We handle the initial outreach, FAQs, and qualification—so you only step in when it's time to close.
+                </p>
+
+                <ul class="space-y-4">
+                    <li class="flex items-start">
+                        <i data-lucide="check-circle-2" class="w-6 h-6 text-brand-accent mr-3 flex-shrink-0 mt-0.5"></i>
+                        <span class="text-gray-300">Respond to inbound inquiries in under 3 seconds.</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i data-lucide="check-circle-2" class="w-6 h-6 text-brand-accent mr-3 flex-shrink-0 mt-0.5"></i>
+                        <span class="text-gray-300">Automatically qualify leads based on your custom criteria.</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i data-lucide="check-circle-2" class="w-6 h-6 text-brand-accent mr-3 flex-shrink-0 mt-0.5"></i>
+                        <span class="text-gray-300">Seamlessly hand off high-value prospects to a human agent.</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Phone Mockup -->
+            <div class="relative mx-auto w-full max-w-[300px]">
+                <div class="absolute inset-0 bg-brand-accent/15 blur-[60px] rounded-full"></div>
+                <div class="phone-mockup h-[500px] flex flex-col relative z-10">
+                    <!-- Phone Header -->
+                    <div class="bg-[#0e0e0e] p-4 flex items-center border-b border-[#1e1e1e]">
+                        <div class="w-10 h-10 rounded-full bg-brand-accent/20 flex items-center justify-center mr-3">
+                            <i data-lucide="building-2" class="w-5 h-5 text-brand-accent"></i>
+                        </div>
+                        <div>
+                            <div class="font-medium text-sm text-white">Yield.ai Assistant</div>
+                            <div class="text-xs text-brand-accentLight flex items-center gap-1">
+                                <span class="w-1.5 h-1.5 rounded-full bg-brand-accent inline-block"></span>
+                                Online
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Chat Area -->
+                    <div class="flex-1 p-4 overflow-hidden bg-[#0a0a0a] flex flex-col justify-end text-sm">
+                        <div class="chat-bubble-right opacity-80">
+                            Hi! I saw your ad about the premium listing package.
+                        </div>
+                        <div class="chat-bubble-left">
+                            Hello! 👋 Thanks for reaching out. We'd love to help you scale. Are you currently handling more than 100 inquiries a week?
+                        </div>
+                        <div class="chat-bubble-right opacity-80">
+                            Yes, it's getting hard to manage manually.
+                        </div>
+                        <div class="chat-bubble-left">
+                            Perfect. Yield.ai is designed exactly for that volume. When are you free for a quick 10-min call today?
+                        </div>
+                        <div class="chat-bubble-right opacity-80">
+                            How about 3 PM IST?
+                        </div>
+                        <div class="chat-bubble-left shadow-[0_0_15px_rgba(16,185,129,0.15)] border border-brand-accent/30">
+                            Booked! ✅ I've just sent you the calendar invite. Talk soon!
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Platform / Ecosystem Section -->
+    <section id="platform" class="py-24 px-6 relative z-10 bg-[#080808] border-y border-white/[0.06] mt-12">
+        <div class="max-w-7xl mx-auto text-center">
+            <div class="inline-flex items-center px-3 py-1 rounded-full bg-white/5 border border-white/10 text-gray-400 text-xs font-medium mb-6">
+                <i data-lucide="layers" class="w-3 h-3 mr-2"></i>
+                Enterprise Expansion
+            </div>
+            <h2 class="text-3xl md:text-4xl font-semibold mb-4">A growing ecosystem.</h2>
+            <p class="text-gray-400 mb-16 max-w-2xl mx-auto font-light leading-relaxed">
+                We're starting with WhatsApp because it's where your customers already live. Our vision is a unified AI automation layer across every high-velocity industry.
+            </p>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 text-left">
+
+                <!-- Card 1 — Real Estate (LIVE) -->
+                <div class="p-7 rounded-2xl card-glass relative overflow-hidden">
+                    <div class="flex items-center justify-between mb-5">
+                        <div class="w-11 h-11 rounded-xl icon-wrapper flex items-center justify-center">
+                            <i data-lucide="building-2" class="w-5 h-5"></i>
+                        </div>
+                        <span class="badge-live inline-flex items-center px-2.5 py-1 text-[10px] uppercase font-bold rounded-full gap-1.5">
+                            <span class="dot w-1.5 h-1.5 rounded-full animate-pulse"></span>
+                            Live
+                        </span>
+                    </div>
+                    <h3 class="text-base font-semibold mb-2 text-white">Real Estate Agent AI</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        End-to-end BANT qualification, property matching, and automated viewing scheduling for real estate brokers.
+                    </p>
+                </div>
+
+                <!-- Card 2 — E-Commerce (LAUNCHING SOON) -->
+                <div class="p-7 rounded-2xl card-glass relative overflow-hidden opacity-75">
+                    <div class="flex items-center justify-between mb-5">
+                        <div class="w-11 h-11 rounded-xl bg-white/[0.04] border border-white/10 flex items-center justify-center text-gray-500">
+                            <i data-lucide="shopping-bag" class="w-5 h-5"></i>
+                        </div>
+                        <span class="badge-soon inline-flex items-center px-2.5 py-1 text-[10px] uppercase font-bold rounded-full">
+                            Launching Soon
+                        </span>
+                    </div>
+                    <h3 class="text-base font-semibold mb-2 text-gray-300">E-Commerce Sales &amp; Support AI</h3>
+                    <p class="text-gray-500 text-sm leading-relaxed">
+                        Automated order tracking, abandon cart recovery, and 24/7 customer support via native WhatsApp API.
+                    </p>
+                </div>
+
+                <!-- Card 3 — Automotive (LAUNCHING SOON) -->
+                <div class="p-7 rounded-2xl card-glass relative overflow-hidden opacity-75">
+                    <div class="flex items-center justify-between mb-5">
+                        <div class="w-11 h-11 rounded-xl bg-white/[0.04] border border-white/10 flex items-center justify-center text-gray-500">
+                            <i data-lucide="car" class="w-5 h-5"></i>
+                        </div>
+                        <span class="badge-soon inline-flex items-center px-2.5 py-1 text-[10px] uppercase font-bold rounded-full">
+                            Launching Soon
+                        </span>
+                    </div>
+                    <h3 class="text-base font-semibold mb-2 text-gray-300">Automotive &amp; Dealership AI</h3>
+                    <p class="text-gray-500 text-sm leading-relaxed">
+                        Test-drive scheduling, vehicle inquiry handling, and service reminders for automotive dealerships.
+                    </p>
+                </div>
+
+                <!-- Card 4 — CRM Sync (LIVE) -->
+                <div class="p-7 rounded-2xl card-glass relative overflow-hidden">
+                    <div class="flex items-center justify-between mb-5">
+                        <div class="w-11 h-11 rounded-xl icon-wrapper flex items-center justify-center">
+                            <i data-lucide="git-merge" class="w-5 h-5"></i>
+                        </div>
+                        <span class="badge-live inline-flex items-center px-2.5 py-1 text-[10px] uppercase font-bold rounded-full gap-1.5">
+                            <span class="dot w-1.5 h-1.5 rounded-full animate-pulse"></span>
+                            Live
+                        </span>
+                    </div>
+                    <h3 class="text-base font-semibold mb-2 text-white">Omnichannel &amp; CRM Sync</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        Native webhooks and real-time synchronization with PocketBase, HubSpot, Salesforce, and custom CRMs.
+                    </p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Lead Capture Form -->
+    <section id="book-demo" class="py-24 px-6 relative z-10">
+        <div class="max-w-2xl mx-auto relative">
+            <!-- Glow decoration -->
+            <div class="absolute inset-0 bg-brand-accent/5 blur-[80px] rounded-full pointer-events-none"></div>
+
+            <div class="relative bg-[rgba(15,15,15,0.9)] border border-white/[0.08] rounded-3xl p-8 md:p-12 shadow-2xl backdrop-blur-xl">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl md:text-4xl font-semibold mb-3">Ready to close more deals?</h2>
+                    <p class="text-gray-400 font-light">Book a brief strategy call to see if Yield.ai is a fit for your sales operation.</p>
+                </div>
+
+                <form id="lead-form" class="space-y-5">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div class="space-y-1.5">
+                            <label for="name" class="text-xs font-medium text-gray-400 uppercase tracking-wider">Full Name</label>
+                            <input type="text" id="name" name="name" required class="w-full px-4 py-3 rounded-xl text-sm" placeholder="John Doe">
+                        </div>
+                        <div class="space-y-1.5">
+                            <label for="email" class="text-xs font-medium text-gray-400 uppercase tracking-wider">Work Email</label>
+                            <input type="email" id="email" name="email" required class="w-full px-4 py-3 rounded-xl text-sm" placeholder="john@company.com">
+                        </div>
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <label for="volume" class="text-xs font-medium text-gray-400 uppercase tracking-wider">Monthly Lead Volume</label>
+                        <select id="volume" name="volume" required class="w-full px-4 py-3 rounded-xl text-sm appearance-none cursor-pointer">
+                            <option value="" disabled selected>Select estimated volume...</option>
+                            <option value="under_100">Under 100 leads / mo</option>
+                            <option value="100_500">100 - 500 leads / mo</option>
+                            <option value="500_plus">500+ leads / mo (High Volume)</option>
+                        </select>
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <label for="goal" class="text-xs font-medium text-gray-400 uppercase tracking-wider">Primary Goal</label>
+                        <textarea id="goal" name="goal" rows="2" class="w-full px-4 py-3 rounded-xl text-sm resize-none" placeholder="e.g., We need to automate our WhatsApp lead qualification..."></textarea>
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <label for="whatsapp" class="text-xs font-medium text-gray-400 uppercase tracking-wider">WhatsApp Number <span class="font-normal normal-case text-gray-600">(optional)</span></label>
+                        <div class="relative">
+                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-sm select-none">+</span>
+                            <input type="tel" id="whatsapp" name="whatsapp" class="w-full pl-7 pr-4 py-3 rounded-xl text-sm" placeholder="91 98765 43210" autocomplete="tel">
+                        </div>
+                        <p class="text-[11px] text-gray-600">We'll reach out here first — since this is a WhatsApp product.</p>
+                    </div>
+
+                    <button type="submit" class="w-full py-4 rounded-xl btn-primary font-medium text-base mt-2 flex items-center justify-center gap-2" id="submit-btn">
+                        Book Onboarding Call
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </button>
+                </form>
+
+                <!-- Success Message overlay -->
+                <div id="success-message" class="hidden absolute inset-0 bg-[#0f0f0f]/95 backdrop-blur-sm z-20 flex flex-col items-center justify-center p-8 text-center rounded-3xl">
+                    <div class="w-16 h-16 rounded-full bg-brand-accent/10 text-brand-accentLight flex items-center justify-center mb-6 border border-brand-accent/20">
+                        <i data-lucide="check" class="w-8 h-8"></i>
+                    </div>
+                    <h3 class="text-2xl font-semibold text-white mb-2">Request Received</h3>
+                    <p class="text-gray-400 max-w-sm mb-6">An agent will contact you within 15 minutes to schedule your strategy call.</p>
+                    <button id="open-calendly-btn" class="px-6 py-2.5 rounded-full btn-primary text-sm font-medium flex items-center gap-2 mb-3">
+                        <i data-lucide="calendar" class="w-4 h-4"></i>
+                        Book a time now
+                    </button>
+                    <button id="reset-form" class="px-6 py-2 border border-white/10 rounded-full text-sm hover:bg-white/5 transition-colors text-gray-400 hover:text-white">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/[0.06] bg-[#030303] py-14 px-6">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-10 mb-10">
+            <div class="flex flex-col">
+                <a href="/" class="font-semibold text-xl tracking-tight text-white mb-3 flex items-center gap-1">
+                    Yield<span class="text-brand-accentLight">.ai</span>
+                </a>
+                <p class="text-sm font-semibold text-white mb-1">YIELD AI</p>
+                <p class="text-sm text-gray-500">Torna Complex, Rajgurunagar, Pune, Maharashtra, India - 410505</p>
+                <p class="text-sm text-gray-500 mt-1"><a href="mailto:support.yieldai@gmail.com" class="hover:text-white transition-colors">support.yieldai@gmail.com</a></p>
+            </div>
+
+            <div class="flex flex-col gap-2.5 text-sm text-gray-500 md:text-right">
+                <h4 class="text-white font-medium mb-1">Legal</h4>
+                <a href="/privacy" class="hover:text-white transition-colors">Privacy Policy</a>
+                <a href="/terms" class="hover:text-white transition-colors">Terms of Service</a>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto border-t border-white/[0.06] pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-600">
+            <div class="flex items-center gap-6">
+                © 2026 YIELD AI. Built for revenue.
+            </div>
+            <div class="flex items-center gap-4">
+                <a href="#" class="hover:text-white transition-colors" aria-label="LinkedIn">
+                    <i data-lucide="linkedin" class="w-5 h-5"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+
+        // --- Navbar scroll effect ---
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 20) {
+                navbar.style.borderBottomColor = 'rgba(255,255,255,0.08)';
+            } else {
+                navbar.style.borderBottomColor = 'transparent';
+            }
+        });
+
+        // --- Mobile Menu Toggle ---
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // --- Smooth Scroll with Offset ---
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    e.preventDefault();
+                    if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
+                        mobileMenu.classList.add('hidden');
+                    }
+                    const headerOffset = 90;
+                    const elementPosition = targetElement.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.scrollY - headerOffset;
+                    window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                }
+            });
+        });
+
+        // --- Toast Helper ---
+        function showToast() {
+            const toast = document.getElementById('toast');
+            lucide.createIcons();
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 5000);
+        }
+
+        // --- Calendly Modal ---
+        const calendlyModal = document.getElementById('calendly-modal');
+        const closeCalendlyBtn = document.getElementById('close-calendly');
+        const openCalendlyBtn = document.getElementById('open-calendly-btn');
+
+        function openCalendly() {
+            calendlyModal.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeCalendly() {
+            calendlyModal.classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        closeCalendlyBtn.addEventListener('click', closeCalendly);
+        calendlyModal.addEventListener('click', (e) => {
+            if (e.target === calendlyModal) closeCalendly();
+        });
+        openCalendlyBtn.addEventListener('click', openCalendly);
+
+        // --- Form Handling: Formspree POST + Calendly ---
+        const form = document.getElementById('lead-form');
+        const successMessage = document.getElementById('success-message');
+        const resetBtn = document.getElementById('reset-form');
+        const submitBtn = document.getElementById('submit-btn');
+
+        // =========================================================
+        // LEAD FORM — API ENDPOINT CONFIGURATION
+        // =========================================================
+        // Resolution order:
+        //   1. window.YIELD_CONFIG.LEAD_FORM_ENDPOINT  — set in /config.js
+        //   2. Inline fallback below                   — Formspree (works with no server)
+        //
+        // To swap environments, edit /config.js (recommended) OR change
+        // the inline fallback string below:
+        //
+        //   Local dev  :  'http://localhost:3000/api/leads'
+        //   Live cloud :  'http://34.24.209.173:3000/api/leads'   (Node backend on GCP VPS)
+        //
+        // =========================================================
+        const LEAD_FORM_ENDPOINT =
+            (window.YIELD_CONFIG && window.YIELD_CONFIG.LEAD_FORM_ENDPOINT)
+            || 'http://34.24.209.173:3000/api/leads';  // live cloud backend
+        // const LEAD_FORM_ENDPOINT = 'http://localhost:3000/api/leads';        // local dev
+        // const LEAD_FORM_ENDPOINT = 'https://formspree.io/f/xoeajron';       // fallback
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // ---- Button: loading state ----
+            const originalHTML = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<svg class="animate-spin -ml-1 mr-2 w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg> Sending…';
+            submitBtn.disabled = true;
+
+            const formData = {
+                name:      document.getElementById('name').value,
+                email:     document.getElementById('email').value,
+                volume:    document.getElementById('volume').value,
+                goal:      document.getElementById('goal').value,
+                whatsapp:  document.getElementById('whatsapp').value || undefined,
+            };
+
+            try {
+                // ---- FETCH REQUEST -----------------------------------------------
+                // Endpoint reads from LEAD_FORM_ENDPOINT (see config block above).
+                // To swap environments: change LEAD_FORM_ENDPOINT at the top.
+                // -----------------------------------------------------------------
+                const res = await fetch(LEAD_FORM_ENDPOINT, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                    body: JSON.stringify(formData),
+                });
+
+                // Show success UX regardless of response (Formspree can return 200 or 4xx)
+                showToast();
+                successMessage.classList.remove('hidden');
+                lucide.createIcons();
+
+                if (!res.ok) {
+                    // Log non-OK backend responses for debugging (doesn't block user UX)
+                    const errText = await res.text().catch(() => String(res.status));
+                    console.warn('[Yield.ai] Lead form response:', res.status, errText);
+                }
+            } catch (err) {
+                // Network error fallback — still show success to avoid blocking UX
+                console.warn('[Yield.ai] Lead form fetch failed:', err.message);
+                showToast();
+                successMessage.classList.remove('hidden');
+                lucide.createIcons();
+            } finally {
+                // ---- Button: restore ----
+                submitBtn.innerHTML = originalHTML;
+                submitBtn.disabled = false;
+                lucide.createIcons();
+            }
+        });
+
+        resetBtn.addEventListener('click', () => {
+            form.reset();
+            successMessage.classList.add('hidden');
+        });
+    </script>
+</body>
+</html>
