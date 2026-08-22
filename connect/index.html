@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" id="html-root">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -25,14 +25,23 @@
                             dark: '#050505',
                             card: '#0f0f0f',
                             border: '#222222',
-                            accent: '#10B981',
-                            accentLight: '#34D399',
+                            accent: '#16CF82',
+                            accentLight: '#3DEAA4',
                         }
                     },
                     fontFamily: { sans: ['Inter', 'sans-serif'] }
                 }
             }
         }
+    </script>
+
+    <!-- Instant theme apply — prevents flash of wrong theme -->
+    <script>
+        (function(){
+            if (localStorage.getItem('yieldai_theme') === 'light') {
+                document.getElementById('html-root').classList.add('light-mode');
+            }
+        })();
     </script>
 
     <!-- Lucide Icons -->
@@ -282,9 +291,48 @@
             animation: pulse-green 2s ease-in-out infinite;
         }
         @keyframes pulse-green {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(16,185,129,0.3); }
-            50%       { box-shadow: 0 0 0 14px rgba(16,185,129,0); }
+            0%, 100% { box-shadow: 0 0 0 0 rgba(22,207,130,0.3); }
+            50%       { box-shadow: 0 0 0 14px rgba(22,207,130,0); }
         }
+
+        /* ===== LIGHT MODE ===== */
+        html.light-mode body { background-color: #F0F4F8 !important; color: #0F172A; background-image: radial-gradient(circle at 30% 20%, rgba(22,207,130,0.08) 0%, transparent 50%), radial-gradient(circle at 70% 80%, rgba(22,207,130,0.05) 0%, transparent 50%); }
+        html.light-mode .glass-nav { background: rgba(245,248,252,0.92) !important; border-bottom: 1px solid rgba(0,0,0,0.08) !important; }
+        html.light-mode .portal-card { background: rgba(255,255,255,0.85) !important; border: 1px solid rgba(0,0,0,0.07) !important; box-shadow: 0 8px 40px rgba(0,0,0,0.08); }
+        html.light-mode h1,html.light-mode h2,html.light-mode h3 { color: #0F172A; }
+        html.light-mode p { color: #475569; }
+        html.light-mode .text-white { color: #0F172A !important; }
+        html.light-mode .text-gray-400 { color: #64748B !important; }
+        html.light-mode .text-gray-500 { color: #94A3B8 !important; }
+        html.light-mode input, html.light-mode textarea {
+            background-color: #FFFFFF !important;
+            border: 1px solid rgba(0,0,0,0.2) !important;
+            color: #0F172A !important;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05) !important;
+        }
+        html.light-mode input::placeholder, html.light-mode textarea::placeholder { color: #94A3B8 !important; }
+        html.light-mode .btn-glass { background: rgba(0,0,0,0.04) !important; border: 1px solid rgba(0,0,0,0.12) !important; color: #0F172A !important; }
+        html.light-mode .btn-glass:hover { background: rgba(0,0,0,0.08) !important; }
+        html.light-mode .dev-config-panel { border-color: rgba(0,0,0,0.08) !important; background: rgba(0,0,0,0.02) !important; }
+        html.light-mode .dev-config-toggle:hover { background: rgba(0,0,0,0.03) !important; }
+        html.light-mode .trust-badge { background: rgba(0,0,0,0.02) !important; border-color: rgba(0,0,0,0.07) !important; }
+        html.light-mode .divider-label::before { background: rgba(0,0,0,0.08) !important; }
+        html.light-mode .divider-label span { color: #94A3B8 !important; }
+        html.light-mode #mobile-menu { background: #F5F8FC !important; border-color: rgba(0,0,0,0.08) !important; }
+        html.light-mode footer { background: #E8EEF4 !important; border-color: rgba(0,0,0,0.08) !important; }
+        html.light-mode .hover\:text-white:hover { color: #0F172A !important; }
+        html.light-mode .text-brand-accentLight { color: #10B981 !important; }
+        /* Theme toggle */
+        .theme-toggle {
+            width: 36px; height: 36px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; border: 1px solid rgba(255,255,255,0.12);
+            background: rgba(255,255,255,0.04); color: #94A3B8;
+            transition: all 0.2s ease; flex-shrink: 0;
+        }
+        .theme-toggle:hover { background: rgba(255,255,255,0.1); color: #fff; }
+        html.light-mode .theme-toggle { border: 1px solid rgba(0,0,0,0.12) !important; background: rgba(0,0,0,0.04) !important; color: #475569 !important; }
+        html.light-mode .theme-toggle:hover { background: rgba(0,0,0,0.08) !important; color: #0F172A !important; }
     </style>
 </head>
 <body class="antialiased selection:bg-brand-accent selection:text-white">
@@ -301,12 +349,18 @@
                 <a href="/#book-demo" class="hover:text-white transition-colors">Book a Demo</a>
             </div>
             <div class="hidden md:flex items-center gap-3">
-                <a href="/connect" class="inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium rounded-full btn-primary">
-                    Client Login
+                <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+                    <i data-lucide="sun" class="w-4 h-4" id="theme-icon"></i>
+                </button>
+                <a href="/connect" id="nav-connect-btn" class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-full text-brand-accent hover:text-brand-accentLight transition-colors">
+                    Connect
                 </a>
-                <a href="/#book-demo" class="inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium rounded-full btn-glass">
-                    Book a Demo
+                <a href="/dashboard" id="client-login-btn" class="inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium rounded-full btn-glass">
+                    Login
                 </a>
+                <button onclick="handleLogout()" id="nav-logout-btn" class="hidden text-sm font-medium text-gray-500 hover:text-white transition-colors" style="display: none;">
+                    Logout
+                </button>
             </div>
             <button class="md:hidden text-gray-400 hover:text-white" id="mobile-menu-btn" aria-label="Menu">
                 <i data-lucide="menu"></i>
@@ -317,6 +371,17 @@
                 <a href="/#features" class="text-sm font-medium text-gray-400 hover:text-white">Features</a>
                 <a href="/#platform" class="text-sm font-medium text-gray-400 hover:text-white">Platform</a>
                 <a href="/#book-demo" class="text-sm font-medium text-gray-400 hover:text-white">Book a Demo</a>
+                <div class="flex flex-col gap-3 pt-1">
+                    <a href="/connect" class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-full text-brand-accent hover:text-brand-accentLight transition-colors">
+                        Connect
+                    </a>
+                    <a href="/dashboard" id="mobile-client-login-btn" class="inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium rounded-full btn-glass">
+                        Login
+                    </a>
+                    <button onclick="handleLogout()" id="mobile-nav-logout-btn" class="hidden text-sm font-medium text-gray-500 hover:text-white transition-colors" style="display: none;">
+                        Logout
+                    </button>
+                </div>
             </div>
         </div>
     </nav>
@@ -362,26 +427,6 @@
                                 autocomplete="organization"
                             >
                         </div>
-
-                        <div>
-                            <label for="contact-phone" class="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-1.5">
-                                Contact WhatsApp Number
-                                <span class="ml-1 text-gray-600 normal-case font-normal">(optional)</span>
-                            </label>
-                            <div class="relative">
-                                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-sm select-none">+</span>
-                                <input
-                                    type="tel"
-                                    id="contact-phone"
-                                    name="contact_phone"
-                                    class="w-full pl-7 pr-4 py-3 rounded-xl text-sm"
-                                    placeholder="91 98765 43210"
-                                    autocomplete="tel"
-                                >
-                            </div>
-                            <p class="text-xs text-gray-600 mt-1.5">Your WhatsApp number for account notifications and setup confirmation.</p>
-                        </div>
-
                         <div>
                             <label for="ai-instructions" class="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-1.5">
                                 AI System Instructions
@@ -399,42 +444,7 @@
                     </div>
                 </div>
 
-                <!-- Backend API Config (collapsible, for dev / testing) -->
-                <div class="dev-config-panel" id="dev-config-panel">
-                    <div class="dev-config-toggle" id="dev-config-toggle"
-                         role="button" aria-expanded="false" aria-controls="dev-config-body" tabindex="0">
-                        <div class="flex items-center gap-2">
-                            <i data-lucide="terminal" class="w-3.5 h-3.5 text-brand-accent"></i>
-                            <span class="text-xs font-medium text-gray-500 uppercase tracking-wider">Backend API Config</span>
-                            <span class="text-[10px] font-medium px-1.5 py-0.5 rounded" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);color:#52525b;">Dev</span>
-                        </div>
-                        <i data-lucide="chevron-down" class="w-4 h-4 toggle-chevron" id="toggle-chevron"></i>
-                    </div>
-                    <div class="dev-config-body" id="dev-config-body">
-                        <p class="text-[11px] text-gray-600 mb-3 leading-relaxed">
-                            After Meta authorization, the token payload POSTs here.
-                            Resolution order: <strong class="text-gray-500">?api= URL param</strong>
-                            &rarr; <strong class="text-gray-500">this field</strong>
-                            &rarr; <strong class="text-gray-500">ENV_BACKEND_API_URL</strong> (source file).
-                        </p>
-                        <label for="backend-url" class="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1.5">
-                            Webhook Endpoint URL
-                        </label>
-                        <input
-                            type="url"
-                            id="backend-url"
-                            class="w-full px-3 py-2.5 rounded-lg text-xs font-mono"
-                            placeholder="http://34.24.209.173:3000/api/whatsapp/callback"
-                            autocomplete="off"
-                            spellcheck="false"
-                        >
-                        <!-- Environment indicator updated by JS -->
-                        <div id="env-indicator" class="mt-2 text-[10px] text-gray-700 flex items-center gap-1.5">
-                            <i data-lucide="info" class="w-3 h-3" id="env-icon"></i>
-                            <span id="env-indicator-text">Endpoint pre-configured — connected to live cloud backend.</span>
-                        </div>
-                    </div>
-                </div>
+
 
                 <!-- Divider -->
                 <div class="divider-label">
@@ -587,53 +597,7 @@
             document.getElementById('mobile-menu').classList.toggle('hidden');
         });
 
-        // ---- AUTO-EXPAND DEV PANEL WHEN NO ENDPOINT IS SET ----------------
-        // Gives a subtle amber dot cue so devs know they need to configure the URL.
-        (function initDevPanelState() {
-            if (!window.BACKEND_API_URL) {
-                // Auto-open the panel so the user sees where to paste their URL
-                const body    = document.getElementById('dev-config-body');
-                const chevron = document.getElementById('toggle-chevron');
-                const toggle  = document.getElementById('dev-config-toggle');
-                body.classList.add('open');
-                chevron.classList.add('open');
-                toggle.setAttribute('aria-expanded', 'true');
-            }
-        })();
 
-        // ---- DEV CONFIG TOGGLE (collapsible backend URL panel) -------------
-        const devToggle = document.getElementById('dev-config-toggle');
-        const devBody   = document.getElementById('dev-config-body');
-        const chevron   = document.getElementById('toggle-chevron');
-
-        function toggleDevConfig() {
-            const isOpen = devBody.classList.toggle('open');
-            chevron.classList.toggle('open', isOpen);
-            devToggle.setAttribute('aria-expanded', String(isOpen));
-        }
-        devToggle.addEventListener('click', toggleDevConfig);
-        devToggle.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleDevConfig(); }
-        });
-
-        // ---- ENVIRONMENT INDICATOR -----------------------------------------
-        // Shows whether an endpoint was pre-configured via URL param or ENV var.
-        (function updateEnvIndicator() {
-            const text = document.getElementById('env-indicator-text');
-            const wrap = document.getElementById('env-indicator');
-            const icon = document.getElementById('env-icon');
-            if (window.BACKEND_API_URL) {
-                const src = new URLSearchParams(window.location.search).get('api')
-                    ? '?api= URL param'
-                    : 'ENV_BACKEND_API_URL (source file)';
-                text.textContent = 'Endpoint pre-set via ' + src + ': ' + window.BACKEND_API_URL;
-                icon.setAttribute('data-lucide', 'check-circle-2');
-                wrap.style.color = '#34D399';
-            } else {
-                text.textContent = 'No endpoint pre-configured — check ENV_BACKEND_API_URL in the source file.';
-            }
-            lucide.createIcons();
-        })();
 
         // ---- CONNECTION STATE MACHINE --------------------------------------
         //
@@ -691,6 +655,29 @@
             lucide.createIcons();
         }
 
+        // ---- SYNCHRONIZATION STATE -------------------------------------------
+        // Meta's Embedded Signup has two async data sources that must BOTH arrive
+        // before we can POST to the backend:
+        //
+        //   1. postMessage("WA_EMBEDDED_SIGNUP", "FINISH") — delivers waba_id
+        //      and phone_number_id from the popup iframe after signup completes.
+        //
+        //   2. FB.login() callback — delivers response.authResponse.code after
+        //      the popup closes and the OAuth redirect resolves.
+        //
+        // Neither source is guaranteed to fire first. We store each piece in the
+        // shared `signupState` object and only call the backend POST when BOTH
+        // the code and the IDs are present.
+        // ----------------------------------------------------------------------
+        const signupState = {
+            code: null,
+            waba_id: null,
+            phone_number_id: null,
+            redirectUri: null,
+            originUri: null
+        };
+        let fbLoginCallbackFired = false;
+
         // ---- META EMBEDDED SIGNUP — message listener -----------------------
         window.addEventListener('message', function (event) {
             if (event.origin !== 'https://www.facebook.com') return;
@@ -698,12 +685,21 @@
                 const data = JSON.parse(event.data);
                 if (data.type === 'WA_EMBEDDED_SIGNUP') {
                     if (data.event === 'FINISH') {
-                        const { phone_number_id, waba_id, code } = data.data;
-                        handleSignupSuccess({ 
-                            phone_number_id, 
-                            waba_id,
-                            code: code || null
+                        // Store IDs from the popup's FINISH event
+                        signupState.waba_id = data.data?.waba_id || null;
+                        signupState.phone_number_id = data.data?.phone_number_id || null;
+                        // The postMessage may also include a code in some flows;
+                        // store it if present so we don't lose it.
+                        if (data.data?.code) {
+                            signupState.code = data.data.code;
+                        }
+                        console.log('📡 [postMessage FINISH] Stored IDs:', {
+                            waba_id: signupState.waba_id,
+                            phone_number_id: signupState.phone_number_id,
+                            hasCode: signupState.code !== null
                         });
+                        // Check if we can now proceed (both sources may have arrived)
+                        checkSignupReady();
                     } else if (data.event === 'CANCEL') {
                         setConnectionState('error', 'Connection cancelled.', 'You can try again at any time.');
                     } else if (data.event === 'ERROR') {
@@ -730,18 +726,46 @@
                 return;
             }
 
+            // Reset synchronization state for a fresh attempt
+            signupState.code = null;
+            signupState.waba_id = null;
+            signupState.phone_number_id = null;
+            signupState.redirectUri = null;
+            signupState.originUri = null;
+            fbLoginCallbackFired = false;
+
             setConnectionState('loading',
                 'Opening Meta authorization…',
                 'A popup will appear. Complete the steps to link your WhatsApp Business number.'
             );
 
+            // Start 15s safety timeout — will error if data doesn't arrive from both sources
+            startSignupTimeout();
+
             FB.login(function (response) {
+                fbLoginCallbackFired = true;
+                // 🔍 DEBUG: Log the full FB.login response
+                console.group('[FB.login] Raw Response');
+                console.log('Full response:', response);
+                console.log('authResponse:', response.authResponse);
+                console.log('authResponse.code:', response.authResponse?.code);
+                console.log('authResponse.accessToken:', response.authResponse?.accessToken);
+                console.log('authResponse.accessToken exists?', typeof response.authResponse?.accessToken);
+                console.log('status:', response.status);
+                console.groupEnd();
+
                 if (response.authResponse) {
-                    handleSignupSuccess({ 
-                        code: response.authResponse.code,
-                        redirectUri: window.location.origin + window.location.pathname,
-                        originUri: window.location.origin
+                    // Store the code from FB.login response
+                    signupState.code = response.authResponse.code || null;
+                    signupState.redirectUri = window.location.origin + window.location.pathname;
+                    signupState.originUri = window.location.origin;
+                    console.log('📡 [FB.login callback] Code obtained:', {
+                        hasCode: signupState.code !== null,
+                        hasWabaId: signupState.waba_id !== null,
+                        hasPhoneId: signupState.phone_number_id !== null
                     });
+                    // Check if we can now proceed (postMessage may have arrived first)
+                    checkSignupReady();
                 } else {
                     setConnectionState('error',
                         'Authorization not granted.',
@@ -756,7 +780,77 @@
             });
         }
 
+        // ---- SYNCHRONIZATION CHECKER ----------------------------------------
+        // Called whenever either data source fires. Proceeds only when BOTH
+        // the code and at least one of waba_id/phone_number_id are present.
+        // Gives a 15-second timeout in case one source never arrives.
+        let readinessChecked = false;
+        function checkSignupReady() {
+            // Use a flag to prevent duplicate calls to handleSignupSuccess
+            if (readinessChecked) return;
+
+            const hasCode = signupState.code !== null;
+            const hasId = signupState.waba_id !== null || signupState.phone_number_id !== null;
+
+            // 🔍 DEBUG: Log sync state
+            console.log('[SYNC] checkSignupReady called:', {
+                hasCode: signupState.code !== null && signupState.code !== undefined,
+                codeValue: signupState.code,
+                hasWabaId: signupState.waba_id !== null,
+                wabaId: signupState.waba_id,
+                hasPhoneId: signupState.phone_number_id !== null,
+                phoneId: signupState.phone_number_id,
+                fbLoginCallbackFired: fbLoginCallbackFired
+            });
+
+            if (hasCode && hasId) {
+                readinessChecked = true;
+                console.log('✅ [SYNC] Both code and IDs available — proceeding to backend POST');
+                handleSignupSuccess({
+                    code: signupState.code,
+                    waba_id: signupState.waba_id,
+                    phone_number_id: signupState.phone_number_id,
+                    redirectUri: signupState.redirectUri,
+                    originUri: signupState.originUri
+                });
+            } else if (fbLoginCallbackFired && !hasCode) {
+                readinessChecked = true;
+                setConnectionState('error',
+                    'Authorization code missing.',
+                    'Facebook login succeeded but did not return an authorization code. Please try again.'
+                );
+            } else {
+                console.log('⏳ [SYNC] Waiting for both sources... (code: ' +
+                    (hasCode ? '✓' : '✗') + ', ids: ' + (hasId ? '✓' : '✗') + ')');
+            }
+        }
+
+        // ---- SAFETY TIMEOUT -------------------------------------------------
+        // If 15 seconds pass and we still don't have both data sources,
+        // surface an error to the user so they know something is stuck.
+        let signupTimeout = null;
+        function startSignupTimeout() {
+            if (signupTimeout) clearTimeout(signupTimeout);
+            signupTimeout = setTimeout(() => {
+                if (!readinessChecked) {
+                    const hasCode = signupState.code !== null;
+                    const hasId = signupState.waba_id !== null || signupState.phone_number_id !== null;
+                    if (!hasCode || !hasId) {
+                        setConnectionState('error',
+                            'Timed out waiting for Meta response.',
+                            'One of the required data (auth code or business IDs) did not arrive. Please try again or contact support. Details: [code: ' +
+                            (hasCode ? 'received' : 'missing') + ', ids: ' + (hasId ? 'received' : 'missing') + ']'
+                        );
+                    }
+                }
+            }, 15000);
+        }
+
         // ---- HANDLE SIGNUP SUCCESS — POST token to backend -----------------
+        //
+        //  Receives the fully-merged payload { code, waba_id, phone_number_id,
+        //  redirectUri, originUri } only once both asynchronous Meta data
+        //  sources have resolved.
         //
         //  HOW TO SWAP ENVIRONMENTS:
         //    Local dev  -> paste your ngrok URL in the Backend API Config panel,
@@ -768,10 +862,8 @@
         async function handleSignupSuccess(payload) {
             const businessName   = document.getElementById('business-name').value.trim();
             const aiInstructions = document.getElementById('ai-instructions').value.trim();
-            const contactPhone   = document.getElementById('contact-phone').value.trim();
 
-            const inputUrl    = document.getElementById('backend-url').value.trim();
-            const resolvedUrl = window.BACKEND_API_URL || inputUrl;
+            const resolvedUrl = window.BACKEND_API_URL;
 
             // Build the request body based on available data
             const body = {
@@ -781,7 +873,7 @@
                 system_prompt: aiInstructions || undefined,
                 timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
                 timestamp: new Date().toISOString(),
-                source: 'yieldai_embedded_signup',
+                source: 'yieldai_embedded_signup'
             };
 
             // Remove null/undefined values
@@ -796,10 +888,8 @@
             if (!resolvedUrl) {
                 setConnectionState('error',
                     'Backend URL not set.',
-                    'Expand “Backend API Config” above, paste your local or ngrok endpoint, and try again. Token payload is in browser console (F12).'
+                    'Production environment missing window.BACKEND_API_URL.'
                 );
-                if (!devBody.classList.contains('open')) toggleDevConfig();
-                setTimeout(() => document.getElementById('backend-url').focus(), 300);
                 return;
             }
 
@@ -836,6 +926,19 @@
                         'Token synced successfully!',
                         "Your AI agent is being configured. You'll receive confirmation shortly."
                     );
+
+                    // Persist Phone Number ID
+                    if (payload.phone_number_id) {
+                        localStorage.setItem('yieldai_phone_id', payload.phone_number_id);
+                        if (payload.waba_id) {
+                            localStorage.setItem('yieldai_waba_id', payload.waba_id);
+                        }
+                    }
+
+                    // Auto-redirect to dashboard after successful signup
+                    setTimeout(function() {
+                        window.location.href = '/dashboard';
+                    }, 2000);
                 } else {
                     const errText = await res.text().catch(() => String(res.status));
                     console.error('[Yield.ai] Backend error:', res.status, errText);
@@ -853,5 +956,61 @@
             }
         }
     </script>
+
+    <script>
+        /** Light / Dark mode toggle — shared across all pages via yieldai_theme key */
+        function toggleTheme() {
+            const html = document.getElementById('html-root');
+            const isLight = html.classList.toggle('light-mode');
+            localStorage.setItem('yieldai_theme', isLight ? 'light' : 'dark');
+            updateThemeIcon(isLight);
+        }
+
+        function updateThemeIcon(isLight) {
+            const icon = document.getElementById('theme-icon');
+            if (!icon) return;
+            icon.setAttribute('data-lucide', isLight ? 'moon' : 'sun');
+            lucide.createIcons();
+        }
+
+        /**
+         * Smart Navigation State
+         */
+        function updateNavState() {
+            const hasSavedSession = !!localStorage.getItem('dashboard_tenant');
+            const hasSavedPhoneId = !!localStorage.getItem('yieldai_phone_id');
+            const isLoggedIn = hasSavedSession || hasSavedPhoneId;
+
+            const loginBtn = document.getElementById('client-login-btn');
+            const logoutBtn = document.getElementById('nav-logout-btn');
+            const mobileLoginBtn = document.getElementById('mobile-client-login-btn');
+            const mobileLogoutBtn = document.getElementById('mobile-nav-logout-btn');
+
+            if (loginBtn) {
+                loginBtn.textContent = isLoggedIn ? 'Dashboard' : 'Login';
+                loginBtn.href = '/dashboard';
+            }
+            if (mobileLoginBtn) {
+                mobileLoginBtn.textContent = isLoggedIn ? 'Dashboard' : 'Login';
+                mobileLoginBtn.href = '/dashboard';
+            }
+
+            if (logoutBtn) logoutBtn.style.display = isLoggedIn ? 'block' : 'none';
+            if (mobileLogoutBtn) mobileLogoutBtn.style.display = isLoggedIn ? 'block' : 'none';
+        }
+
+        function handleLogout() {
+            localStorage.removeItem('dashboard_tenant');
+            localStorage.removeItem('yieldai_phone_id');
+            window.location.href = '/';
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            updateNavState();
+            const isLight = document.getElementById('html-root').classList.contains('light-mode');
+            updateThemeIcon(isLight);
+        });
+    </script>
 </body>
 </html>
+

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" id="html-root">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -23,8 +23,8 @@
                             dark: '#050505',
                             card: '#0f0f0f',
                             border: '#222222',
-                            accent: '#10B981',
-                            accentLight: '#34D399',
+                            accent: '#16CF82',
+                            accentLight: '#3DEAA4',
                         }
                     },
                     fontFamily: {
@@ -33,6 +33,21 @@
                 }
             }
         }
+    </script>
+
+    <!-- Instant theme apply — prevents flash of wrong theme -->
+    <script>
+        (function(){
+            var theme = localStorage.getItem('yieldai_theme');
+            var root = document.getElementById('html-root') || document.documentElement;
+            if (theme === 'light') {
+                root.classList.add('light-mode');
+                root.setAttribute('data-theme', 'light');
+            } else if (theme === 'dark') {
+                root.classList.add('dark-mode');
+                root.setAttribute('data-theme', 'dark');
+            }
+        })();
     </script>
 
     <!-- Lucide Icons -->
@@ -52,10 +67,118 @@
             color: #F8FAFC;
             overflow-x: hidden;
             background-image:
-                radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.06) 0%, transparent 55%),
-                radial-gradient(circle at 80% 60%, rgba(16, 185, 129, 0.03) 0%, transparent 40%),
-                radial-gradient(circle at 20% 80%, rgba(16, 185, 129, 0.02) 0%, transparent 40%);
+                radial-gradient(circle at 50% 0%, rgba(22, 207, 130, 0.07) 0%, transparent 55%),
+                radial-gradient(circle at 80% 60%, rgba(22, 207, 130, 0.04) 0%, transparent 40%),
+                radial-gradient(circle at 20% 80%, rgba(22, 207, 130, 0.02) 0%, transparent 40%);
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
+
+        /* ===== LIGHT MODE ===== */
+        [data-theme="light"] body {
+            background-color: #F0F4F8;
+            color: #0F172A;
+            background-image:
+                radial-gradient(circle at 50% 0%, rgba(22, 207, 130, 0.09) 0%, transparent 55%),
+                radial-gradient(circle at 80% 60%, rgba(22, 207, 130, 0.05) 0%, transparent 40%);
+        }
+        [data-theme="light"] .glass-nav {
+            background: rgba(245, 248, 252, 0.92) !important;
+            border-bottom: 1px solid rgba(0,0,0,0.08) !important;
+        }
+        [data-theme="light"] #navbar.scrolled {
+            background: rgba(245, 248, 252, 0.97) !important;
+        }
+        [data-theme="light"] .card-glass {
+            background: rgba(255,255,255,0.85) !important;
+            border: 1px solid rgba(0,0,0,0.07) !important;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+        }
+        [data-theme="light"] .card-hover {
+            background-color: #FFFFFF !important;
+            border: 1px solid rgba(0,0,0,0.08) !important;
+        }
+        [data-theme="light"] h1, [data-theme="light"] h2, [data-theme="light"] h3, [data-theme="light"] h4 { color: #0F172A; }
+        [data-theme="light"] p { color: #475569; }
+        [data-theme="light"] .text-white { color: #0F172A !important; }
+        [data-theme="light"] .text-gray-400 { color: #64748B !important; }
+        [data-theme="light"] .text-gray-500 { color: #94A3B8 !important; }
+        [data-theme="light"] .text-gray-600 { color: #64748B !important; }
+        [data-theme="light"] input, [data-theme="light"] select, [data-theme="light"] textarea {
+            background-color: #FFFFFF !important;
+            border: 1px solid rgba(0,0,0,0.2) !important;
+            color: #0F172A !important;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05) !important;
+        }
+        [data-theme="light"] input::placeholder, [data-theme="light"] textarea::placeholder { color: #94A3B8 !important; }
+        [data-theme="light"] select option { background-color: #fff; color: #0F172A; }
+        [data-theme="light"] .btn-glass {
+            background: rgba(0,0,0,0.04) !important;
+            border: 1px solid rgba(0,0,0,0.12) !important;
+            color: #0F172A !important;
+        }
+        [data-theme="light"] .btn-glass:hover {
+            background: rgba(0,0,0,0.08) !important;
+        }
+        [data-theme="light"] .btn-secondary {
+            border-color: rgba(0,0,0,0.15) !important;
+            color: #0F172A !important;
+        }
+        [data-theme="light"] #mobile-menu {
+            background: #F5F8FC !important;
+            border-color: rgba(0,0,0,0.08) !important;
+        }
+        [data-theme="light"] .gradient-text {
+            background: linear-gradient(135deg, #0F172A 0%, #475569 100%) !important;
+            -webkit-background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+            background-clip: text !important;
+        }
+        [data-theme="light"] .phone-mockup {
+            background-color: #f5f5f5 !important;
+            border-color: #d1d5db !important;
+        }
+        [data-theme="light"] .chat-bubble-left {
+            background-color: #F1F5F9 !important;
+            color: #0F172A !important;
+        }
+        [data-theme="light"] .icon-wrapper {
+            background: linear-gradient(135deg, rgba(22,207,130,0.12) 0%, rgba(14,187,114,0.06) 100%) !important;
+            border: 1px solid rgba(22,207,130,0.25) !important;
+        }
+        [data-theme="light"] .calendly-inner {
+            background: #fff !important;
+        }
+        /* Override specific Tailwind utility background classes for Light Mode */
+        [data-theme="light"] .bg-\[\#080808\] { background-color: #F5F8FC !important; border-color: rgba(0,0,0,0.08) !important; }
+        [data-theme="light"] .bg-\[\#030303\] { background-color: #E8EEF4 !important; border-color: rgba(0,0,0,0.08) !important; }
+        [data-theme="light"] .bg-\[rgba\(15\,15\,15\,0\.9\)\] { background: rgba(255, 255, 255, 0.95) !important; border-color: rgba(0,0,0,0.08) !important; }
+        [data-theme="light"] .bg-\[\#0f0f0f\]\/95 { background: rgba(255,255,255,0.95) !important; }
+        [data-theme="light"] .bg-\[\#0e0e0e\] { background-color: #F8FAFC !important; border-color: #E2E8F0 !important; }
+        [data-theme="light"] .bg-\[\#0a0a0a\] { background-color: #F1F5F9 !important; }
+        [data-theme="light"] .bg-\[\#0f1f17\] { background-color: #ffffff !important; }
+        [data-theme="light"] .text-gray-300 { color: #475569 !important; }
+        [data-theme="light"] .hover\:text-white:hover { color: #0F172A !important; }
+        [data-theme="light"] .text-brand-accentLight { color: #10B981 !important; }
+
+        /* Theme toggle button */
+        .theme-toggle {
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            border: 1px solid rgba(255,255,255,0.12);
+            background: rgba(255,255,255,0.04);
+            color: #94A3B8;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+        .theme-toggle:hover { background: rgba(255,255,255,0.1); color: #fff; }
+        [data-theme="light"] .theme-toggle {
+            border: 1px solid rgba(0,0,0,0.12) !important;
+            background: rgba(0,0,0,0.04) !important;
+            color: #475569 !important;
+        }
+        [data-theme="light"] .theme-toggle:hover { background: rgba(0,0,0,0.08) !important; color: #0F172A !important; }
 
         .glass-nav {
             background: rgba(5, 5, 5, 0.75);
@@ -68,14 +191,36 @@
         .btn-primary {
             background: linear-gradient(135deg, #10B981 0%, #059669 100%);
             color: #ffffff;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-primary:hover::after {
+            left: 100%;
         }
 
         .btn-primary:hover {
-            box-shadow: 0 6px 25px rgba(16, 185, 129, 0.4);
-            transform: translateY(-1px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 10px rgba(16, 185, 129, 0.3);
         }
 
         .btn-glass {
@@ -104,17 +249,18 @@
         }
 
         .card-glass {
-            background: rgba(255, 255, 255, 0.03);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.01) 100%);
             border: 1px solid rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            transition: all 0.4s ease;
+            backdrop-filter: blur(16px) saturate(140%);
+            -webkit-backdrop-filter: blur(16px) saturate(140%);
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .card-glass:hover {
-            border-color: rgba(16, 185, 129, 0.25);
+            border-color: rgba(22, 207, 130, 0.25);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(22, 207, 130, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.06);
             transform: translateY(-3px);
-            box-shadow: 0 16px 48px -12px rgba(16, 185, 129, 0.1);
         }
 
         .card-hover {
@@ -143,15 +289,27 @@
         }
 
         .badge-live {
-            background: rgba(16, 185, 129, 0.12);
+            background: rgba(16, 185, 129, 0.15);
             border: 1px solid rgba(16, 185, 129, 0.3);
             color: #34D399;
-            box-shadow: 0 0 12px rgba(16, 185, 129, 0.2);
+            box-shadow: 0 0 16px rgba(16, 185, 129, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            animation: badge-glow 3s ease-in-out infinite;
         }
 
         .badge-live .dot {
             background: #10B981;
-            box-shadow: 0 0 6px rgba(16, 185, 129, 0.8);
+            box-shadow: 0 0 8px rgba(16, 185, 129, 1), 0 0 16px rgba(16, 185, 129, 0.5);
+            animation: dot-pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes badge-glow {
+            0%, 100% { box-shadow: 0 0 16px rgba(16, 185, 129, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.1); }
+            50% { box-shadow: 0 0 24px rgba(16, 185, 129, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15); }
+        }
+
+        @keyframes dot-pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.8; }
         }
 
         .badge-soon {
@@ -186,9 +344,15 @@
             border: 8px solid #1a1a1a;
             border-radius: 2rem;
             background-color: #050505;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 0 1px #2a2a2a, 0 0 40px rgba(16,185,129,0.04);
+            box-shadow: 0 25px 80px rgba(0,0,0,0.7), 0 0 0 1px #2a2a2a, 0 0 60px rgba(16,185,129,0.06);
             overflow: hidden;
             position: relative;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .phone-mockup:hover {
+            transform: translateY(-8px) scale(1.01);
+            box-shadow: 0 35px 100px rgba(0,0,0,0.8), 0 0 0 1px #333, 0 0 80px rgba(16,185,129,0.1);
         }
 
         .chat-bubble-left {
@@ -239,6 +403,9 @@
             align-items: center;
             justify-content: center;
         }
+        [data-theme="light"] #calendly-modal {
+            background: rgba(0,0,0,0.6) !important;
+        }
 
         #calendly-modal.open {
             display: flex;
@@ -262,11 +429,30 @@
             width: 600px;
             height: 600px;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(16,185,129,0.08) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(16,185,129,0.1) 0%, transparent 70%);
             top: 50%;
             left: 50%;
             transform: translate(-50%, -70%);
             pointer-events: none;
+            animation: hero-glow-pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes hero-glow-pulse {
+            0%, 100% { opacity: 0.6; transform: translate(-50%, -70%) scale(1); }
+            50% { opacity: 1; transform: translate(-50%, -70%) scale(1.1); }
+        }
+
+        /* Smooth scroll */
+        html { scroll-behavior: smooth; }
+
+        /* Selection */
+        ::selection {
+            background: rgba(16, 185, 129, 0.3);
+            color: #fff;
+        }
+        [data-theme="light"] ::selection {
+            background: rgba(16, 185, 129, 0.2);
+            color: #0F172A;
         }
     </style>
 </head>
@@ -303,8 +489,8 @@
     <!-- Navigation -->
     <nav class="fixed w-full z-50 glass-nav" id="navbar">
         <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-            <a href="/" class="font-semibold text-xl tracking-tight text-white flex items-center gap-1.5">
-                Yield<span class="text-brand-accentLight">.ai</span>
+            <a href="/" class="font-bold text-2xl tracking-tighter text-white flex items-center">
+                Yield<span class="text-brand-accent">.ai</span>
             </a>
 
             <div class="hidden md:flex items-center space-x-8 text-sm font-medium text-gray-400">
@@ -315,12 +501,18 @@
 
             <!-- CTA Cluster -->
             <div class="hidden md:flex items-center gap-3">
-                <a href="/connect" id="client-login-btn" class="inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium rounded-full btn-glass">
-                    Client Login
+                <button class="theme-toggle" id="theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle theme">
+                    <i data-lucide="sun" class="w-4 h-4" id="theme-icon"></i>
+                </button>
+                <a href="/connect" id="nav-connect-btn" class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-full text-brand-accent hover:text-brand-accentLight transition-colors">
+                    Connect
                 </a>
-                <a href="#book-demo" id="book-demo-nav-btn" class="inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium rounded-full btn-primary">
-                    Book a Demo
+                <a href="/dashboard" id="client-login-btn" class="inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium rounded-full btn-glass">
+                    Login
                 </a>
+                <button onclick="handleLogout()" id="nav-logout-btn" class="hidden text-sm font-medium text-gray-500 hover:text-white transition-colors" style="display: none;">
+                    Logout
+                </button>
             </div>
 
             <!-- Mobile menu button -->
@@ -336,12 +528,15 @@
                 <a href="#platform" class="text-sm font-medium text-gray-400 hover:text-white transition-colors">Platform</a>
                 <a href="#book-demo" class="text-sm font-medium text-gray-400 hover:text-white transition-colors">Book a Demo</a>
                 <div class="flex flex-col gap-3 pt-1">
-                    <a href="/connect" class="inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium rounded-full btn-glass">
-                        Client Login
+                    <a href="/connect" class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-full text-brand-accent hover:text-brand-accentLight transition-colors">
+                        Connect
                     </a>
-                    <a href="#book-demo" class="inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium rounded-full btn-primary">
-                        Book a Demo
+                    <a href="/dashboard" id="mobile-client-login-btn" class="inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium rounded-full btn-glass">
+                        Login
                     </a>
+                    <button onclick="handleLogout()" id="mobile-nav-logout-btn" class="hidden text-sm font-medium text-gray-500 hover:text-white transition-colors" style="display: none;">
+                        Logout
+                    </button>
                 </div>
             </div>
         </div>
@@ -356,12 +551,12 @@
                 WhatsApp AI Automation is Live
             </div>
 
-            <h1 class="text-5xl md:text-7xl font-semibold tracking-tight mb-6 leading-[1.05] gradient-text">
-                Close more deals.<br>On autopilot.
+            <h1 class="text-4xl md:text-6xl font-semibold tracking-tight mb-6 leading-[1.1] gradient-text">
+                The Autonomous WhatsApp Infrastructure That Qualifies Leads and Books Viewings While You Sleep.
             </h1>
 
-            <p class="text-lg md:text-xl text-gray-400 mb-10 max-w-2xl mx-auto leading-relaxed font-light">
-                The premium WhatsApp automation engine built for high-velocity teams. Qualify leads 24/7, book viewings instantly, and route top-tier prospects on complete autopilot.
+            <p class="text-lg md:text-xl text-gray-400 font-light max-w-2xl mx-auto mb-10 leading-relaxed">
+                Scale your real estate pipeline instantly. Turn passive inquiries into locked appointments with elite AI logic, zero manual effort.
             </p>
 
             <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -610,7 +805,7 @@
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-10 mb-10">
             <div class="flex flex-col">
                 <a href="/" class="font-semibold text-xl tracking-tight text-white mb-3 flex items-center gap-1">
-                    Yield<span class="text-brand-accentLight">.ai</span>
+                    Yield<span class="text-brand-accent">.ai</span>
                 </a>
                 <p class="text-sm font-semibold text-white mb-1">YIELD AI</p>
                 <p class="text-sm text-gray-500">Torna Complex, Rajgurunagar, Pune, Maharashtra, India - 410505</p>
@@ -636,154 +831,78 @@
     </footer>
 
     <script>
-        lucide.createIcons();
+        /**
+         * Smart Navigation State
+         */
+        function updateNavState() {
+            const hasSavedSession = !!localStorage.getItem('dashboard_tenant');
+            const hasSavedPhoneId = !!localStorage.getItem('yieldai_phone_id');
+            const isLoggedIn = hasSavedSession || hasSavedPhoneId;
 
-        // --- Navbar scroll effect ---
-        const navbar = document.getElementById('navbar');
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 20) {
-                navbar.style.borderBottomColor = 'rgba(255,255,255,0.08)';
+            const loginBtn = document.getElementById('client-login-btn');
+            const logoutBtn = document.getElementById('nav-logout-btn');
+            const mobileLoginBtn = document.getElementById('mobile-client-login-btn');
+            const mobileLogoutBtn = document.getElementById('mobile-nav-logout-btn');
+
+            if (loginBtn) {
+                loginBtn.textContent = isLoggedIn ? 'Dashboard' : 'Login';
+                loginBtn.href = '/dashboard';
+            }
+            if (mobileLoginBtn) {
+                mobileLoginBtn.textContent = isLoggedIn ? 'Dashboard' : 'Login';
+                mobileLoginBtn.href = '/dashboard';
+            }
+
+            if (logoutBtn) logoutBtn.style.display = isLoggedIn ? 'block' : 'none';
+            if (mobileLogoutBtn) mobileLogoutBtn.style.display = isLoggedIn ? 'block' : 'none';
+        }
+
+        function handleLogout() {
+            localStorage.removeItem('dashboard_tenant');
+            localStorage.removeItem('yieldai_phone_id');
+            window.location.href = '/';
+        }
+
+        // ---- THEME TOGGLE --------------------------------------------------
+        function applyTheme(theme) {
+            const html = document.getElementById('html-root');
+            if (!html) return;
+
+            html.classList.remove('light-mode', 'dark-mode');
+            if (theme === 'light') {
+                html.classList.add('light-mode');
+                html.setAttribute('data-theme', 'light');
             } else {
-                navbar.style.borderBottomColor = 'transparent';
+                html.classList.add('dark-mode');
+                html.setAttribute('data-theme', 'dark');
             }
-        });
+            localStorage.setItem('yieldai_theme', theme);
+            updateThemeIcon(theme === 'light');
+        }
 
-        // --- Mobile Menu Toggle ---
-        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-        const mobileMenu = document.getElementById('mobile-menu');
-        mobileMenuBtn.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
-        });
+        function toggleTheme() {
+            const html = document.getElementById('html-root');
+            if (!html) return;
+            const isLight = html.classList.contains('light-mode');
+            applyTheme(isLight ? 'dark' : 'light');
+        }
 
-        // --- Smooth Scroll with Offset ---
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                const targetId = this.getAttribute('href');
-                if (targetId === '#') return;
-                const targetElement = document.querySelector(targetId);
-                if (targetElement) {
-                    e.preventDefault();
-                    if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
-                        mobileMenu.classList.add('hidden');
-                    }
-                    const headerOffset = 90;
-                    const elementPosition = targetElement.getBoundingClientRect().top;
-                    const offsetPosition = elementPosition + window.scrollY - headerOffset;
-                    window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-                }
-            });
-        });
-
-        // --- Toast Helper ---
-        function showToast() {
-            const toast = document.getElementById('toast');
+        function updateThemeIcon(isLight) {
+            const icon = document.getElementById('theme-icon');
+            if (!icon) return;
+            icon.setAttribute('data-lucide', isLight ? 'moon' : 'sun');
             lucide.createIcons();
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 5000);
         }
 
-        // --- Calendly Modal ---
-        const calendlyModal = document.getElementById('calendly-modal');
-        const closeCalendlyBtn = document.getElementById('close-calendly');
-        const openCalendlyBtn = document.getElementById('open-calendly-btn');
-
-        function openCalendly() {
-            calendlyModal.classList.add('open');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeCalendly() {
-            calendlyModal.classList.remove('open');
-            document.body.style.overflow = '';
-        }
-
-        closeCalendlyBtn.addEventListener('click', closeCalendly);
-        calendlyModal.addEventListener('click', (e) => {
-            if (e.target === calendlyModal) closeCalendly();
-        });
-        openCalendlyBtn.addEventListener('click', openCalendly);
-
-        // --- Form Handling: Formspree POST + Calendly ---
-        const form = document.getElementById('lead-form');
-        const successMessage = document.getElementById('success-message');
-        const resetBtn = document.getElementById('reset-form');
-        const submitBtn = document.getElementById('submit-btn');
-
-        // =========================================================
-        // LEAD FORM — API ENDPOINT CONFIGURATION
-        // =========================================================
-        // Resolution order:
-        //   1. window.YIELD_CONFIG.LEAD_FORM_ENDPOINT  — set in /config.js
-        //   2. Inline fallback below                   — Formspree (works with no server)
-        //
-        // To swap environments, edit /config.js (recommended) OR change
-        // the inline fallback string below:
-        //
-        //   Local dev  :  'http://localhost:3000/api/leads'
-        //   Live cloud :  'http://34.24.209.173:3000/api/leads'   (Node backend on GCP VPS)
-        //
-        // =========================================================
-        const LEAD_FORM_ENDPOINT =
-            (window.YIELD_CONFIG && window.YIELD_CONFIG.LEAD_FORM_ENDPOINT)
-            || 'http://34.24.209.173:3000/api/leads';  // live cloud backend
-        // const LEAD_FORM_ENDPOINT = 'http://localhost:3000/api/leads';        // local dev
-        // const LEAD_FORM_ENDPOINT = 'https://formspree.io/f/xoeajron';       // fallback
-
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            // ---- Button: loading state ----
-            const originalHTML = submitBtn.innerHTML;
-            submitBtn.innerHTML = '<svg class="animate-spin -ml-1 mr-2 w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg> Sending…';
-            submitBtn.disabled = true;
-
-            const formData = {
-                name:      document.getElementById('name').value,
-                email:     document.getElementById('email').value,
-                volume:    document.getElementById('volume').value,
-                goal:      document.getElementById('goal').value,
-                whatsapp:  document.getElementById('whatsapp').value || undefined,
-            };
-
-            try {
-                // ---- FETCH REQUEST -----------------------------------------------
-                // Endpoint reads from LEAD_FORM_ENDPOINT (see config block above).
-                // To swap environments: change LEAD_FORM_ENDPOINT at the top.
-                // -----------------------------------------------------------------
-                const res = await fetch(LEAD_FORM_ENDPOINT, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-                    body: JSON.stringify(formData),
-                });
-
-                // Show success UX regardless of response (Formspree can return 200 or 4xx)
-                showToast();
-                successMessage.classList.remove('hidden');
-                lucide.createIcons();
-
-                if (!res.ok) {
-                    // Log non-OK backend responses for debugging (doesn't block user UX)
-                    const errText = await res.text().catch(() => String(res.status));
-                    console.warn('[Yield.ai] Lead form response:', res.status, errText);
-                }
-            } catch (err) {
-                // Network error fallback — still show success to avoid blocking UX
-                console.warn('[Yield.ai] Lead form fetch failed:', err.message);
-                showToast();
-                successMessage.classList.remove('hidden');
-                lucide.createIcons();
-            } finally {
-                // ---- Button: restore ----
-                submitBtn.innerHTML = originalHTML;
-                submitBtn.disabled = false;
-                lucide.createIcons();
-            }
-        });
-
-        resetBtn.addEventListener('click', () => {
-            form.reset();
-            successMessage.classList.add('hidden');
+        // Sync icon and nav to current state on load
+        document.addEventListener('DOMContentLoaded', function() {
+            updateNavState();
+            const savedTheme = localStorage.getItem('yieldai_theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = savedTheme || (prefersDark ? 'dark' : 'light');
+            applyTheme(theme);
         });
     </script>
 </body>
 </html>
+

@@ -52,14 +52,38 @@ window.YIELD_CONFIG = {
     WHATSAPP_CALLBACK_ENDPOINT: 'http://34.24.209.173:3000/api/whatsapp/callback',
     // WHATSAPP_CALLBACK_ENDPOINT: 'http://localhost:3000/api/whatsapp/callback',   // ← local dev
 
+    // --------------------------------------------------------
+    // CLIENT DASHBOARD API  (dashboard/index.html)
+    // --------------------------------------------------------
+    // Dashboard API endpoints for tenant lookup, metrics, leads, and
+    // system_prompt management. Served by the Node backend on the VPS.
+    //
+    // live cloud : 'https://api.yieldai.space/api/dashboard'
+    // local dev  : 'http://localhost:3000/api/dashboard'
+    DASHBOARD_API: 'https://api.yieldai.space/api/dashboard',
+    // DASHBOARD_API: 'http://localhost:3000/api/dashboard',   // ← local dev
+
+    // --------------------------------------------------------
+    // POCKETBASE REALTIME URL (dashboard/index.html SSE/WS)
+    // --------------------------------------------------------
+    // MUST be HTTPS when served from an HTTPS page (yieldai.space).
+    // Using the nginx proxy at /pocketbase/ avoids CORS and mixed-content
+    // issues — the nginx config includes proxy_buffering off and
+    // proxy_read_timeout 3600s for SSE streaming.
+    //
+    // live cloud : 'https://api.yieldai.space/pocketbase'
+    // local dev  : 'http://localhost:8080'
+    POCKETBASE_URL: 'https://api.yieldai.space/pocketbase',
+
 };
 
 // ---- Dev console banner ----------------------------------------
 console.log(
-    '%c[Yield.ai Config]%c ENV=%s | Lead→%s | WA Callback→%s',
+    '%c[Yield.ai Config]%c ENV=%s | Lead\u2192%s | WA Callback\u2192%s | Dashboard\u2192%s',
     'color:#34D399;font-weight:bold',
     'color:#71717a',
     window.YIELD_CONFIG.ENV,
     window.YIELD_CONFIG.LEAD_FORM_ENDPOINT || '(not set)',
-    window.YIELD_CONFIG.WHATSAPP_CALLBACK_ENDPOINT || '(not set — use in-page panel)'
+    window.YIELD_CONFIG.WHATSAPP_CALLBACK_ENDPOINT || '(not set — use in-page panel)',
+    window.YIELD_CONFIG.DASHBOARD_API || '(not set)'
 );

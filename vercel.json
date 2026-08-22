@@ -8,6 +8,14 @@
     {
       "src": "connect/index.html",
       "use": "@vercel/static"
+    },
+    {
+      "src": "dashboard/index.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "config.js",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
@@ -20,12 +28,31 @@
       "dest": "/connect/index.html"
     },
     {
-      "src": "/api/whatsapp/config",
-      "dest": "https://api.yieldai.space/api/whatsapp/config"
+      "src": "/dashboard/",
+      "dest": "/dashboard/index.html"
     },
     {
-      "src": "/api/whatsapp/auth/exchange-token",
-      "dest": "https://api.yieldai.space/auth/exchange-token"
+      "src": "/dashboard",
+      "dest": "/dashboard/index.html"
+    },
+    {
+      "src": "/api/(.*)",
+      "dest": "https://api.yieldai.space/api/$1",
+      "headers": {
+        "Cache-Control": "s-maxage=0, no-store, must-revalidate"
+      }
+    },
+    {
+      "src": "/(index|connect/index|dashboard/index)\\.html",
+      "headers": {
+        "Cache-Control": "s-maxage=0, no-store, must-revalidate"
+      }
+    },
+    {
+      "src": "/config.js",
+      "headers": {
+        "Cache-Control": "s-maxage=0, no-store, must-revalidate"
+      }
     }
   ]
 }
