@@ -413,7 +413,7 @@
             box-shadow: 0 0 12px rgba(245, 158, 11, 0.1) !important;
         }
         [data-theme="light"] .pulse-dot { box-shadow: 0 0 8px rgba(16, 185, 129, 0.6), 0 0 16px rgba(16, 185, 129, 0.3) !important; }
-        [data-theme="light"] .chat-bubble-user { box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important; }
+        [data-theme="light"] .chat-bubble-user { background: #e7e7e7 !important; color: #333333 !important; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important; }
         [data-theme="light"] .chat-bubble-assistant {
             background: linear-gradient(135deg, #10B981 0%, #059669 100%) !important;
             color: white !important;
@@ -464,9 +464,9 @@
 
         /* ===== CHAT DRAWER ===== */
         .chat-bubble-user {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            color: #e4e4e7;
+            background: #e7e7e7;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            color: #333333;
             border-radius: 16px 16px 16px 4px;
             padding: 12px 16px;
             font-size: 0.875rem;
@@ -1339,36 +1339,45 @@
 
         function handlePbUpdate(e) {
             if (window.currentOpenLeadId && e.record && e.record.id === window.currentOpenLeadId) {
+                // 🔥 CRITICAL: Use e.record (fresh SSE payload) directly — DO NOT rely on
+                // window.currentLeads cache which may lag behind by one message (N+1 race).
+                // The e.record from PocketBase SSE contains the LIVE Chat_History.
+                const historyDiv = document.getElementById('drawer-chat-history');
+                if (historyDiv) {
+                    const freshHistory = (Array.isArray(e.record.Chat_History)
+                        ? e.record.Chat_History
+                        : (typeof e.record.Chat_History === 'string'
+                            ? JSON.parse(e.record.Chat_History)
+                            : []));
+                    historyDiv.innerHTML = renderChatBubbles(freshHistory);
+                    historyDiv.scrollTop = historyDiv.scrollHeight;
+                }
+
+                // Also keep the window.currentLeads cache in sync for other UI elements
                 const updatedLead = (window.currentLeads || []).find(l => l.id === window.currentOpenLeadId);
                 if (updatedLead) {
-                    const chatHistory = updatedLead.chat_history || [];
-                    const historyDiv = document.getElementById('drawer-chat-history');
-                    if (historyDiv) {
-                        historyDiv.innerHTML = renderChatBubbles(chatHistory);
-                        historyDiv.scrollTop = historyDiv.scrollHeight;
-                    }
+                    updatedLead.Chat_History = e.record.Chat_History;
+                    updatedLead.chat_history = e.record.Chat_History;
+                }
 
-                    // 🔥 CRITICAL: Read ai_paused directly from e.record (source of truth)
-                    // The cache (updatedLead) may have a stale or undefined value if
-                    // refreshLeads() hasn't completed or the API response omits the field.
-                    const isPaused = e.record.ai_paused === true;
-                    // Keep cache in sync for future renders
-                    updatedLead.ai_paused = isPaused;
-                    const toggle = document.getElementById('ai-pause-toggle');
-                    const manualInput = document.getElementById('manual-chat-input');
-                    const sendBtn = document.getElementById('manual-chat-send');
-                    if (toggle) toggle.checked = isPaused;
-                    if (manualInput) {
-                        manualInput.disabled = !isPaused;
-                        manualInput.classList.toggle('opacity-50', !isPaused);
-                        manualInput.classList.toggle('cursor-not-allowed', !isPaused);
-                        manualInput.placeholder = isPaused ? 'Type a message...' : 'Pause AI to type manually...';
-                    }
-                    if (sendBtn) {
-                        sendBtn.disabled = !isPaused;
-                        sendBtn.classList.toggle('opacity-50', !isPaused);
-                        sendBtn.classList.toggle('cursor-not-allowed', !isPaused);
-                    }
+                // Read ai_paused directly from e.record (source of truth)
+                const isPaused = e.record.ai_paused === true;
+                if (updatedLead) updatedLead.ai_paused = isPaused;
+
+                const toggle = document.getElementById('ai-pause-toggle');
+                const manualInput = document.getElementById('manual-chat-input');
+                const sendBtn = document.getElementById('manual-chat-send');
+                if (toggle) toggle.checked = isPaused;
+                if (manualInput) {
+                    manualInput.disabled = !isPaused;
+                    manualInput.classList.toggle('opacity-50', !isPaused);
+                    manualInput.classList.toggle('cursor-not-allowed', !isPaused);
+                    manualInput.placeholder = isPaused ? 'Type a message...' : 'Pause AI to type manually...';
+                }
+                if (sendBtn) {
+                    sendBtn.disabled = !isPaused;
+                    sendBtn.classList.toggle('opacity-50', !isPaused);
+                    sendBtn.classList.toggle('cursor-not-allowed', !isPaused);
                 }
             }
         }
@@ -1663,11 +1672,13 @@
                 const timeStr = time ? new Date(time).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '';
 
                 if (role === 'user') {
+                    // LHS: User/lead inbound messages — white/light bubble, dark text
                     return `<div class="flex flex-col items-start mb-4">
                         <div class="chat-bubble-user">${escapeHtml(text)}</div>
                         ${timeStr ? `<div class="chat-time">${escapeHtml(timeStr)}</div>` : ''}
                     </div>`;
-                } else if (role === 'assistant' || role === 'model' || role === 'ai') {
+                } else if (role === 'assistant' || role === 'model' || role === 'ai' || role === 'system') {
+                    // RHS: Agent outbound messages — green bubble, white text
                     return `<div class="flex flex-col items-end mb-4">
                         <div class="chat-bubble-assistant">${escapeHtml(text)}</div>
                         ${timeStr ? `<div class="chat-time">${escapeHtml(timeStr)}</div>` : ''}
