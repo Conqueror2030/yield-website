@@ -14,6 +14,10 @@
       "use": "@vercel/static"
     },
     {
+      "src": "dashboard/realstate_dashboard_v2.html",
+      "use": "@vercel/static"
+    },
+    {
       "src": "config.js",
       "use": "@vercel/static"
     }
@@ -36,6 +40,18 @@
       "dest": "/dashboard/index.html"
     },
     {
+      "src": "/dashboard/v2",
+      "dest": "/dashboard/realstate_dashboard_v2.html"
+    },
+    {
+      "src": "/dashboard/v2/",
+      "dest": "/dashboard/realstate_dashboard_v2.html"
+    },
+    {
+      "src": "/realstate-dashboard-v2",
+      "dest": "/dashboard/realstate_dashboard_v2.html"
+    },
+    {
       "src": "/api/(.*)",
       "dest": "https://api.yieldai.space/api/$1",
       "headers": {
@@ -43,7 +59,7 @@
       }
     },
     {
-      "src": "/(index|connect/index|dashboard/index)\\.html",
+      "src": "/(index|connect/index|dashboard/index|dashboard/realstate_dashboard_v2)\\.html",
       "headers": {
         "Cache-Control": "s-maxage=0, no-store, must-revalidate"
       }
