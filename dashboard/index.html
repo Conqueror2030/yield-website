@@ -1398,11 +1398,6 @@
                     }
                 });
 
-                pb.onClose(() => {
-                    console.warn('[Dashboard] PB realtime connection closed');
-                    updatePbConnectionStatus(false, 'Disconnected');
-                });
-
                 pb.onError((err) => {
                     var reason = (err && err.message) || (err && err.toString()) || 'Unknown error';
                     console.error('[Dashboard] PB realtime error:', reason);

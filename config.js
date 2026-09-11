@@ -35,7 +35,7 @@ window.YIELD_CONFIG = {
     // local dev  : 'http://localhost:3000/api/leads'
     // live cloud : 'http://34.24.209.173:3000/api/leads'   (Node backend on GCP VPS)
     // fallback   : Formspree (no server needed, always works)
-    LEAD_FORM_ENDPOINT: 'http://34.24.209.173:3000/api/leads',
+    LEAD_FORM_ENDPOINT: 'https://api.yieldai.space/api/leads',
     // LEAD_FORM_ENDPOINT: 'http://localhost:3000/api/leads',       // ← local dev
     // LEAD_FORM_ENDPOINT: 'https://formspree.io/f/xoeajron',       // ← fallback
 
@@ -49,7 +49,7 @@ window.YIELD_CONFIG = {
     //              OR paste the ngrok URL into the "Backend API Config" panel on the page.
     // live cloud : 'http://34.24.209.173:3000/api/whatsapp/callback'   (Node backend on GCP VPS)
     // empty      : '' means the connect page will prompt via the in-page dev panel
-    WHATSAPP_CALLBACK_ENDPOINT: 'http://34.24.209.173:3000/api/whatsapp/callback',
+    WHATSAPP_CALLBACK_ENDPOINT: 'https://api.yieldai.space/api/whatsapp/callback',
     // WHATSAPP_CALLBACK_ENDPOINT: 'http://localhost:3000/api/whatsapp/callback',   // ← local dev
 
     // --------------------------------------------------------
