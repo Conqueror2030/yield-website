@@ -10,6 +10,14 @@
       "use": "@vercel/static"
     },
     {
+      "src": "privacy/index.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "terms/index.html",
+      "use": "@vercel/static"
+    },
+    {
       "src": "dashboard/index.html",
       "use": "@vercel/static"
     },
@@ -34,6 +42,22 @@
     {
       "src": "/connect/",
       "dest": "/connect/index.html"
+    },
+    {
+      "src": "/privacy",
+      "dest": "/privacy/index.html"
+    },
+    {
+      "src": "/privacy/",
+      "dest": "/privacy/index.html"
+    },
+    {
+      "src": "/terms",
+      "dest": "/terms/index.html"
+    },
+    {
+      "src": "/terms/",
+      "dest": "/terms/index.html"
     },
     {
       "src": "/dashboard/dashboard(\\.html)?",
@@ -72,7 +96,7 @@
       }
     },
     {
-      "src": "/(index|connect/index|dashboard/index)\\.html",
+      "src": "/(index|connect/index|privacy/index|terms/index|dashboard/index)\\.html",
       "headers": {
         "Cache-Control": "s-maxage=0, no-store, must-revalidate"
       }
