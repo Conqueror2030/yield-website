@@ -31,7 +31,7 @@
     }
 
     // ---- INITIALIZATION ---------------------------------------------
-    document.addEventListener('DOMContentLoaded', () => {
+    function initBackend() {
         if (typeof lucide !== 'undefined') lucide.createIcons();
         
         // Populate Tenant UI
@@ -51,7 +51,13 @@
         refreshAllData();
         startAutoRefresh();
         initRealtimeUpdates();
-    });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initBackend);
+    } else {
+        initBackend();
+    }
 
     // ---- REFRESH ALL DATA --------------------------------------------
     async function refreshAllData() {

@@ -36,24 +36,33 @@
       "dest": "/connect/index.html"
     },
     {
+      "src": "/dashboard/dashboard(\\.html)?",
+      "status": 301,
+      "headers": {
+        "Location": "/dashboard/"
+      }
+    },
+    {
+      "src": "/dashboard/v2/?",
+      "status": 301,
+      "headers": {
+        "Location": "/dashboard/"
+      }
+    },
+    {
+      "src": "/realstate-dashboard-v2",
+      "status": 301,
+      "headers": {
+        "Location": "/dashboard/"
+      }
+    },
+    {
       "src": "/dashboard/",
       "dest": "/dashboard/index.html"
     },
     {
       "src": "/dashboard",
       "dest": "/dashboard/index.html"
-    },
-    {
-      "src": "/dashboard/v2",
-      "dest": "/dashboard/dashboard.html"
-    },
-    {
-      "src": "/dashboard/v2/",
-      "dest": "/dashboard/dashboard.html"
-    },
-    {
-      "src": "/realstate-dashboard-v2",
-      "dest": "/dashboard/dashboard.html"
     },
     {
       "src": "/api/(.*)",
@@ -63,7 +72,7 @@
       }
     },
     {
-      "src": "/(index|connect/index|dashboard/index|dashboard/dashboard)\\.html",
+      "src": "/(index|connect/index|dashboard/index)\\.html",
       "headers": {
         "Cache-Control": "s-maxage=0, no-store, must-revalidate"
       }
