@@ -14,7 +14,11 @@
       "use": "@vercel/static"
     },
     {
-      "src": "dashboard/realstate_dashboard_v2.html",
+      "src": "dashboard/dashboard.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "dashboard/dashboard-backend.js",
       "use": "@vercel/static"
     },
     {
@@ -41,15 +45,15 @@
     },
     {
       "src": "/dashboard/v2",
-      "dest": "/dashboard/realstate_dashboard_v2.html"
+      "dest": "/dashboard/dashboard.html"
     },
     {
       "src": "/dashboard/v2/",
-      "dest": "/dashboard/realstate_dashboard_v2.html"
+      "dest": "/dashboard/dashboard.html"
     },
     {
       "src": "/realstate-dashboard-v2",
-      "dest": "/dashboard/realstate_dashboard_v2.html"
+      "dest": "/dashboard/dashboard.html"
     },
     {
       "src": "/api/(.*)",
@@ -59,7 +63,13 @@
       }
     },
     {
-      "src": "/(index|connect/index|dashboard/index|dashboard/realstate_dashboard_v2)\\.html",
+      "src": "/(index|connect/index|dashboard/index|dashboard/dashboard)\\.html",
+      "headers": {
+        "Cache-Control": "s-maxage=0, no-store, must-revalidate"
+      }
+    },
+    {
+      "src": "/dashboard/dashboard-backend.js",
       "headers": {
         "Cache-Control": "s-maxage=0, no-store, must-revalidate"
       }

@@ -71,9 +71,9 @@ window.YIELD_CONFIG = {
     // issues — the nginx config includes proxy_buffering off and
     // proxy_read_timeout 3600s for SSE streaming.
     //
-    // live cloud : 'https://api.yieldai.space/pocketbase'
+    // live cloud : 'https://api.yieldai.space'
     // local dev  : 'http://localhost:8080'
-    POCKETBASE_URL: 'https://api.yieldai.space/pocketbase',
+    POCKETBASE_URL: 'https://api.yieldai.space',
 
 };
 
