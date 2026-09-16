@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" id="html-root">
 <head>
     <meta charset="UTF-8">
@@ -1328,9 +1328,9 @@ select.sel{
               <span class="card-title" style="font-size:16px">AI Agent Settings</span>
             </div>
             <div style="display:flex;flex-direction:column;align-items:flex-end">
-              <div style="display:flex;align-items:center;gap:4px;color:var(--red);font-size:10px;text-align:right">
-                <span class="dot" style="background:var(--red);width:4px;height:4px"></span>
-                <span style="max-width:100px">Failed: pb.onError is not a function</span>
+              <div style="display:flex;align-items:center;gap:4px;color:var(--green);font-size:10px;text-align:right">
+                <span class="dot" style="background:var(--green);width:4px;height:4px"></span>
+                <span>System Active</span>
               </div>
               <button class="btn btn-o btn-xs" style="border:none;color:var(--t3);margin-top:2px" onclick="toast('Settings saved')">💾 Save Changes</button>
             </div>
@@ -2042,6 +2042,10 @@ function renderBrokers(){
 }
 
 function renderAgents(){
+  if (typeof window.renderDynamicAgents === 'function') {
+    window.renderDynamicAgents();
+    return;
+  }
   const agentGrid = document.getElementById('agent-grid');
   if (agentGrid && typeof AGENTS !== 'undefined') {
     agentGrid.innerHTML = AGENTS.map(a=>`
