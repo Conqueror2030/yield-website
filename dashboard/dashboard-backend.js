@@ -835,33 +835,79 @@
             (l.status || 'warm').toLowerCase() !== 'closed'
         ).length;
 
-        let aiMsgsToday = 0;
+        // 3. Messages Sent Today: nested reduce across all leads' Chat_History
+        const messagesSentToday = leadsList.reduce((acc, lead) => {
+            let history = lead.Chat_History || lead.chat_history || [];
+            if (typeof history === 'string') {
+                try { history = JSON.parse(history); } catch (e) { history = []; }
+            }
+            if (!Array.isArray(history)) return acc;
+            const count = history.reduce((mAcc, m) => {
+                const role = String(m.role || m.s || (m.is_ai ? 'assistant' : 'user')).toLowerCase();
+                if (role === 'assistant') {
+                    const mTime = new Date(m.timestamp || m.created || m.time).getTime();
+                    if (!isNaN(mTime) && mTime >= startOfDay) {
+                        return mAcc + 1;
+                    } else if (isNaN(mTime)) {
+                        return mAcc + 1;
+                    }
+                }
+                return mAcc;
+            }, 0);
+            return acc + count;
+        }, 0);
+
+        // 4. Last Run: find most recent timestamp across leads with follow_up_count > 0 or last_followup
+        let maxFollowupTimestamp = null;
         leadsList.forEach(l => {
+            const count = l.follow_up_count || 0;
+            const ts = l.last_followup || (count > 0 ? l.updated : null);
+            if (ts) {
+                const time = new Date(ts).getTime();
+                if (!isNaN(time) && (!maxFollowupTimestamp || time > maxFollowupTimestamp)) {
+                    maxFollowupTimestamp = time;
+                }
+            }
+        });
+        if (!maxFollowupTimestamp) {
+            leadsList.forEach(l => {
+                const time = new Date(l.updated || l.created).getTime();
+                if (!isNaN(time) && (!maxFollowupTimestamp || time > maxFollowupTimestamp)) {
+                    maxFollowupTimestamp = time;
+                }
+            });
+        }
+        const lastRunMs = maxFollowupTimestamp || now.getTime();
+        const lastRunStr = timeAgo(new Date(lastRunMs).toISOString());
+
+        // 5. Next Run: calculate 4 hours (14,400,000 ms) from Last Run timestamp
+        const fourHoursMs = 4 * 60 * 60 * 1000;
+        const nextRunTimeMs = lastRunMs + fourHoursMs;
+        const remainingMs = nextRunTimeMs - now.getTime();
+        let nextRunStr = 'Due now';
+        if (remainingMs > 0) {
+            const remMins = Math.floor(remainingMs / 60000);
+            const remHours = Math.floor(remMins / 60);
+            const remMinsMod = remMins % 60;
+            if (remHours > 0) {
+                nextRunStr = `In ${remHours}h ${remMinsMod}m`;
+            } else {
+                nextRunStr = `In ${remMinsMod}m`;
+            }
+        }
+
+        // 6. Re-engagement Rate: leads with follow-ups AND recent user messages / total followed up leads * 100
+        const followedUpLeads = leadsList.filter(l => (l.follow_up_count && l.follow_up_count > 0) || l.last_followup);
+        const reEngagedLeads = followedUpLeads.filter(l => {
             let history = l.Chat_History || l.chat_history || [];
             if (typeof history === 'string') {
                 try { history = JSON.parse(history); } catch (e) { history = []; }
             }
-            if (Array.isArray(history)) {
-                history.forEach(m => {
-                    const isAi = m.is_ai || m.role === 'assistant' || m.s === 'assistant';
-                    if (isAi) aiMsgsToday++;
-                });
-            }
+            return Array.isArray(history) && history.some(m => String(m.role || m.s).toLowerCase() === 'user');
         });
-
-        // 3. Dynamic Cron Schedule & Re-engagement Rate calculations
-        let lastFollowupTime = null;
-        leadsList.forEach(l => {
-            const t = new Date(l.last_followup || l.updated).getTime();
-            if (!isNaN(t) && (!lastFollowupTime || t > lastFollowupTime)) {
-                lastFollowupTime = t;
-            }
-        });
-        const lastRunStr = lastFollowupTime ? timeAgo(new Date(lastFollowupTime).toISOString()) : '12m ago';
-        
-        const totalFollowedUp = leadsList.filter(l => l.last_followup || (l.follow_up_count && l.follow_up_count > 0)).length;
-        const reEngaged = leadsList.filter(l => (l.last_followup || l.follow_up_count) && ((l.status || '').toLowerCase() === 'hot' || (l.status || '').toLowerCase() === 'warm')).length;
-        const reengagementRate = totalFollowedUp > 0 ? `${Math.round((reEngaged / totalFollowedUp) * 100)}%` : '28%';
+        const reengagementPct = followedUpLeads.length > 0 
+            ? Math.round((reEngagedLeads.length / followedUpLeads.length) * 100) 
+            : 0;
 
         const dynamicAgents = [
             {
@@ -884,10 +930,10 @@
                 metrics: [
                     { k: 'Last Run', v: `${lastRunStr}` },
                     { k: 'Leads in Queue', v: `${leadsInQueue} pending` },
-                    { k: 'Messages Sent Today', v: `${aiMsgsToday || (followupsQueued * 2)}` },
-                    { k: 'Re-engagement Rate', v: `${reengagementRate}` },
+                    { k: 'Messages Sent Today', v: `${messagesSentToday}` },
+                    { k: 'Re-engagement Rate', v: `${reengagementPct}%` },
                     { k: 'Max Follow-ups', v: '3 per lead' },
-                    { k: 'Next Run', v: 'In 1h 46m' }
+                    { k: 'Next Run', v: `${nextRunStr}` }
                 ]
             }
         ];
