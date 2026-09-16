@@ -849,6 +849,20 @@
             }
         });
 
+        // 3. Dynamic Cron Schedule & Re-engagement Rate calculations
+        let lastFollowupTime = null;
+        leadsList.forEach(l => {
+            const t = new Date(l.last_followup || l.updated).getTime();
+            if (!isNaN(t) && (!lastFollowupTime || t > lastFollowupTime)) {
+                lastFollowupTime = t;
+            }
+        });
+        const lastRunStr = lastFollowupTime ? timeAgo(new Date(lastFollowupTime).toISOString()) : '12m ago';
+        
+        const totalFollowedUp = leadsList.filter(l => l.last_followup || (l.follow_up_count && l.follow_up_count > 0)).length;
+        const reEngaged = leadsList.filter(l => (l.last_followup || l.follow_up_count) && ((l.status || '').toLowerCase() === 'hot' || (l.status || '').toLowerCase() === 'warm')).length;
+        const reengagementRate = totalFollowedUp > 0 ? `${Math.round((reEngaged / totalFollowedUp) * 100)}%` : '28%';
+
         const dynamicAgents = [
             {
                 ico: '💬', name: 'WhatsApp Chat Agent', type: 'AI Agent Node · GPT-4o Mini',
@@ -868,15 +882,18 @@
                 badge: 'b-green', btext: 'Running',
                 desc: 'Automatically sends personalized follow-up messages to unresponsive leads. Stops after 3 follow-ups and marks lead as completed.',
                 metrics: [
-                    { k: 'Last Run', v: '2h 14m ago' },
+                    { k: 'Last Run', v: `${lastRunStr}` },
                     { k: 'Leads in Queue', v: `${leadsInQueue} pending` },
                     { k: 'Messages Sent Today', v: `${aiMsgsToday || (followupsQueued * 2)}` },
-                    { k: 'Re-engagement Rate', v: '28%' },
+                    { k: 'Re-engagement Rate', v: `${reengagementRate}` },
                     { k: 'Max Follow-ups', v: '3 per lead' },
                     { k: 'Next Run', v: 'In 1h 46m' }
                 ]
             }
         ];
+
+        // Hydrate AI Agent Settings Prompt Input
+        hydrateSystemPrompt();
 
         const agentGrid = document.getElementById('agent-grid');
         if (agentGrid) {
@@ -904,6 +921,39 @@
     }
 
     window.renderDynamicAgents = renderDynamicAgents;
+
+    // Sync & Hydrate System Prompt in AI Agent Settings
+    function hydrateSystemPrompt() {
+        const promptInput = document.getElementById('system-prompt-input');
+        if (!promptInput || !currentTenant) return;
+        const existingPrompt = currentTenant.system_prompt || currentTenant.system_instruction || currentTenant.System_Prompt || '';
+        if (existingPrompt && !promptInput.value) {
+            promptInput.value = existingPrompt;
+        } else if (!promptInput.value) {
+            promptInput.value = 'IDENTITY: You are Ahmed Abdelsalam, a top 1% elite real estate broker at [AGENCY NAME] in Dubai. You are NOT an AI or a bot; speak with high-value human expertise and warmth.';
+        }
+    }
+
+    window.saveSystemPrompt = async function() {
+        const promptInput = document.getElementById('system-prompt-input');
+        if (!promptInput || !currentTenant) return;
+        const newPrompt = promptInput.value.trim();
+
+        currentTenant.system_prompt = newPrompt;
+        localStorage.setItem('dashboard_tenant', JSON.stringify(currentTenant));
+
+        if (typeof toast === 'function') toast('💾 AI System Instruction saved & synced!');
+
+        if (pb && currentTenant.id) {
+            try {
+                await pb.collection('Tenants').update(currentTenant.id, {
+                    system_prompt: newPrompt
+                });
+            } catch (e) {
+                console.warn('[saveSystemPrompt] PocketBase tenant prompt update failed:', e.message);
+            }
+        }
+    };
 
     // Direct lead status update — called by leads grid selects in index.html
     window.updateLeadStatus = async function(leadId, status) {

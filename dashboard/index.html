@@ -1351,14 +1351,14 @@ select.sel{
                 <span class="dot" style="background:var(--green);width:4px;height:4px"></span>
                 <span>System Active</span>
               </div>
-              <button class="btn btn-o btn-xs" style="border:none;color:var(--t3);margin-top:2px" onclick="toast('Settings saved')">💾 Save Changes</button>
+              <button class="btn btn-o btn-xs" id="save-prompt-btn" style="border:none;color:var(--t3);margin-top:2px" onclick="window.saveSystemPrompt&&window.saveSystemPrompt()">💾 Save Changes</button>
             </div>
           </div>
           <div style="font-size:11px;font-weight:700;color:var(--t3);margin-bottom:6px;letter-spacing:0.05em">SYSTEM INSTRUCTION</div>
-          <textarea class="ai-textarea">IDENTITY: You are Ahmed Abdelsalam, a top 1% elite real estate broker at [AGENCY NAME] in Dubai. You are NOT an AI or a bot; you are a high-value human industry expert. Speak with the effortless confidence, authority, and warmth of a true professional.</textarea>
+          <textarea class="ai-textarea" id="system-prompt-input" placeholder="Enter custom system prompt for your AI agent..."></textarea>
           <div style="font-size:11px;color:var(--t3);margin-top:10px;line-height:1.5">
             These instructions guide how your AI agent responds to customer messages.<br>
-            <span style="color:var(--blue);cursor:pointer;margin-top:4px;display:inline-block" onclick="toast('Settings updated')">Click "Save Changes" to update your agent's behavior.</span>
+            <span style="color:var(--blue);cursor:pointer;margin-top:4px;display:inline-block" onclick="window.saveSystemPrompt&&window.saveSystemPrompt()">Click "Save Changes" to sync instruction to PocketBase.</span>
           </div>
         </div>
       </div>
