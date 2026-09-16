@@ -1194,13 +1194,28 @@
 
     window.renderDynamicAgents = renderDynamicAgents;
 
+    function cleanPromptText(raw) {
+        if (!raw) return '';
+        return String(raw)
+            .replace(/<p[^>]*>/gi, '')
+            .replace(/<\/p>/gi, '\n\n')
+            .replace(/<br\s*\/?>/gi, '\n')
+            .replace(/<strong>/gi, '')
+            .replace(/<\/strong>/gi, '')
+            .replace(/<[^>]+>/g, '')
+            .replace(/&nbsp;/g, ' ')
+            .replace(/\n{3,}/g, '\n\n')
+            .trim();
+    }
+
     // Sync & Hydrate System Prompt in AI Agent Settings
     function hydrateSystemPrompt() {
         const promptInput = document.getElementById('system-prompt-input');
         if (!promptInput || !currentTenant) return;
         const existingPrompt = currentTenant.system_prompt || currentTenant.system_instruction || currentTenant.System_Prompt || '';
-        if (existingPrompt && !promptInput.value) {
-            promptInput.value = existingPrompt;
+        const cleaned = cleanPromptText(existingPrompt);
+        if (cleaned) {
+            promptInput.value = cleaned;
         } else if (!promptInput.value) {
             promptInput.value = 'IDENTITY: You are Ahmed Abdelsalam, a top 1% elite real estate broker at [AGENCY NAME] in Dubai. You are NOT an AI or a bot; speak with high-value human expertise and warmth.';
         }
@@ -1209,7 +1224,8 @@
     window.saveSystemPrompt = async function() {
         const promptInput = document.getElementById('system-prompt-input');
         if (!promptInput || !currentTenant) return;
-        const newPrompt = promptInput.value.trim();
+        const newPrompt = cleanPromptText(promptInput.value);
+        promptInput.value = newPrompt;
 
         currentTenant.system_prompt = newPrompt;
         localStorage.setItem('dashboard_tenant', JSON.stringify(currentTenant));
