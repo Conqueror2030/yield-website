@@ -1904,7 +1904,7 @@ function renderDashBookings(){
   const tbl = document.getElementById('dash-bookings');
   if (!tbl) return;
   if (!liveAppointments || liveAppointments.length === 0) {
-    tbl.innerHTML = '<thead><tr><th>Date &amp; Time</th><th>Client Phone</th><th>Property / Notes</th><th>Status</th><th>Action</th></tr></thead><tbody><tr><td colspan="5" style="padding:20px;text-align:center;color:var(--t3)">Loading recent bookings...</td></tr></tbody>';
+    tbl.innerHTML = '<thead><tr><th>Date &amp; Time</th><th>Client Phone</th><th>Property / Notes</th><th>Status</th><th>Action</th></tr></thead><tbody><tr><td colspan="5" style="padding:20px;text-align:center;color:var(--t3)">No recent bookings found.</td></tr></tbody>';
     return;
   }
   const recent = liveAppointments.slice(0, 10);
@@ -1913,19 +1913,27 @@ function renderDashBookings(){
       <th>Date &amp; Time</th><th>Client Phone</th><th>Property / Notes</th><th>Status</th><th>Action</th>
     </tr></thead>
     <tbody>${recent.map(b => {
-      const timeStr = b.Scheduled_Time
-        ? new Date(b.Scheduled_Time).toLocaleString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})
-        : 'TBD';
-      const phone = String(b.Phone_No || 'N/A');
-      const prop  = String(b.Notes || b.Type || 'Property Site Visit');
-      const st    = (b.Status || 'confirmed').toLowerCase();
+      const rawTime = b.Scheduled_Time || b.scheduled_time || b.time || b.date;
+      let timeStr = 'TBD';
+      if (rawTime) {
+        try {
+          const parsed = new Date(String(rawTime).replace(' ', 'T'));
+          timeStr = !isNaN(parsed.getTime())
+            ? parsed.toLocaleString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})
+            : String(rawTime);
+        } catch(e) { timeStr = String(rawTime); }
+      }
+      const phone = String(b.Phone_No || b.phone_no || b.phone || 'N/A');
+      const prop  = String(b.Notes || b.notes || b.property || b.Type || b.type || 'Property Site Visit');
+      const rawSt = b.Status || b.status || 'Confirmed';
+      const st    = String(rawSt).toLowerCase();
       const bc    = st === 'confirmed' ? 'b-green' : st === 'pending' ? 'b-orange' : 'b-blue';
       return `<tr>
         <td style="color:var(--t3)">${timeStr}</td>
         <td><strong style="color:var(--blue)">${phone}</strong></td>
-        <td style="max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${prop}</td>
-        <td><span class="badge ${bc}">${b.Status || 'Confirmed'}</span></td>
-        <td><button class="btn btn-o btn-xs" onclick="window.openChat&&window.openChat('${phone}');nav('inbox')">View</button></td>
+        <td style="max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${prop}">${prop}</td>
+        <td><span class="badge ${bc}">${rawSt}</span></td>
+        <td><button class="btn btn-o btn-xs" onclick="window.openChat&&window.openChat('${phone}');nav('inbox')">View</button>
       </tr>`;
     }).join('')}</tbody>`;
 }

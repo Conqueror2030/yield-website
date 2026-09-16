@@ -494,12 +494,28 @@
 
             const tz = (currentTenant && currentTenant.timezone) || 'UTC';
             tbody.innerHTML = this.appointments.map(apt => {
-                const timeStr = apt.Scheduled_Time ? new Date(apt.Scheduled_Time).toLocaleString('en-US', {
-                    month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: tz
-                }) : 'TBD';
-                const phone = String(apt.Phone_No || 'N/A');
-                const prop = apt.Notes || apt.Type || 'Property Site Visit';
-                const st = (apt.Status || 'Confirmed').toLowerCase();
+                const rawTime = apt.Scheduled_Time || apt.scheduled_time || apt.time || apt.date;
+                let timeStr = 'TBD';
+                if (rawTime) {
+                    try {
+                        const normalizedDate = String(rawTime).replace(' ', 'T');
+                        const parsedDate = new Date(normalizedDate);
+                        if (!isNaN(parsedDate.getTime())) {
+                            timeStr = parsedDate.toLocaleString('en-US', {
+                                month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: tz
+                            });
+                        } else {
+                            timeStr = String(rawTime);
+                        }
+                    } catch (e) {
+                        timeStr = String(rawTime);
+                    }
+                }
+
+                const phone = String(apt.Phone_No || apt.phone_no || apt.phone || apt.Phone || 'N/A');
+                const prop = apt.Notes || apt.notes || apt.property || apt.Type || apt.type || 'Property Site Visit';
+                const rawStatus = apt.Status || apt.status || 'Confirmed';
+                const st = String(rawStatus).toLowerCase();
                 const badgeClass = st === 'confirmed' ? 'b-green' : st === 'pending' ? 'b-orange' : 'b-blue';
 
                 return `
@@ -511,7 +527,7 @@
                             </div>
                         </td>
                         <td>${escapeHtml(prop)}</td>
-                        <td class="agency-only"><span class="badge ${badgeClass}">${escapeHtml(apt.Status || 'Confirmed')}</span></td>
+                        <td class="agency-only"><span class="badge ${badgeClass}">${escapeHtml(rawStatus)}</span></td>
                     </tr>
                 `;
             }).join('');
@@ -521,8 +537,12 @@
             const tbody = document.getElementById('ai-followups-tbody');
             if (!tbody) return;
 
-            // Extract follow-ups from active leads with follow_up_status or pending flag
-            const queue = (currentLeads || []).filter(l => l.follow_up_status || l.last_followup);
+            // Extract follow-ups from active leads with follow_up_status or warm/cold/hot status
+            const queue = (currentLeads || []).filter(l => {
+                if (l.follow_up_status || l.last_followup) return true;
+                const st = (l.status || 'warm').toLowerCase();
+                return (st === 'warm' || st === 'cold' || st === 'hot') && !l.ai_paused;
+            });
 
             if (queue.length === 0) {
                 tbody.innerHTML = `
@@ -537,8 +557,9 @@
 
             tbody.innerHTML = queue.map(l => {
                 const phone = String(l.Phone_No || l.phone_no || 'Lead');
-                const timeStr = l.last_followup ? timeAgo(l.last_followup) : 'Scheduled Today';
-                const preview = String(l.Chat_Summary || 'Follow-up on property inquiry');
+                const timeStr = l.last_followup ? timeAgo(l.last_followup) : (l.updated ? timeAgo(l.updated) : 'Scheduled Today');
+                const preview = String(l.Chat_Summary || l.chat_summary || 'Follow-up on property inquiry');
+                const statusLabel = l.follow_up_status || (l.status ? `${l.status.toUpperCase()} Lead` : 'Queued');
                 return `
                     <tr>
                         <td><strong>${escapeHtml(phone)}</strong></td>
@@ -546,7 +567,7 @@
                         <td style="color:var(--t3);font-size:12px;max-width:260px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${escapeHtml(preview)}">
                             "${escapeHtml(preview)}"
                         </td>
-                        <td><span class="badge b-blue">${escapeHtml(l.follow_up_status || 'Queued')}</span></td>
+                        <td><span class="badge b-blue">${escapeHtml(statusLabel)}</span></td>
                     </tr>
                 `;
             }).join('');
@@ -1012,6 +1033,14 @@
                     sort: '-Scheduled_Time'
                 });
                 if (Array.isArray(res)) aptsData = res;
+
+                // Graceful fallback: If tenant filter returns empty, fetch general list
+                if (!aptsData || aptsData.length === 0) {
+                    aptsData = await pb.collection('Appointments').getFullList({
+                        sort: '-created',
+                        perPage: 50
+                    });
+                }
             } catch (e) {
                 console.warn('[Dashboard] PocketBase Appointments query warning:', e.message);
             }
