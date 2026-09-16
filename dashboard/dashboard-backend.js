@@ -557,14 +557,19 @@
 
             tbody.innerHTML = queue.map(l => {
                 const phone = String(l.Phone_No || l.phone_no || 'Lead');
+                const targetId = l.id || phone;
                 const timeStr = l.last_followup ? timeAgo(l.last_followup) : (l.updated ? timeAgo(l.updated) : 'Scheduled Today');
                 const preview = String(l.Chat_Summary || l.chat_summary || 'Follow-up on property inquiry');
                 const statusLabel = l.follow_up_status || (l.status ? `${l.status.toUpperCase()} Lead` : 'Queued');
                 return `
                     <tr>
-                        <td><strong>${escapeHtml(phone)}</strong></td>
+                        <td>
+                            <div onclick="window.openChat('${escapeHtml(targetId)}'); nav('inbox');" style="cursor:pointer" title="Open conversation in Inbox">
+                                <strong style="color:var(--blue);text-decoration:underline;text-underline-offset:2px">${escapeHtml(phone)}</strong>
+                            </div>
+                        </td>
                         <td style="color:var(--t3)">${escapeHtml(timeStr)}</td>
-                        <td style="color:var(--t3);font-size:12px;max-width:260px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${escapeHtml(preview)}">
+                        <td onclick="window.openChat('${escapeHtml(targetId)}'); nav('inbox');" style="color:var(--t3);font-size:12px;max-width:260px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer" title="Open conversation in Inbox">
                             "${escapeHtml(preview)}"
                         </td>
                         <td><span class="badge b-blue">${escapeHtml(statusLabel)}</span></td>
