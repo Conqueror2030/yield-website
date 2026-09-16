@@ -1497,20 +1497,20 @@ select.sel{
   <div class="modal">
     <div class="modal-title">🏠 Add New Property</div>
     <div class="form-row-2">
-      <div class="form-row"><div class="form-lbl">Property Name *</div><input class="form-inp" placeholder="e.g. 3BHK Luxury Apartment"></div>
-      <div class="form-row"><div class="form-lbl">Type *</div><select class="form-inp sel"><option>Residential</option><option>Commercial</option><option>Plot</option></select></div>
+      <div class="form-row"><div class="form-lbl">Property Name *</div><input class="form-inp" id="prop-title" placeholder="e.g. 3BHK Luxury Apartment"></div>
+      <div class="form-row"><div class="form-lbl">Type *</div><select class="form-inp sel" id="prop-type"><option>Residential</option><option>Commercial</option><option>Plot</option></select></div>
     </div>
     <div class="form-row-2">
-      <div class="form-row"><div class="form-lbl">Location *</div><input class="form-inp" placeholder="Area, Bhopal"></div>
-      <div class="form-row"><div class="form-lbl">Price Range *</div><input class="form-inp" placeholder="₹65L – ₹75L"></div>
+      <div class="form-row"><div class="form-lbl">Location *</div><input class="form-inp" id="prop-location" placeholder="Area, Bhopal"></div>
+      <div class="form-row"><div class="form-lbl">Price Range *</div><input class="form-inp" id="prop-price" placeholder="₹65L – ₹75L"></div>
     </div>
     <div class="form-row-2">
-      <div class="form-row"><div class="form-lbl">BHK / Config</div><select class="form-inp sel"><option>1 BHK</option><option>2 BHK</option><option selected>3 BHK</option><option>4 BHK</option><option>Commercial</option><option>Plot</option></select></div>
-      <div class="form-row"><div class="form-lbl">Area (sq.ft)</div><input class="form-inp" placeholder="1,450 sq.ft"></div>
+      <div class="form-row"><div class="form-lbl">BHK / Config</div><select class="form-inp sel" id="prop-bhk"><option>1 BHK</option><option>2 BHK</option><option selected>3 BHK</option><option>4 BHK</option><option>Commercial</option><option>Plot</option></select></div>
+      <div class="form-row"><div class="form-lbl">Area (sq.ft)</div><input class="form-inp" id="prop-area" placeholder="1,450 sq.ft"></div>
     </div>
-    <div class="form-row"><div class="form-lbl">Status</div><select class="form-inp sel"><option>Available</option><option>Booked</option><option>Sold</option></select></div>
-    <div class="form-row"><div class="form-lbl">Tags (comma separated)</div><input class="form-inp" placeholder="Ready to Move, Gated Society, RERA Approved"></div>
-    <div class="form-row"><div class="form-lbl">Property Description / Info</div><textarea class="form-inp" style="height:80px;resize:vertical;font-family:inherit" placeholder="Additional details, highlights..."></textarea></div>
+    <div class="form-row"><div class="form-lbl">Status</div><select class="form-inp sel" id="prop-status"><option>Available</option><option>Booked</option><option>Sold</option></select></div>
+    <div class="form-row"><div class="form-lbl">Tags (comma separated)</div><input class="form-inp" id="prop-tags" placeholder="Ready to Move, Gated Society, RERA Approved"></div>
+    <div class="form-row"><div class="form-lbl">Property Description / Info</div><textarea class="form-inp" id="prop-desc" style="height:80px;resize:vertical;font-family:inherit" placeholder="Additional details, highlights..."></textarea></div>
     <div class="form-row">
       <div class="form-lbl">Images & Brochures (PDF)</div>
       <div style="border:2px dashed var(--border);border-radius:8px;padding:20px;text-align:center;color:var(--t3);cursor:pointer;transition:background 0.2s" onmouseover="this.style.background='var(--bg)'" onmouseout="this.style.background='transparent'" onclick="toast('📂 Opening file browser...')">
@@ -1521,7 +1521,7 @@ select.sel{
     </div>
     <div class="modal-foot">
       <button class="btn btn-o" onclick="closeModal('modal-add-prop')">Cancel</button>
-      <button class="btn btn-p" onclick="saveProperty()">Add Property</button>
+      <button class="btn btn-p" onclick="window.saveProperty&&window.saveProperty()">Add Property</button>
     </div>
   </div>
 </div>

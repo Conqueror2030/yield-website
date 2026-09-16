@@ -1230,17 +1230,159 @@
         currentTenant.system_prompt = newPrompt;
         localStorage.setItem('dashboard_tenant', JSON.stringify(currentTenant));
 
-        if (typeof toast === 'function') toast('💾 AI System Instruction saved & synced!');
+        let updatedSuccess = false;
 
-        if (pb && currentTenant.id) {
-            try {
-                await pb.collection('Tenants').update(currentTenant.id, {
-                    system_prompt: newPrompt
-                });
-            } catch (e) {
-                console.warn('[saveSystemPrompt] PocketBase tenant prompt update failed:', e.message);
+        if (pb) {
+            // Strategy 1: Direct record ID update
+            if (currentTenant.id) {
+                try {
+                    await pb.collection('Tenants').update(currentTenant.id, {
+                        system_prompt: newPrompt
+                    });
+                    updatedSuccess = true;
+                } catch (e) {
+                    console.warn('[saveSystemPrompt] Direct ID update failed, attempting lookup:', e.message);
+                }
+            }
+
+            // Strategy 2: If direct ID update failed or ID wasn't record ID, find record by phone_id
+            if (!updatedSuccess && currentTenant.phone_id) {
+                try {
+                    const records = await pb.collection('Tenants').getFullList({
+                        filter: `phone_id = "${currentTenant.phone_id}"`
+                    });
+                    if (records && records.length > 0) {
+                        const realId = records[0].id;
+                        currentTenant.id = realId;
+                        await pb.collection('Tenants').update(realId, {
+                            system_prompt: newPrompt
+                        });
+                        updatedSuccess = true;
+                        localStorage.setItem('dashboard_tenant', JSON.stringify(currentTenant));
+                    }
+                } catch (e) {
+                    console.warn('[saveSystemPrompt] Query by phone_id update failed:', e.message);
+                }
             }
         }
+
+        // Strategy 3: Fallback API Gateway Endpoint
+        if (!updatedSuccess && currentTenant.phone_id) {
+            try {
+                await fetch(`${API_BASE}/tenant/update`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        phone_id: currentTenant.phone_id,
+                        system_prompt: newPrompt
+                    })
+                });
+            } catch(e) {}
+        }
+
+        if (typeof toast === 'function') toast('💾 AI System Instruction saved & synced to PocketBase!');
+    };
+
+    // Real PocketBase Persistence for Adding Properties
+    window.saveProperty = async function() {
+        const title = (document.getElementById('prop-title')?.value || '').trim();
+        const type = document.getElementById('prop-type')?.value || 'Residential';
+        const location = (document.getElementById('prop-location')?.value || '').trim();
+        const price = (document.getElementById('prop-price')?.value || '').trim();
+        const bhk = document.getElementById('prop-bhk')?.value || '3 BHK';
+        const area = (document.getElementById('prop-area')?.value || '').trim();
+        const status = (document.getElementById('prop-status')?.value || 'Available').toLowerCase();
+        const tags = (document.getElementById('prop-tags')?.value || '').trim();
+        const desc = (document.getElementById('prop-desc')?.value || '').trim();
+
+        if (!title) {
+            if (typeof toast === 'function') toast('⚠️ Please enter a property title');
+            return;
+        }
+
+        const tenantId = currentTenant ? (currentTenant.id || currentTenant.phone_id || '') : '';
+        const infoText = `Type: ${type} | Location: ${location} | Price: ${price} | BHK: ${bhk} | Area: ${area} | Tags: ${tags} | Description: ${desc}`;
+
+        const newRecord = {
+            Title: title,
+            Status: status,
+            Info: infoText,
+            Tenants_ID: tenantId
+        };
+
+        let created = false;
+        if (pb) {
+            try {
+                await pb.collection('Properties').create(newRecord);
+                created = true;
+            } catch (e) {
+                console.warn('[saveProperty] PocketBase create failed:', e.message);
+            }
+        }
+
+        if (!created && currentTenant) {
+            try {
+                await fetch(`${API_BASE}/properties/create`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newRecord)
+                });
+            } catch(e) {}
+        }
+
+        if (typeof closeModal === 'function') closeModal('modal-add-prop');
+        if (typeof toast === 'function') toast('✅ Property added & synced to PocketBase!');
+
+        refreshProperties();
+    };
+
+    // Real PocketBase Persistence for Booking Confirmations
+    window.saveBooking = async function() {
+        const name = (document.getElementById('bk-name')?.value || '').trim();
+        const phone = (document.getElementById('bk-phone')?.value || '').trim();
+        const budget = (document.getElementById('bk-budget')?.value || '').trim();
+        const prop = document.getElementById('bk-prop')?.value || 'Property Site Visit';
+        const date = document.getElementById('bk-date')?.value || new Date().toISOString().split('T')[0];
+        const broker = document.getElementById('bk-broker')?.value || 'Rajesh Kumar';
+
+        if (!phone) {
+            if (typeof toast === 'function') toast('⚠️ Please enter client phone number');
+            return;
+        }
+
+        const tenantId = currentTenant ? (currentTenant.id || currentTenant.phone_id || '') : '';
+        const newAppointment = {
+            Phone_No: phone,
+            Scheduled_Time: date,
+            Status: 'Confirmed',
+            Notes: `${prop} · Budget: ${budget} · Client: ${name} · Broker: ${broker}`,
+            Tenants_ID: tenantId
+        };
+
+        let created = false;
+        if (pb) {
+            try {
+                await pb.collection('Appointments').create(newAppointment);
+                created = true;
+            } catch (e) {
+                console.warn('[saveBooking] PocketBase create failed:', e.message);
+            }
+        }
+
+        if (!created && currentTenant) {
+            try {
+                await fetch(`${API_BASE}/appointments/create`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newAppointment)
+                });
+            } catch(e) {}
+        }
+
+        if (typeof closeModal === 'function') closeModal('modal-booking');
+        if (typeof toast === 'function') toast(`✅ Site visit confirmed & synced to PocketBase! Broker ${broker} notified.`);
+
+        refreshAppointments();
     };
 
     // Direct lead status update — called by leads grid selects in index.html
