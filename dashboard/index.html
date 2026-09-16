@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" id="html-root">
 <head>
     <meta charset="UTF-8">
@@ -815,7 +815,7 @@ select.sel{
                         </p>
                     </div>
 
-                    <form id="login-form" class="space-y-5">
+                    <form id="login-form" class="space-y-5" novalidate onsubmit="event.preventDefault(); window.executeLogin && window.executeLogin(event); return false;">
                         <div>
                             <label for="phone-id-input" class="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">
                                 Phone Number ID
@@ -827,13 +827,14 @@ select.sel{
                                 placeholder="e.g. 123456789"
                                 autocomplete="off"
                                 required
+                                onkeydown="if(event.key==='Enter'){event.preventDefault(); if(window.executeLogin) window.executeLogin(event);}"
                             >
                             <p class="text-xs text-gray-500 mt-1.5">
                                 This is the WhatsApp Business Phone Number ID from your Meta dashboard.
                             </p>
                         </div>
 
-                        <button type="submit" id="login-btn"
+                        <button type="button" id="login-btn" onclick="if(window.executeLogin) window.executeLogin(event);"
                             class="w-full py-3 rounded-xl btn-primary font-medium text-sm flex items-center justify-center gap-2">
                             <span id="login-btn-text">Access Dashboard</span>
                         </button>
@@ -1099,14 +1100,16 @@ select.sel{
           <div class="conv-search-bar">
             <input type="text" placeholder="🔍  Search conversations..." oninput="filterConvs(this.value)" id="conv-search">
           </div>
-          <div class="conv-list" id="conv-list"></div>
+          <div class="conv-list" id="conv-list">
+            <div style="padding:24px;text-align:center;color:var(--t3);font-size:13px">Loading conversations...</div>
+          </div>
         </div>
         <div class="chat-col">
           <div class="chat-hd" id="chat-hd">
-            <div class="cavi" id="chat-avi" style="background:#7F56D9">RS</div>
+            <div class="cavi" id="chat-avi" style="background:#7F56D9">--</div>
             <div style="flex:1">
-              <div style="font-size:14px;font-weight:800;color:var(--t1)" id="chat-name">Ramesh Singh</div>
-              <div style="font-size:11.5px;color:var(--t3)">+91 98765 43210 · <span id="chat-src" class="badge b-green">WhatsApp</span></div>
+              <div style="font-size:14px;font-weight:800;color:var(--t1)" id="chat-name">Select a conversation</div>
+              <div style="font-size:11.5px;color:var(--t3)"><span id="chat-src" class="badge b-green">WhatsApp</span></div>
             </div>
             <div style="display:flex;gap:8px">
               <button class="btn btn-o btn-sm" onclick="toast('📅 Site visit scheduling opened...')">📅 Schedule Visit</button>
@@ -1114,10 +1117,12 @@ select.sel{
               <button class="btn btn-p btn-sm" onclick="confirmBookingModal()">✅ Confirm Booking</button>
             </div>
           </div>
-          <div class="chat-msgs" id="chat-msgs"></div>
+          <div class="chat-msgs" id="chat-msgs">
+            <div style="padding:24px;text-align:center;color:var(--t3);font-size:13px">Select a conversation from the left to view messages.</div>
+          </div>
           <div class="chat-inp">
             <input type="text" id="msg-inp" placeholder="Type a message or let AI handle it..." onkeydown="if(event.key==='Enter')sendMsg()">
-            <button class="btn btn-o btn-sm" onclick="toast('🤖 AI agent is now handling this conversation')">🤖 AI Mode</button>
+            <button class="btn btn-o btn-sm" id="inbox-ai-toggle" onclick="toggleAiMode()">🤖 AI Mode</button>
             <button class="btn btn-p btn-sm" onclick="sendMsg()">Send ↑</button>
           </div>
         </div>
@@ -1135,8 +1140,8 @@ select.sel{
             <div>
               <div class="info-label">CHAT SUMMARY</div>
               <div class="info-box">
-                <div class="info-txt">
-                  Ahmed Abdelsalam shifted his focus from exclusively requesting visual materials for the Binghatti Elite to actively seeking details on The Oasis villas, indicating a potential expansion of his property scope. This move represents a departure from his previous refusal to engage with broader high-ROI alternatives, though he has not yet addressed payment structures or confirmed a firm intent to proceed.
+                <div class="info-txt" id="inbox-chat-summary">
+                  Select a conversation to view chat summary.
                 </div>
               </div>
             </div>
@@ -1144,11 +1149,7 @@ select.sel{
             <div>
               <div class="info-label">BUYER FACTS</div>
               <div id="buyer-facts-list">
-                <div class="fact-row"><div class="fact-k">LOCATION</div><div class="fact-v">Dubai Production City (IMPZ)</div></div>
-                <div class="fact-row"><div class="fact-k">PREFERENCE</div><div class="fact-v">Highest ROI</div></div>
-                <div class="fact-row"><div class="fact-k">PROPERTY</div><div class="fact-v">Binghatti Elite Studio</div></div>
-                <div class="fact-row"><div class="fact-k">BUDGET</div><div class="fact-v">₹70L – ₹80L</div></div>
-                <div class="fact-row"><div class="fact-k">TIMELINE</div><div class="fact-v">Site visit Thu 3 PM · Oasis tmrw 7 PM</div></div>
+                <div style="color:var(--t3);font-size:12px;padding:8px 0">Select a lead to view buyer facts.</div>
               </div>
             </div>
 
@@ -1228,25 +1229,8 @@ select.sel{
           <div class="tbl-wrap">
             <table>
               <thead><tr><th>Lead Name</th><th>Scheduled For</th><th>AI Message Preview</th><th>Status</th></tr></thead>
-              <tbody>
-                <tr>
-                  <td><strong>Ramesh Singh</strong></td>
-                  <td style="color:var(--t3)">Today, 4:30 PM</td>
-                  <td style="color:var(--t3);font-size:12px">"Hi Ramesh, were you able to discuss the Kolar road flat with your family?..."</td>
-                  <td><span class="badge b-blue">Queued</span></td>
-                </tr>
-                <tr>
-                  <td><strong>Vikram Patel</strong></td>
-                  <td style="color:var(--t3)">Tomorrow, 10:00 AM</td>
-                  <td style="color:var(--t3);font-size:12px">"Namaste Vikram ji, just checking in to see if you'd like to schedule a site visit..."</td>
-                  <td><span class="badge b-blue">Queued</span></td>
-                </tr>
-                <tr>
-                  <td><strong>Sneha Gupta</strong></td>
-                  <td style="color:var(--t3)">Wed, 2:15 PM</td>
-                  <td style="color:var(--t3);font-size:12px">"Hi Sneha, I found another 3BHK matching your budget in Habibganj..."</td>
-                  <td><span class="badge b-blue">Queued</span></td>
-                </tr>
+              <tbody id="ai-followups-tbody">
+                <tr><td colspan="4" style="padding:24px;text-align:center;color:var(--t3)">Loading follow-up queue...</td></tr>
               </tbody>
             </table>
           </div>
@@ -1263,40 +1247,8 @@ select.sel{
           <div class="tbl-wrap">
             <table>
               <thead><tr><th>Date & Time</th><th>Client & Phone</th><th>Property</th><th class="agency-only">Broker</th></tr></thead>
-              <tbody>
-                <tr>
-                  <td style="color:var(--t3);font-weight:600">Today, 5:00 PM</td>
-                  <td>
-                    <div onclick="nav('inbox');openChat(1, null)" style="cursor:pointer">
-                      <strong style="color:var(--blue)">Ramesh Singh</strong><br>
-                      <span style="font-size:11px;color:var(--t3)">+91 98765 43210</span>
-                    </div>
-                  </td>
-                  <td>3BHK Kolar Road</td>
-                  <td class="agency-only"><span class="badge b-gray">Rajesh Kumar</span></td>
-                </tr>
-                <tr>
-                  <td style="color:var(--t3);font-weight:600">Tomorrow, 11:30 AM</td>
-                  <td>
-                    <div onclick="nav('inbox');openChat(2, null)" style="cursor:pointer">
-                      <strong style="color:var(--blue)">Priya Singh</strong><br>
-                      <span style="font-size:11px;color:var(--t3)">+91 87654 32109</span>
-                    </div>
-                  </td>
-                  <td>2BHK Habibganj</td>
-                  <td class="agency-only"><span class="badge b-gray">Meena Verma</span></td>
-                </tr>
-                <tr>
-                  <td style="color:var(--t3);font-weight:600">Thu, 4:00 PM</td>
-                  <td>
-                    <div onclick="nav('inbox');openChat(4, null)" style="cursor:pointer">
-                      <strong style="color:var(--blue)">Deepak Mishra</strong><br>
-                      <span style="font-size:11px;color:var(--t3)">+91 65432 10987</span>
-                    </div>
-                  </td>
-                  <td>Plot Misrod</td>
-                  <td class="agency-only"><span class="badge b-gray">Meena Verma</span></td>
-                </tr>
+              <tbody id="appointments-tbody">
+                <tr><td colspan="4" style="padding:24px;text-align:center;color:var(--t3)">Loading appointments...</td></tr>
               </tbody>
             </table>
           </div>
@@ -1309,7 +1261,7 @@ select.sel{
       <div class="sec-hd">
         <div>
           <div class="sec-title">Property Inventory</div>
-          <div class="sec-sub">24 active · 6 sold · 3 under negotiation</div>
+          <div class="sec-sub" id="prop-sub-count">Loading properties...</div>
         </div>
         <div style="display:flex;gap:10px">
           <button class="btn btn-o" onclick="toast('📤 Exporting to Excel...')">📤 Export</button>
@@ -1326,7 +1278,9 @@ select.sel{
         <select class="sel" onchange="filterProps()"><option value="">All Areas</option><option>Kolar Road</option><option>Habibganj</option><option>Chinar Park</option><option>Misrod</option></select>
         <span id="prop-count" style="font-size:12.5px;color:var(--t3);margin-left:auto"></span>
       </div>
-      <div class="g3" id="prop-grid"></div>
+      <div class="g3" id="prop-grid">
+        <div style="grid-column:1/-1;padding:48px;text-align:center;color:var(--t3);font-size:13px">Loading property inventory...</div>
+      </div>
     </div>
 
     <!-- ══════════════ BROKERS ══════════════ -->
@@ -1655,46 +1609,79 @@ select.sel{
             }
         }
 
-        // ---- LOGIN HANDLER ----------------------------------------------
-        const loginForm = document.getElementById('login-form');
-        if (loginForm) {
-            loginForm.addEventListener('submit', async (e) => {
+        // Clean any leaked query parameters from URL immediately on load
+        if (window.location.search) {
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+
+        // ---- LOGIN HANDLER (Direct PocketBase Query) --------------------
+        window.executeLogin = async function(e) {
+            if (e) {
                 e.preventDefault();
-                const phoneId = document.getElementById('phone-id-input').value.trim();
+                e.stopPropagation();
+            }
 
-                if (!phoneId) {
-                    showToast('Error', 'Please enter your Phone Number ID.');
-                    return;
-                }
+            const inputEl = document.getElementById('phone-id-input');
+            const inputValue = inputEl ? inputEl.value.trim() : '';
 
-                const btn = document.getElementById('login-btn');
-                const btnText = document.getElementById('login-btn-text');
-                btn.disabled = true;
+            if (!inputValue) {
+                showToast('Error', 'Please enter your WhatsApp Phone Number ID.');
+                return;
+            }
+
+            const btn = document.getElementById('login-btn');
+            const btnText = document.getElementById('login-btn-text');
+            if (btn) btn.disabled = true;
+            if (btnText) {
                 btnText.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin mr-2"></i>Validating...';
                 if (typeof lucide !== 'undefined') lucide.createIcons();
+            }
 
-                try {
-                    const res = await fetch(`${API_BASE}/tenant?phone_id=${encodeURIComponent(phoneId)}`);
+            try {
+                // Direct PocketBase query against Tenants collection
+                const pbUrl = `https://api.yieldai.space/api/collections/Tenants/records?filter=(phone_id='${encodeURIComponent(inputValue)}')`;
+                const res = await fetch(pbUrl);
 
-                    if (res.ok) {
-                        const data = await res.json();
-                        localStorage.setItem('dashboard_tenant', JSON.stringify(data));
-                        // Reload cleanly into authenticated state on /dashboard/
-                        window.location.href = '/dashboard/';
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.items && data.items.length > 0) {
+                        const tenant = data.items[0];
+                        localStorage.setItem('dashboard_tenant', JSON.stringify(tenant));
+                        
+                        // Sanitize URL query parameters completely
+                        if (window.location.search) {
+                            window.history.replaceState({}, document.title, window.location.pathname);
+                        }
+
+                        // Smoothly transition the UI to authenticated v2 dashboard
+                        document.documentElement.classList.remove('is-unauthenticated');
+                        document.documentElement.classList.add('is-authenticated');
+
+                        // Hydrate backend
+                        if (typeof window.initBackend === 'function') {
+                            window.initBackend();
+                        } else {
+                            window.location.href = window.location.pathname;
+                        }
                     } else {
-                        const err = await res.json().catch(() => ({}));
-                        localStorage.removeItem('yieldai_phone_id');
-                        localStorage.removeItem('yieldai_waba_id');
-                        showToast('Access Denied', err.error || 'Could not verify your Phone Number ID. Please check and try again.');
+                        showToast('Access Denied', 'Phone Number ID not found in system. Please verify your ID.');
                     }
-                } catch (err) {
-                    showToast('Network Error', 'Could not reach the server. Please check your connection.');
-                } finally {
-                    btn.disabled = false;
-                    btnText.textContent = 'Access Dashboard';
-                    if (typeof lucide !== 'undefined') lucide.createIcons();
+                } else {
+                    const err = await res.json().catch(() => ({}));
+                    showToast('Access Denied', err.message || 'Could not verify your Phone Number ID. Please check and try again.');
                 }
-            });
+            } catch (err) {
+                showToast('Network Error', 'Could not reach the database. Please check your connection.');
+            } finally {
+                if (btn) btn.disabled = false;
+                if (btnText) btnText.textContent = 'Access Dashboard';
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+            }
+        };
+
+        const loginForm = document.getElementById('login-form');
+        if (loginForm) {
+            loginForm.addEventListener('submit', window.executeLogin);
         }
 
         // ---- LOGOUT HANDLER ---------------------------------------------
@@ -1730,107 +1717,11 @@ const PAGE_META = {
   settings:   { title:'Settings',           sub:'— System configuration' },
 };
 
-const LEADS_DATA = [
-  {
-    id:1, name:'Ramesh Singh',   init:'RS', color:'#7F56D9', phone:'+91 98765 43210', src:'whatsapp', status:'hot',
-    property:'3BHK Kolar Road', budget:'₹70L', timeline:'This month', location:'Bhopal',
-    visits:1, messages:18, lastContact:'2 min ago',
-    summary:'Actively looking for 3BHK in Kolar Road. Very interested, asking about loan facility and final price negotiation.',
-    broker:'Rajesh Kumar'
-  },
-  {
-    id:2, name:'Priya Singh',    init:'PS', color:'#12B76A', phone:'+91 87654 32109', src:'whatsapp', status:'warm',
-    property:'2BHK Habibganj', budget:'₹45L', timeline:'2 months', location:'Bhopal',
-    visits:0, messages:8, lastContact:'8 min ago',
-    summary:'Self-use buyer. Interested in 2BHK Habibganj. Needs loan facility. CIBIL score check pending.',
-    broker:'Meena Verma'
-  },
-  {
-    id:3, name:'Ankit Sharma',   init:'AS', color:'#F79009', phone:'+91 76543 21098', src:'meta',     status:'warm',
-    property:'3BHK Kolar Road', budget:'₹65L', timeline:'3 months', location:'Bhopal',
-    visits:0, messages:5, lastContact:'23 min ago',
-    summary:'Came via Meta ad. 3BHK inquiry, budget ₹60-70L. Asking about site visit dates.',
-    broker:'Rajesh Kumar'
-  },
-  {
-    id:4, name:'Deepak Mishra',  init:'DM', color:'#1A6BFF', phone:'+91 65432 10987', src:'voice',    status:'cold',
-    property:'Plot Misrod', budget:'₹20L', timeline:'6 months', location:'Bhopal',
-    visits:1, messages:3, lastContact:'1 hr ago',
-    summary:'Investment buyer. Interested in plots. Call completed — follow-up required.',
-    broker:'Meena Verma'
-  },
-  {
-    id:5, name:'Ahmed Abdelsalam', init:'AA', color:'#F04438', phone:'+91 76660 09152', src:'whatsapp', status:'hot',
-    property:'Binghatti Elite + Oasis', budget:'₹70L–₹80L', timeline:'Immediate', location:'Dubai',
-    visits:2, messages:89, lastContact:'Yesterday',
-    summary:'Dubai-based investor. Shifted focus to Oasis villas for higher ROI. Two site visits scheduled.',
-    broker:'Sunil Sharma'
-  },
-];
+// ── LIVE DATA STORES (hydrated by dashboard-backend.js via onLeadsLoaded / onAppointmentsLoaded) ──
+let liveLeads = [];
+let liveAppointments = [];
 
-const BOOKINGS = [
-  { id:'BK-1042', client:'Ramesh Gupta',   property:'3BHK Kolar Road',        budget:'₹72L',   src:'whatsapp', broker:'Rajesh Kumar', visit:'Aug 8',  status:'confirmed' },
-  { id:'BK-1041', client:'Priya Sharma',   property:'2BHK Habibganj',         budget:'₹45L',   src:'meta',     broker:'Meena Verma',  visit:'Aug 9',  status:'confirmed' },
-  { id:'BK-1040', client:'Mohit Jain',     property:'4BHK Villa Chinar Park', budget:'₹1.3Cr', src:'voice',    broker:'Sunil Sharma', visit:'Aug 10', status:'pending' },
-  { id:'BK-1039', client:'Sunita Verma',   property:'Commercial Shop',         budget:'₹28L',   src:'meta',     broker:'Sunil Sharma', visit:'Aug 7',  status:'confirmed' },
-  { id:'BK-1038', client:'Deepak Singh',   property:'Plot 200sq.yd Misrod',   budget:'₹20L',   src:'whatsapp', broker:'Meena Verma',  visit:'Aug 6',  status:'site_visit' },
-  { id:'BK-1037', client:'Kavita Rao',     property:'3BHK Kolar Road',        budget:'₹68L',   src:'voice',    broker:'Rajesh Kumar', visit:'Aug 5',  status:'confirmed' },
-  { id:'BK-1036', client:'Aman Tiwari',    property:'2BHK Habibganj',         budget:'₹43L',   src:'meta',     broker:'Meena Verma',  visit:'Aug 4',  status:'cancelled' },
-  { id:'BK-1035', client:'Ritu Pandey',    property:'4BHK Villa Chinar Park', budget:'₹1.4Cr', src:'whatsapp', broker:'Rajesh Kumar', visit:'Aug 3',  status:'confirmed' },
-  { id:'BK-1034', client:'Vikas Malhotra', property:'Commercial Shop',         budget:'₹32L',   src:'meta',     broker:'Sunil Sharma', visit:'Aug 2',  status:'confirmed' },
-  { id:'BK-1033', client:'Neha Gupta',     property:'Plot Misrod',             budget:'₹19L',   src:'voice',    broker:'Meena Verma',  visit:'Aug 1',  status:'confirmed' },
-];
 
-const CONVOS = [
-  { id:1, name:'Ramesh Singh',   init:'RS', color:'#7F56D9', phone:'+91 98765 43210', src:'whatsapp', unread:3, time:'2m',   prev:'Bhai 3BHK ka price kya hoga?', status:'hot' },
-  { id:2, name:'Priya Singh',    init:'PS', color:'#12B76A', phone:'+91 87654 32109', src:'whatsapp', unread:1, time:'8m',   prev:'Loan facility milegi?', status:'warm' },
-  { id:3, name:'Ankit Sharma',   init:'AS', color:'#F79009', phone:'+91 76543 21098', src:'meta',     unread:0, time:'23m',  prev:'Site visit kab hoga?', status:'warm' },
-  { id:4, name:'Deepak Mishra',  init:'DM', color:'#1A6BFF', phone:'+91 65432 10987', src:'voice',    unread:0, time:'1h',   prev:'Call ended — transcript ready', status:'cold' },
-  { id:5, name:'Kavita Patel',   init:'KP', color:'#F04438', phone:'+91 54321 09876', src:'meta',     unread:2, time:'2h',   prev:'Villa ke photos bhejo please', status:'hot' },
-  { id:6, name:'Mohit Jain',     init:'MJ', color:'#344054', phone:'+91 43210 98765', src:'whatsapp', unread:0, time:'3h',   prev:'Thoda baad mein call karna', status:'cold' },
-  { id:7, name:'Sunita Rao',     init:'SR', color:'#0BA5EC', phone:'+91 32109 87654', src:'meta',     unread:1, time:'5h',   prev:'Budget 50 lakh hai, kuch dikh', status:'warm' },
-];
-
-const CHAT_MSGS = {
-  1:[
-    { s:'user',  t:'Hello, mujhe 3BHK flat dekhna hai Bhopal mein',                    time:'10:32 AM', ai:false },
-    { s:'agent', t:'Namaste! 🙏 Main Priya hoon, Prime Realty se.\n\nKolar Road pe ek behtareen 3BHK available hai — ₹65L-75L range mein, ready to move! Aapka budget kya hai?', time:'10:32 AM', ai:true },
-    { s:'user',  t:'70 lakh ke around theek rahega',                                   time:'10:34 AM', ai:false },
-    { s:'agent', t:'Perfect! 😊 Hamare paas:\n\n🏠 3BHK — 1,450 sq.ft\n💰 Price: ₹72L (negotiable)\n🚗 2 Covered Parking\n📍 Near DB Mall, Kolar Road\n✅ Ready to Move\n\nKya site visit karna chahenge? This weekend available hai!', time:'10:34 AM', ai:true },
-    { s:'user',  t:'Bhai 3BHK ka price kya hoga final?',                               time:'10:38 AM', ai:false },
-    { s:'agent', t:'Sir ₹72 Lakh mein available hai. Home loan bhi arrange kar sakte hain — SBI 8.5% pe EMI approx ₹58,000/month.\n\nKab aana chahenge site visit pe?', time:'10:39 AM', ai:true },
-  ],
-  2:[
-    { s:'user',  t:'Hello, 2BHK flat chahiye Habibganj area mein',                     time:'9:15 AM', ai:false },
-    { s:'agent', t:'Namaste! Habibganj mein ek excellent 2BHK available hai — ₹42L-48L range. Kya aap invest karna chahti hain ya self-use ke liye?', time:'9:15 AM', ai:true },
-    { s:'user',  t:'Self-use ke liye. Loan facility milegi?',                           time:'9:20 AM', ai:false },
-    { s:'agent', t:'Bilkul! Hum SBI, HDFC aur ICICI ke saath empanelled hain.\n\n✅ 90% loan available\n✅ Sirf ₹4-5L down payment\n✅ Process 100% smooth\n\nCIBIL score 700+ hai? 😊', time:'9:21 AM', ai:true },
-  ],
-  3:[
-    { s:'user',  t:'Property dekhni thi, Meta ad se contact kar raha hoon',             time:'Yesterday', ai:false },
-    { s:'agent', t:'Namaste! Meta pe hamara ad dekha, bahut shukriya! 🙏\n\nAap kaunsi property mein interested hain? Budget aur BHK bataiye.', time:'Yesterday', ai:true },
-    { s:'user',  t:'3BHK, budget 60-70 lakh',                                           time:'Yesterday', ai:false },
-    { s:'agent', t:'Sir perfect! Kolar Road pe ek 3BHK hai 68L mein — ready to move, gated society. Site visit kab karein?', time:'Yesterday', ai:true },
-    { s:'user',  t:'Site visit kab hoga?',                                               time:'23m ago',  ai:false },
-  ],
-  4:[
-    { s:'agent', t:'Namaste! Aapka Prime Realty mein call aaya tha. Kya main jaanta hoon aap kya dhundh rahe hain?', time:'1h ago', ai:true },
-    { s:'user',  t:'Haan, plot chahiye investment ke liye',                              time:'1h ago',   ai:false },
-    { s:'agent', t:'Bilkul sir! Misrod mein 200 sq.yd corner plot — ₹18L-22L. Excellent investment zone. Site visit Friday ko?', time:'1h ago', ai:true },
-  ],
-};
-
-const PROPS = [
-  { id:'PR-001', name:'3BHK Luxury Apartment', loc:'Kolar Road, Bhopal',  price:'₹65L – ₹75L', bhk:'3 BHK',    area:'1,450 sq.ft', floor:'5th',    status:'available', type:'Residential', emoji:'🏢', parking:'2 Covered', tags:['Ready to Move','Gated Society','RERA Approved'] },
-  { id:'PR-002', name:'2BHK Modern Flat',       loc:'Habibganj, Bhopal',  price:'₹42L – ₹48L', bhk:'2 BHK',    area:'1,050 sq.ft', floor:'3rd',    status:'available', type:'Residential', emoji:'🏠', parking:'1 Covered', tags:['Dec 2025 Possession','RERA Approved'] },
-  { id:'PR-003', name:'4BHK Premium Villa',     loc:'Chinar Park, Bhopal',price:'₹1.2Cr – ₹1.5Cr', bhk:'4 BHK',area:'3,200 sq.ft',floor:'G+1',   status:'booked',   type:'Residential', emoji:'🏡', parking:'3 Covered', tags:['Private Pool','Smart Home','Luxury'] },
-  { id:'PR-004', name:'Commercial Shop Space',  loc:'DB Mall Road, Bhopal',price:'₹25L – ₹35L', bhk:'Shop',     area:'450 sq.ft',   floor:'Ground', status:'available', type:'Commercial', emoji:'🏪', parking:'—',         tags:['Main Road','High Footfall'] },
-  { id:'PR-005', name:'Plot 200 sq.yd',         loc:'Misrod, Bhopal',     price:'₹18L – ₹22L', bhk:'Plot',     area:'200 sq.yd',   floor:'NA',     status:'available', type:'Plot',       emoji:'🌿', parking:'NA',        tags:['RERA Approved','Corner Plot'] },
-  { id:'PR-006', name:'3BHK Builder Floor',     loc:'Arera Colony, Bhopal',price:'₹55L – ₹62L', bhk:'3 BHK',  area:'1,300 sq.ft', floor:'2nd',    status:'sold',     type:'Residential', emoji:'🏘️', parking:'1 Covered', tags:['Sold'] },
-  { id:'PR-007', name:'2BHK Studio Apartment',  loc:'MP Nagar, Bhopal',   price:'₹35L – ₹42L', bhk:'2 BHK',   area:'890 sq.ft',   floor:'7th',    status:'available', type:'Residential', emoji:'🏗️', parking:'1 Covered', tags:['High Rise','Metro Nearby'] },
-  { id:'PR-008', name:'Office Space 1000 sqft', loc:'Hoshangabad Road',   price:'₹55L – ₹65L', bhk:'Office',   area:'1,000 sq.ft', floor:'4th',    status:'available', type:'Commercial', emoji:'🏬', parking:'5 Open',    tags:['Corporate Zone','RERA Approved'] },
-  { id:'PR-009', name:'Agricultural Land 2 Acre',loc:'Ratibad, Bhopal',   price:'₹30L – ₹38L', bhk:'Land',     area:'2 Acres',     floor:'NA',     status:'available', type:'Plot',       emoji:'🌾', parking:'NA',        tags:['Investment Zone','Highway Access'] },
-];
 
 const BROKERS = [
   { name:'Rajesh Kumar', init:'RK', color:'#1A6BFF', spec:'Residential Expert',   phone:'+91 98001 11001', tg:'@rajesh_realty',    exp:'8 Years', leads:24, closed:14, rev:'₹1.8Cr', rating:'4.8', status:'active' },
@@ -2010,171 +1901,149 @@ function renderActivity(){
 }
 
 function renderDashBookings(){
-  document.getElementById('dash-bookings').innerHTML=`
+  const tbl = document.getElementById('dash-bookings');
+  if (!tbl) return;
+  if (!liveAppointments || liveAppointments.length === 0) {
+    tbl.innerHTML = '<thead><tr><th>Date &amp; Time</th><th>Client Phone</th><th>Property / Notes</th><th>Status</th><th>Action</th></tr></thead><tbody><tr><td colspan="5" style="padding:20px;text-align:center;color:var(--t3)">Loading recent bookings...</td></tr></tbody>';
+    return;
+  }
+  const recent = liveAppointments.slice(0, 10);
+  tbl.innerHTML = `
     <thead><tr>
-      <th>#</th><th>Client</th><th>Property</th><th>Budget</th>
-      <th>Source</th><th>Broker</th><th>Visit Date</th><th>Status</th><th>Action</th>
+      <th>Date &amp; Time</th><th>Client Phone</th><th>Property / Notes</th><th>Status</th><th>Action</th>
     </tr></thead>
-    <tbody>${BOOKINGS.map(b=>`<tr>
-      <td class="mono" style="color:var(--t3)">${b.id}</td>
-      <td><strong>${b.client}</strong></td>
-      <td style="max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${b.property}</td>
-      <td style="font-weight:800;color:var(--blue)">${b.budget}</td>
-      <td>${srcBadge(b.src)}</td>
-      <td style="color:var(--t2)">${b.broker}</td>
-      <td style="color:var(--t3)">${b.visit}</td>
-      <td>${stBadge(b.status)}</td>
-      <td><button class="btn btn-o btn-xs" onclick="toast('👁 Viewing ${b.id}...')">View</button></td>
-    </tr>`).join('')}</tbody>`;
+    <tbody>${recent.map(b => {
+      const timeStr = b.Scheduled_Time
+        ? new Date(b.Scheduled_Time).toLocaleString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})
+        : 'TBD';
+      const phone = String(b.Phone_No || 'N/A');
+      const prop  = String(b.Notes || b.Type || 'Property Site Visit');
+      const st    = (b.Status || 'confirmed').toLowerCase();
+      const bc    = st === 'confirmed' ? 'b-green' : st === 'pending' ? 'b-orange' : 'b-blue';
+      return `<tr>
+        <td style="color:var(--t3)">${timeStr}</td>
+        <td><strong style="color:var(--blue)">${phone}</strong></td>
+        <td style="max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${prop}</td>
+        <td><span class="badge ${bc}">${b.Status || 'Confirmed'}</span></td>
+        <td><button class="btn btn-o btn-xs" onclick="window.openChat&&window.openChat('${phone}');nav('inbox')">View</button></td>
+      </tr>`;
+    }).join('')}</tbody>`;
 }
 
+// ══════════════════════════════════════════════════════════════
+//  DYNAMIC CONTROLLER BRIDGES (Wired to dashboard-backend.js)
+// ══════════════════════════════════════════════════════════════
 function renderConvList(filter=''){
-  const filtered = CONVOS.filter(c=>c.name.toLowerCase().includes(filter.toLowerCase())||c.prev.toLowerCase().includes(filter.toLowerCase()));
-  document.getElementById('conv-list').innerHTML = filtered.length ? filtered.map(c=>`
-    <div class="conv-item ${c.id===1?'on':''}" data-id="${c.id}" onclick="openChat(${c.id},this)">
-      <div class="cavi" style="background:${c.color}">${c.init}</div>
-      <div style="flex:1;min-width:0">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <span class="cname">${c.name}</span>
-          <span class="ctime">${c.time} ago</span>
-        </div>
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:2px">
-          <span class="cprev">${c.prev}</span>
-          ${c.unread>0?`<span class="cunread">${c.unread}</span>`:''}
-        </div>
-        <div style="margin-top:4px">${srcBadge(c.src)}</div>
-      </div>
-    </div>`).join('')
-  : '<div style="padding:24px;text-align:center;color:var(--t3);font-size:13px">No conversations found</div>';
+  if(window.InboxController && window.InboxController.render) {
+    window.InboxController.render(filter);
+  }
 }
 
 function openChat(id, el){
-  document.querySelectorAll('.conv-item').forEach(e=>e.classList.remove('on'));
-  if(el) el.classList.add('on');
-  const c = CONVOS.find(x=>x.id===id);
-  if(!c) return;
-  document.getElementById('chat-name').textContent = c.name;
-  document.getElementById('chat-avi').textContent  = c.init;
-  document.getElementById('chat-avi').style.background = c.color;
-  document.getElementById('chat-src').textContent = c.src==='whatsapp'?'WhatsApp':c.src==='meta'?'Meta Ads':'Voice Call';
-  document.getElementById('chat-src').className = 'badge '+(c.src==='whatsapp'?'b-green':c.src==='meta'?'b-blue':'b-purple');
-  const msgs = CHAT_MSGS[id]||[{ s:'agent', t:'Namaste! Koi bhi sawaal puchhe — main yahan hoon.', time:'Now', ai:true }];
-  const container = document.getElementById('chat-msgs');
-  container.innerHTML = msgs.map(m=>`
-    <div class="msg msg-${m.s==='user'?'u':'a'}">
-      <div class="bubble">${m.t}</div>
-      <div class="msg-meta">${m.ai?'<span class="ai-tag">AI</span>':''} ${m.time} ${m.s==='user'?'✓✓':''}</div>
-    </div>`).join('');
-  container.scrollTop = container.scrollHeight;
+  if(window.InboxController && window.InboxController.openChat) {
+    window.InboxController.openChat(id, el);
+  }
 }
 
-function filterConvs(v){ renderConvList(v); }
+function filterConvs(v){
+  if(window.InboxController && window.InboxController.filter) {
+    window.InboxController.filter(v);
+  }
+}
 
 function sendMsg(){
-  const inp = document.getElementById('msg-inp');
-  const txt = inp.value.trim();
-  if(!txt) return;
-  const c = document.getElementById('chat-msgs');
-  const now = new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
-  c.innerHTML += `<div class="msg msg-u"><div class="bubble">${txt}</div><div class="msg-meta">${now} ✓✓</div></div>`;
-  inp.value='';
-  c.scrollTop=c.scrollHeight;
-  // Typing indicator
-  setTimeout(()=>{
-    c.innerHTML += `<div class="msg msg-a" id="typing-ind"><div class="typing"><span></span><span></span><span></span></div></div>`;
-    c.scrollTop=c.scrollHeight;
-  }, 600);
-  setTimeout(()=>{
-    const t=document.getElementById('typing-ind');
-    if(t) t.remove();
-    c.innerHTML += `<div class="msg msg-a"><div class="bubble">Ji zaroor! Aapki request handle kar raha hoon. 😊\n\nKoi aur sawaal hain?</div><div class="msg-meta"><span class="ai-tag">AI</span> ${new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})}</div></div>`;
-    c.scrollTop=c.scrollHeight;
-  }, 2000);
+  if(window.InboxController && window.InboxController.sendMessage) {
+    window.InboxController.sendMessage();
+  }
+}
+
+function toggleAiMode(){
+  if(window.InboxController && window.InboxController.toggleAiMode) {
+    window.InboxController.toggleAiMode();
+  }
+}
+
+function updateStatus(sel){
+  if(window.InboxController && window.InboxController.updateStatus) {
+    window.InboxController.updateStatus(sel);
+  }
 }
 
 function renderProps(){
-  const grid = document.getElementById('prop-grid');
-  document.getElementById('prop-count').textContent = `${PROPS.length} properties`;
-  grid.innerHTML = PROPS.map(p=>{
-    const bgColors={Residential:'linear-gradient(135deg,#C3D6FF,#EBF2FF)',Commercial:'linear-gradient(135deg,#FFE4C3,#FFFAEB)',Plot:'linear-gradient(135deg,#C3F0D7,#ECFDF5)'};
-    return `<div class="prop-card">
-      <div class="prop-img" style="background:${bgColors[p.type]||'var(--bg)'}">
-        <span class="prop-tag">${propStBadge(p.status)}</span>
-        <span class="prop-id">${p.id}</span>
-        ${p.emoji}
-      </div>
-      <div class="prop-body">
-        <div class="prop-type">${p.type}</div>
-        <div class="prop-name">${p.name}</div>
-        <div class="prop-loc">📍 ${p.loc}</div>
-        <div class="prop-price">${p.price}</div>
-        <div class="prop-attrs">
-          <span class="pattr">🛏️ ${p.bhk}</span>
-          <span class="pattr">📐 ${p.area}</span>
-          <span class="pattr">🏢 ${p.floor}</span>
-          <span class="pattr">🚗 ${p.parking}</span>
-        </div>
-        <div class="prop-tags">${p.tags.map(t=>`<span class="badge b-gray" style="font-size:10px">${t}</span>`).join('')}</div>
-      </div>
-      <div class="prop-foot">
-        <button class="btn btn-o btn-sm" onclick="toast('📋 ${p.id} details — ${p.name}')">Details</button>
-        <div style="display:flex;gap:6px">
-          <button class="btn btn-o btn-sm" style="color:var(--purple);border-color:var(--purple)" onclick="openAiMatch('${p.name}')">🎯 AI Match</button>
-          <button class="btn ${p.status==='sold'?'btn-o':'btn-p'} btn-sm" onclick="toast('${p.status==='sold'?'🚫 Already sold':'💬 Sharing '+p.name+' via WhatsApp...'}')">${p.status==='sold'?'Sold':'Share 📲'}</button>
-        </div>
-      </div>
-    </div>`;
-  }).join('');
+  if(window.InventoryController && window.InventoryController.render) {
+    window.InventoryController.render();
+  }
 }
 
 function filterProps(v){
-  toast('🔍 Filtering properties...');
-  renderProps();
+  if(window.InventoryController && window.InventoryController.filter) {
+    window.InventoryController.filter(v);
+  }
 }
 
+// ── LIVE DATA CALLBACKS (called by dashboard-backend.js) ──
+// Receives live Leads array and hydrates the leads profile grid
+window.onLeadsLoaded = function(leads) {
+  liveLeads = Array.isArray(leads) ? leads : [];
+  renderLeads();
+};
+
+// Receives live Appointments array and hydrates the dashboard bookings table
+window.onAppointmentsLoaded = function(apts) {
+  liveAppointments = Array.isArray(apts) ? apts : [];
+  renderDashBookings();
+};
+
+
 function renderBrokers(){
-  document.getElementById('broker-grid').innerHTML = BROKERS.map(b=>`
-    <div class="broker-card">
-      <div style="display:flex;gap:14px;align-items:flex-start">
-        <div class="bavi" style="background:${b.color}">${b.init}</div>
-        <div style="flex:1">
-          <div style="display:flex;justify-content:space-between;align-items:start">
-            <div>
-              <div class="bname">${b.name}</div>
-              <div class="brole">${b.spec} · ${b.exp}</div>
+  const brokerGrid = document.getElementById('broker-grid');
+  if (brokerGrid && typeof BROKERS !== 'undefined') {
+    brokerGrid.innerHTML = BROKERS.map(b=>`
+      <div class="broker-card">
+        <div style="display:flex;gap:14px;align-items:flex-start">
+          <div class="bavi" style="background:${b.color}">${b.init}</div>
+          <div style="flex:1">
+            <div style="display:flex;justify-content:space-between;align-items:start">
+              <div>
+                <div class="bname">${b.name}</div>
+                <div class="brole">${b.spec} · ${b.exp}</div>
+              </div>
+              <span class="badge b-green">${b.status}</span>
             </div>
-            <span class="badge b-green">${b.status}</span>
-          </div>
-          <div class="bstats">
-            <div><div class="bstat-v">${b.leads}</div><div class="bstat-l">Leads</div></div>
-            <div><div class="bstat-v">${b.closed}</div><div class="bstat-l">Closed</div></div>
-            <div><div class="bstat-v">${b.rev}</div><div class="bstat-l">Revenue</div></div>
-          </div>
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px">
-            <div class="brating">⭐ ${b.rating}</div>
-            <span style="font-size:11.5px;color:var(--t3)">${b.tg}</span>
-            <button class="btn btn-o btn-xs" onclick="toast('📱 Opening Telegram for ${b.name}...')">Telegram ↗</button>
+            <div class="bstats">
+              <div><div class="bstat-v">${b.leads}</div><div class="bstat-l">Leads</div></div>
+              <div><div class="bstat-v">${b.closed}</div><div class="bstat-l">Closed</div></div>
+              <div><div class="bstat-v">${b.rev}</div><div class="bstat-l">Revenue</div></div>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px">
+              <div class="brating">⭐ ${b.rating}</div>
+              <span style="font-size:11.5px;color:var(--t3)">${b.tg}</span>
+              <button class="btn btn-o btn-xs" onclick="toast('📱 Opening Telegram for ${b.name}...')">Telegram ↗</button>
+            </div>
           </div>
         </div>
-      </div>
-    </div>`).join('');
+      </div>`).join('');
+  }
 
-  document.getElementById('broker-log-tbl').innerHTML = `
-    <thead><tr><th>Date</th><th>Client</th><th>Property</th><th>Assigned To</th><th>Telegram</th><th>Status</th><th>Commission</th></tr></thead>
-    <tbody>${BROKER_LOG.map(l=>`<tr>
-      <td style="color:var(--t3)">${l.date}</td>
-      <td><strong>${l.client}</strong></td>
-      <td>${l.prop}</td>
-      <td style="font-weight:600">${l.broker}</td>
-      <td><span class="badge b-green">${l.tg}</span></td>
-      <td>${stBadge(l.status)}</td>
-      <td style="font-weight:800;color:var(--t1)">${l.comm}</td>
-    </tr>`).join('')}</tbody>`;
+  const brokerTbl = document.getElementById('broker-log-tbl');
+  if (brokerTbl && typeof BROKER_LOG !== 'undefined') {
+    brokerTbl.innerHTML = `
+      <thead><tr><th>Date</th><th>Client</th><th>Property</th><th>Assigned To</th><th>Telegram</th><th>Status</th><th>Commission</th></tr></thead>
+      <tbody>${BROKER_LOG.map(l=>`<tr>
+        <td style="color:var(--t3)">${l.date}</td>
+        <td><strong>${l.client}</strong></td>
+        <td>${l.prop}</td>
+        <td style="font-weight:600">${l.broker}</td>
+        <td><span class="badge b-green">${l.tg}</span></td>
+        <td>${stBadge(l.status)}</td>
+        <td style="font-weight:800;color:var(--t1)">${l.comm}</td>
+      </tr>`).join('')}</tbody>`;
+  }
 }
 
 function renderAgents(){
   const agentGrid = document.getElementById('agent-grid');
-  if (agentGrid) {
+  if (agentGrid && typeof AGENTS !== 'undefined') {
     agentGrid.innerHTML = AGENTS.map(a=>`
     <div class="agent-card">
       <div class="agent-hd" style="background:linear-gradient(135deg,var(--blue-l),#F5F0FF)">
@@ -2197,7 +2066,7 @@ function renderAgents(){
   }
 
   const execTbl = document.getElementById('exec-tbl');
-  if (execTbl) {
+  if (execTbl && typeof EXEC_LOG !== 'undefined') {
     execTbl.innerHTML = `
     <thead><tr><th>Execution ID</th><th>Workflow</th><th>Trigger</th><th>Duration</th><th>Nodes Run</th><th>Started</th><th>Status</th><th>Action</th></tr></thead>
     <tbody>${EXEC_LOG.map(e=>`<tr>
@@ -2214,49 +2083,55 @@ function renderAgents(){
 }
 
 function renderRecordings(){
-  document.getElementById('rec-list').innerHTML = RECORDINGS.map((r,i)=>`
-    <div class="rec-card">
-      <div class="rec-hd">
-        <div class="ravi" style="background:${r.color}">${r.init}</div>
-        <div style="flex:1">
-          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-            <strong style="font-size:14px">${r.caller}</strong>
-            <span class="mono" style="font-size:11px;color:var(--t3)">${r.phone}</span>
-            ${outBadge(r.outcome)}
+  const recList = document.getElementById('rec-list');
+  if (recList && typeof RECORDINGS !== 'undefined') {
+    recList.innerHTML = RECORDINGS.map((r,i)=>`
+      <div class="rec-card">
+        <div class="rec-hd">
+          <div class="ravi" style="background:${r.color}">${r.init}</div>
+          <div style="flex:1">
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+              <strong style="font-size:14px">${r.caller}</strong>
+              <span class="mono" style="font-size:11px;color:var(--t3)">${r.phone}</span>
+              ${outBadge(r.outcome)}
+            </div>
+            <div style="font-size:11.5px;color:var(--t3);margin-top:3px">${r.id} · ${r.date} · ${r.time} · ⏱️ ${r.dur} · 🏡 ${r.prop}</div>
           </div>
-          <div style="font-size:11.5px;color:var(--t3);margin-top:3px">${r.id} · ${r.date} · ${r.time} · ⏱️ ${r.dur} · 🏡 ${r.prop}</div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-o btn-sm" onclick="toast('📋 Transcript copied for ${r.caller}')">📋 Transcript</button>
+            <button class="btn btn-o btn-sm" onclick="toast('💾 Downloading ${r.id}.mp3...')">💾 MP3</button>
+          </div>
         </div>
-        <div style="display:flex;gap:8px">
-          <button class="btn btn-o btn-sm" onclick="toast('📋 Transcript copied for ${r.caller}')">📋 Transcript</button>
-          <button class="btn btn-o btn-sm" onclick="toast('💾 Downloading ${r.id}.mp3...')">💾 MP3</button>
+        <div style="display:flex;align-items:center;gap:10px">
+          <button class="play-btn" data-playing="0" onclick="togglePlay(this,'${r.id}')">▶</button>
+          <div class="waveform" style="flex:1" onclick="seekWave(event,this,'${r.dur}')">
+            <div class="wbars">${r.waves.map(h=>`<div class="wb" style="height:${h}%"></div>`).join('')}</div>
+          </div>
+          <span style="font-size:12px;color:var(--t3);font-family:monospace;flex-shrink:0">${r.dur}</span>
         </div>
-      </div>
-      <div style="display:flex;align-items:center;gap:10px">
-        <button class="play-btn" data-playing="0" onclick="togglePlay(this,'${r.id}')">▶</button>
-        <div class="waveform" style="flex:1" onclick="seekWave(event,this,'${r.dur}')">
-          <div class="wbars">${r.waves.map(h=>`<div class="wb" style="height:${h}%"></div>`).join('')}</div>
+        <div class="transcript-box">
+          ${r.transcript.map(t=>`<div style="margin-bottom:8px"><span class="${t.ai?'ts-ai':'ts-human'}">${t.spk}: </span>${t.txt}</div>`).join('')}
         </div>
-        <span style="font-size:12px;color:var(--t3);font-family:monospace;flex-shrink:0">${r.dur}</span>
-      </div>
-      <div class="transcript-box">
-        ${r.transcript.map(t=>`<div style="margin-bottom:8px"><span class="${t.ai?'ts-ai':'ts-human'}">${t.spk}: </span>${t.txt}</div>`).join('')}
-      </div>
-    </div>`).join('');
+      </div>`).join('');
+  }
 }
 
 function renderNotifs(){
-  document.getElementById('notif-list').innerHTML = NOTIFS.map(n=>`
-    <div class="notif-item" onclick="toast('${n.icon} ${n.title}')">
-      <div style="display:flex;gap:10px;align-items:flex-start">
-        <div style="font-size:20px">${n.icon}</div>
-        <div style="flex:1">
-          <div class="notif-title">${n.title}</div>
-          <div class="notif-sub">${n.sub}</div>
-          <div class="notif-time">${n.time}</div>
+  const notifList = document.getElementById('notif-list');
+  if (notifList && typeof NOTIFS !== 'undefined') {
+    notifList.innerHTML = NOTIFS.map(n=>`
+      <div class="notif-item" onclick="toast('${n.icon} ${n.title}')">
+        <div style="display:flex;gap:10px;align-items:flex-start">
+          <div style="font-size:20px">${n.icon}</div>
+          <div style="flex:1">
+            <div class="notif-title">${n.title}</div>
+            <div class="notif-sub">${n.sub}</div>
+            <div class="notif-time">${n.time}</div>
+          </div>
+          ${n.new?'<div class="notif-dot"></div>':''}
         </div>
-        ${n.new?'<div class="notif-dot"></div>':''}
-      </div>
-    </div>`).join('');
+      </div>`).join('');
+  }
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -2374,15 +2249,34 @@ function broadcastMatches(){
   toast('🚀 WhatsApp broadcast sent to 3 matched leads!');
 }
 
-// ── STATUS UPDATE ──
+// ── STATUS UPDATE (merged: inbox selector + leads grid selects) ──
 function updateStatus(sel){
+  if (!sel) return;
   const val = sel.value;
   sel.className = 'status-sel ' + val;
-  const labels = {hot:'🔥 Hot',warm:'🌡️ Warm',cold:'❄️ Cold',dead:'💀 Dead'};
-  toast(`${labels[val]} — Lead status updated!`);
-  // Sync inbox panel if open
+  const labels = {hot:'🔥 Hot', warm:'🌡️ Warm', cold:'❄️ Cold', dead:'💀 Dead'};
+  toast((labels[val] || val) + ' — Status updated!');
+  // If this is the inbox status selector, delegate to InboxController
   const inboxSel = document.getElementById('inbox-status-sel');
-  if(inboxSel && sel !== inboxSel){ inboxSel.value = val; inboxSel.className='status-sel '+val; }
+  if (sel === inboxSel) {
+    if (window.InboxController && window.InboxController.updateStatus) {
+      window.InboxController.updateStatus(sel);
+    }
+    return;
+  }
+  // Sync inbox panel if same lead is currently active
+  if (inboxSel && window.InboxController && window.InboxController.activeLead) {
+    const leadId = sel.dataset ? sel.dataset.leadId : null;
+    if (leadId && window.InboxController.activeLead.id === leadId) {
+      inboxSel.value = val;
+      inboxSel.className = 'status-sel ' + val;
+    }
+  }
+  // Direct PocketBase update via lead ID stored on the select's data attribute
+  const leadId = sel.dataset ? sel.dataset.leadId : null;
+  if (leadId && typeof window.updateLeadStatus === 'function') {
+    window.updateLeadStatus(leadId, val);
+  }
 }
 
 // ── BROADCAST MODAL ──
@@ -2404,60 +2298,88 @@ function sendBroadcast(){
 
 // ── LEADS PAGE ──
 function renderLeads(data){
-  const d = data || LEADS_DATA;
-  const statusLabel = {hot:'🔥 Hot',warm:'🌡️ Warm',cold:'❄️ Cold',dead:'💀 Dead'};
-  const srcLabel = {whatsapp:'💬 WhatsApp',meta:'📱 Meta Ads',voice:'📞 Voice'};
-  const srcBadgeCls = {whatsapp:'b-green',meta:'b-blue',voice:'b-purple'};
-  document.getElementById('leads-grid').innerHTML = d.map(l => `
+  const d = data || liveLeads;
+  const grid = document.getElementById('leads-grid');
+  if (!grid) return;
+  if (!d || d.length === 0) {
+    grid.innerHTML = '<div style="grid-column:1/-1;padding:40px;text-align:center;color:var(--t3);font-size:13px">No leads yet. Leads from WhatsApp will appear here automatically.</div>';
+    return;
+  }
+  const colPalette = ['#7F56D9','#12B76A','#F79009','#1A6BFF','#F04438','#0BA5EC','#344054'];
+  grid.innerHTML = d.map(l => {
+    const phone    = String(l.Phone_No || l.phone_no || 'Unknown');
+    const status   = (l.status || 'warm').toLowerCase();
+    const summary  = l.Chat_Summary || l.chat_summary || 'No AI summary generated yet.';
+    const lastSeen = l.updated
+      ? new Date(l.updated).toLocaleString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})
+      : 'Unknown';
+    const msgCount = (() => {
+      try {
+        const h = typeof l.Chat_History === 'string' ? JSON.parse(l.Chat_History) : (l.Chat_History || []);
+        return Array.isArray(h) ? h.length : 0;
+      } catch(e) { return 0; }
+    })();
+    const isAiPaused = !!l.ai_paused;
+    let factsObj = {};
+    try {
+      const raw = l.Buyer_Facts || l.buyer_facts;
+      factsObj = typeof raw === 'string' ? JSON.parse(raw) : (raw || {});
+    } catch(e) { factsObj = {}; }
+    const budget     = factsObj.budget     || factsObj.Budget     || null;
+    const interested = factsObj.interested_in || factsObj.property_type || factsObj['interested in'] || null;
+    const location   = factsObj.location   || factsObj.preferred_location || null;
+    let hash = 0;
+    for (let i = 0; i < phone.length; i++) hash = phone.charCodeAt(i) + ((hash << 5) - hash);
+    const color  = colPalette[Math.abs(hash) % colPalette.length];
+    const init   = phone.replace(/\D/g, '').slice(-2) || 'LD';
+    const leadId = l.id || '';
+    return `
     <div class="lead-profile-card">
       <div class="lpc-header">
-        <div class="lpc-avi" style="background:${l.color}">${l.init}</div>
+        <div class="lpc-avi" style="background:${color}">${init}</div>
         <div style="flex:1">
           <div style="display:flex;justify-content:space-between;align-items:flex-start">
             <div>
-              <div class="lpc-name">${l.name}</div>
-              <div class="lpc-phone">${l.phone}</div>
+              <div class="lpc-name">${phone}</div>
+              <div class="lpc-phone">${msgCount} msg${msgCount!==1?'s':''} &middot; ${isAiPaused ? '&#x23F8;&#xFE0F; Human Mode' : '&#x1F916; AI Active'}</div>
             </div>
-            <select class="status-sel ${l.status}" onchange="updateStatus(this)">
-              <option value="hot" ${l.status==='hot'?'selected':''}>🔥 Hot</option>
-              <option value="warm" ${l.status==='warm'?'selected':''}>🌡️ Warm</option>
-              <option value="cold" ${l.status==='cold'?'selected':''}>❄️ Cold</option>
-              <option value="dead" ${l.status==='dead'?'selected':''}>💀 Dead</option>
+            <select class="status-sel ${status}" data-lead-id="${leadId}" onchange="updateStatus(this)">
+              <option value="hot"  ${status==='hot' ?'selected':''}>&#x1F525; Hot</option>
+              <option value="warm" ${status==='warm'?'selected':''}>&#x1F321;&#xFE0F; Warm</option>
+              <option value="cold" ${status==='cold'?'selected':''}>&#x2744;&#xFE0F; Cold</option>
+              <option value="dead" ${status==='dead'?'selected':''}>&#x1F480; Dead</option>
             </select>
           </div>
-          <div style="margin-top:6px"><span class="badge ${srcBadgeCls[l.src]}">${srcLabel[l.src]}</span></div>
+          <div style="margin-top:6px"><span class="badge b-green">&#x1F4AC; WhatsApp</span></div>
         </div>
       </div>
       <div class="lpc-body">
-        <div style="font-size:12.5px;color:var(--t3);line-height:1.6;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--border-l)">${l.summary}</div>
-        <div class="lpc-fact"><span class="lpc-fk">🏡 Interested In</span><span class="lpc-fv">${l.property}</span></div>
-        <div class="lpc-fact"><span class="lpc-fk">💰 Budget</span><span class="lpc-fv">${l.budget}</span></div>
-        <div class="lpc-fact"><span class="lpc-fk">📍 Location</span><span class="lpc-fv">${l.location}</span></div>
-        <div class="lpc-fact"><span class="lpc-fk">⏱️ Timeline</span><span class="lpc-fv">${l.timeline}</span></div>
-        <div class="lpc-fact"><span class="lpc-fk">📅 Site Visits</span><span class="lpc-fv">${l.visits} done</span></div>
-        <div class="lpc-fact"><span class="lpc-fk">💬 Messages</span><span class="lpc-fv">${l.messages} total</span></div>
-        <div class="lpc-fact"><span class="lpc-fk">🕐 Last Contact</span><span class="lpc-fv">${l.lastContact}</span></div>
-        <div class="lpc-fact"><span class="lpc-fk">👤 Assigned Broker</span><span class="lpc-fv">${l.broker}</span></div>
+        <div style="font-size:12.5px;color:var(--t3);line-height:1.6;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--border-l)">${summary}</div>
+        ${interested ? `<div class="lpc-fact"><span class="lpc-fk">&#x1F3E1; Interested In</span><span class="lpc-fv">${interested}</span></div>` : ''}
+        ${budget     ? `<div class="lpc-fact"><span class="lpc-fk">&#x1F4B0; Budget</span><span class="lpc-fv">${budget}</span></div>` : ''}
+        ${location   ? `<div class="lpc-fact"><span class="lpc-fk">&#x1F4CD; Location</span><span class="lpc-fv">${location}</span></div>` : ''}
+        <div class="lpc-fact"><span class="lpc-fk">&#x1F550; Last Seen</span><span class="lpc-fv">${lastSeen}</span></div>
+        <div class="lpc-fact"><span class="lpc-fk">&#x1F4AC; Messages</span><span class="lpc-fv">${msgCount} total</span></div>
       </div>
       <div class="lpc-footer">
-        <button class="btn btn-o btn-sm" style="flex:1" onclick="nav('inbox');openChat(${l.id},null)">💬 Open Chat</button>
-        <button class="btn btn-p btn-sm" style="flex:1" onclick="confirmBookingModal()">✅ Book</button>
+        <button class="btn btn-o btn-sm" style="flex:1" onclick="window.openChat&&window.openChat('${leadId}');nav('inbox');">&#x1F4AC; Open Chat</button>
+        <button class="btn btn-p btn-sm" style="flex:1" onclick="confirmBookingModal()">&#x2705; Book</button>
       </div>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
 }
 
 function filterLeads(val){
-  const filtered = LEADS_DATA.filter(l=>
-    l.name.toLowerCase().includes(val.toLowerCase()) ||
-    l.property.toLowerCase().includes(val.toLowerCase()) ||
-    l.phone.includes(val)
+  const q = (val || '').toLowerCase();
+  const filtered = liveLeads.filter(l =>
+    String(l.Phone_No || l.phone_no || '').toLowerCase().includes(q) ||
+    String(l.Chat_Summary || l.chat_summary || '').toLowerCase().includes(q)
   );
   renderLeads(filtered);
 }
 
 function filterByStatus(val){
-  const filtered = val ? LEADS_DATA.filter(l=>l.status===val) : LEADS_DATA;
+  const filtered = val ? liveLeads.filter(l => (l.status || 'warm') === val) : liveLeads;
   renderLeads(filtered);
 }
 
@@ -2504,13 +2426,11 @@ document.addEventListener('DOMContentLoaded', ()=>{
   renderActivity();
   renderDashBookings();
   renderConvList();
-  openChat(1, null);
   renderProps();
   renderBrokers();
   renderAgents();
   renderRecordings();
   renderNotifs();
-  renderLeads();
   setInterval(addLiveAct, 9000);
 
   const logoutBtn = document.getElementById('logout-btn');
