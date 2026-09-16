@@ -309,19 +309,22 @@
             }
 
             container.innerHTML = msgs.map(m => {
-                const role = (m.role || m.s || (m.is_ai ? 'assistant' : 'user')).toLowerCase();
-                const isUser = role === 'user';
+                const role = String(m.role || m.s || (m.is_ai ? 'assistant' : 'user')).toLowerCase();
+                // Lead/Customer incoming messages -> LEFT side (.msg-a, white/surface bubble)
+                // Business/Broker/AI outbound messages -> RIGHT side (.msg-u, blue bubble)
+                const isLead = (role === 'user' || role === 'customer' || role === 'lead');
+                const isHumanAgent = (role === 'human_agent' || role === 'agent' || m.is_human === true);
+                const isAi = !isLead && !isHumanAgent;
                 const text = m.content || m.t || m.text || '';
                 const time = m.time || m.timestamp || 'Now';
-                const isAi = !isUser && (m.is_ai !== false && role !== 'human_agent');
 
                 return `
-                    <div class="msg msg-${isUser ? 'u' : 'a'}">
+                    <div class="msg ${isLead ? 'msg-a' : 'msg-u'}">
                         <div class="bubble">${escapeHtml(text).replace(/\n/g, '<br>')}</div>
                         <div class="msg-meta">
-                            ${isAi ? '<span class="ai-tag">AI</span>' : ''}
+                            ${isAi ? '<span class="ai-tag">AI</span>' : (isHumanAgent ? '<span class="ai-tag" style="background:var(--purple);color:#fff">HUMAN</span>' : '')}
                             ${escapeHtml(time)}
-                            ${isUser ? '✓✓' : ''}
+                            ${!isLead ? '✓✓' : ''}
                         </div>
                     </div>
                 `;
@@ -350,12 +353,15 @@
             const c = document.getElementById('chat-msgs');
             const nowTime = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
             
-            // Optimistically append user message
+            // Optimistically append outbound human agent message to RIGHT side (.msg-u)
             if (c) {
                 c.insertAdjacentHTML('beforeend', `
                     <div class="msg msg-u">
                         <div class="bubble">${escapeHtml(txt).replace(/\n/g, '<br>')}</div>
-                        <div class="msg-meta">${nowTime} ✓</div>
+                        <div class="msg-meta">
+                            <span class="ai-tag" style="background:var(--purple);color:#fff">HUMAN</span>
+                            ${nowTime} ✓
+                        </div>
                     </div>
                 `);
                 c.scrollTop = c.scrollHeight;
@@ -363,26 +369,47 @@
             inp.value = '';
 
             // Update PocketBase Lead Record
-            try {
-                let currentHistory = this.activeLead.Chat_History || this.activeLead.chat_history || [];
-                if (typeof currentHistory === 'string') {
-                    try { currentHistory = JSON.parse(currentHistory); } catch (e) { currentHistory = []; }
-                }
-                const updatedHistory = [...currentHistory, {
-                    role: 'user',
-                    content: txt,
-                    time: nowTime,
-                    timestamp: new Date().toISOString()
-                }];
+            const leadPhone = String(this.activeLead.Phone_No || this.activeLead.phone_no || '');
+            let currentHistory = this.activeLead.Chat_History || this.activeLead.chat_history || [];
+            if (typeof currentHistory === 'string') {
+                try { currentHistory = JSON.parse(currentHistory); } catch (e) { currentHistory = []; }
+            }
+            const updatedHistory = [...currentHistory, {
+                role: 'human_agent',
+                content: txt,
+                time: nowTime,
+                timestamp: new Date().toISOString(),
+                is_human: true
+            }];
 
-                this.activeLead.Chat_History = updatedHistory;
-                if (pb) {
+            this.activeLead.Chat_History = updatedHistory;
+
+            if (pb) {
+                try {
                     await pb.collection('Leads').update(this.activeLead.id, {
-                        Chat_History: updatedHistory
+                        Chat_History: updatedHistory,
+                        updated: new Date().toISOString()
                     });
+                } catch (e) {
+                    console.warn('[InboxController] PocketBase lead message update failed:', e.message);
                 }
+            }
+
+            // Dispatch message via API Gateway / Meta WhatsApp API
+            try {
+                const phoneId = (currentTenant && currentTenant.phone_id) || '';
+                await fetch(`${API_BASE}/send-message`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        phone_id: phoneId,
+                        recipient_phone: leadPhone,
+                        message: txt,
+                        lead_id: this.activeLead.id
+                    })
+                });
             } catch (e) {
-                console.warn('[InboxController] Message send sync failed:', e.message);
+                console.warn('[InboxController] API gateway send-message warning:', e.message);
             }
         },
 
@@ -447,7 +474,7 @@
 
             this.render();
 
-            // If the updated lead is currently active, re-render thread seamlessly
+            // If the updated lead is currently active, re-render thread seamlessly & scroll to bottom
             if (this.activeLead && this.activeLead.id === record.id) {
                 this.activeLead = Object.assign({}, this.activeLead, record);
                 this.renderChatMessages(this.activeLead.Chat_History || this.activeLead.chat_history);
