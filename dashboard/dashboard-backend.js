@@ -496,12 +496,14 @@
         init() {
             this.renderAppointments();
             this.renderFollowupQueue();
+            this.renderHumanTakeoverSection();
         },
 
         setAppointments(apts) {
             this.appointments = Array.isArray(apts) ? apts : [];
             this.renderAppointments();
             this.renderFollowupQueue();
+            this.renderHumanTakeoverSection();
         },
 
         renderAppointments() {
@@ -564,9 +566,9 @@
             const tbody = document.getElementById('ai-followups-tbody');
             if (!tbody) return;
 
-            // Extract follow-ups from active leads: include follow_up_status, last_followup, warm/cold/hot status, or AI paused (Human Takeover)
+            // Extract ONLY active AI follow-ups (!ai_paused)
             const queue = (currentLeads || []).filter(l => {
-                if (l.ai_paused) return true;
+                if (l.ai_paused) return false;
                 if (l.follow_up_status || l.last_followup) return true;
                 const st = (l.status || 'warm').toLowerCase();
                 return (st === 'warm' || st === 'cold' || st === 'hot');
@@ -576,7 +578,7 @@
                 tbody.innerHTML = `
                     <tr>
                         <td colspan="4" style="padding:28px;text-align:center;color:var(--t3);font-size:13px">
-                            No queued AI follow-ups or active human takeover leads.
+                            No queued AI follow-ups pending.
                         </td>
                     </tr>
                 `;
@@ -586,13 +588,11 @@
             tbody.innerHTML = queue.map(l => {
                 const phone = String(l.Phone_No || l.phone_no || 'Lead');
                 const targetId = l.id || phone;
-                const isHuman = !!l.ai_paused;
+                const isSent = !!(l.last_followup || l.follow_up_status === 'sent' || (l.follow_up_count && l.follow_up_count > 0));
                 const timeStr = l.last_followup ? timeAgo(l.last_followup) : (l.updated ? timeAgo(l.updated) : 'Scheduled Today');
-                const preview = String(l.Chat_Summary || l.chat_summary || (isHuman ? 'Human Takeover active on this lead' : 'Follow-up on property inquiry'));
-                const badgeClass = isHuman ? 'b-purple' : 'b-blue';
-                const statusLabel = isHuman 
-                    ? 'HUMAN TAKEOVER' 
-                    : (l.follow_up_status || (l.status ? `${l.status.toUpperCase()} Lead` : 'Queued'));
+                const preview = String(l.Chat_Summary || l.chat_summary || 'Follow-up on property inquiry');
+                const badgeClass = isSent ? 'b-green' : 'b-blue';
+                const statusLabel = isSent ? 'Sent' : (l.follow_up_status || 'Queued');
 
                 return `
                     <tr>
@@ -606,6 +606,50 @@
                             "${escapeHtml(preview)}"
                         </td>
                         <td><span class="badge ${badgeClass}">${escapeHtml(statusLabel)}</span></td>
+                    </tr>
+                `;
+            }).join('');
+        },
+
+        renderHumanTakeoverSection() {
+            const tbody = document.getElementById('human-takeover-tbody');
+            if (!tbody) return;
+
+            // Extract leads where AI is paused (Human Takeover Mode)
+            const humanLeads = (currentLeads || []).filter(l => !!l.ai_paused);
+
+            if (humanLeads.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" style="padding:28px;text-align:center;color:var(--t3);font-size:13px">
+                            No active human takeover conversations. All leads currently handled by AI.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = humanLeads.map(l => {
+                const phone = String(l.Phone_No || l.phone_no || 'Lead');
+                const targetId = l.id || phone;
+                const timeStr = l.updated ? timeAgo(l.updated) : (l.created ? timeAgo(l.created) : 'Just now');
+                const summary = String(l.Chat_Summary || l.chat_summary || 'Human takeover active on this lead');
+
+                return `
+                    <tr>
+                        <td>
+                            <div onclick="window.openChat('${escapeHtml(targetId)}'); nav('inbox');" style="cursor:pointer" title="Open conversation in Inbox">
+                                <strong style="color:var(--blue);text-decoration:none">${escapeHtml(phone)}</strong>
+                            </div>
+                        </td>
+                        <td style="color:var(--t3)">${escapeHtml(timeStr)}</td>
+                        <td style="color:var(--t3);font-size:12px;max-width:320px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${escapeHtml(summary)}">
+                            ${escapeHtml(summary)}
+                        </td>
+                        <td><span class="badge b-purple">⏸️ Human Takeover</span></td>
+                        <td>
+                            <button class="btn btn-o btn-xs" onclick="window.openChat('${escapeHtml(targetId)}'); nav('inbox');">💬 Open Chat</button>
+                        </td>
                     </tr>
                 `;
             }).join('');

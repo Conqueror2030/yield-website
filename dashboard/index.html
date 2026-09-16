@@ -1254,6 +1254,25 @@ select.sel{
           </div>
         </div>
       </div>
+
+      <!-- Human Takeover Leads Section -->
+      <div class="card" style="margin-top:20px">
+        <div class="card-hd">
+          <div>
+            <div class="card-title">⏸️ Human Takeover Leads (AI Paused)</div>
+            <div class="card-sub">Conversations currently handled manually by human brokers</div>
+          </div>
+          <button class="btn btn-o btn-sm" onclick="nav('inbox')">💬 Go to Inbox</button>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Client Phone</th><th>Last Active</th><th>Latest Conversation Summary</th><th>Status</th><th>Action</th></tr></thead>
+            <tbody id="human-takeover-tbody">
+              <tr><td colspan="5" style="padding:24px;text-align:center;color:var(--t3)">No active human takeover conversations.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
     
     <!-- ══════════════ INVENTORY ══════════════ -->
