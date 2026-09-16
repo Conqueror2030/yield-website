@@ -564,18 +564,19 @@
             const tbody = document.getElementById('ai-followups-tbody');
             if (!tbody) return;
 
-            // Extract follow-ups from active leads with follow_up_status or warm/cold/hot status
+            // Extract follow-ups from active leads: include follow_up_status, last_followup, warm/cold/hot status, or AI paused (Human Takeover)
             const queue = (currentLeads || []).filter(l => {
+                if (l.ai_paused) return true;
                 if (l.follow_up_status || l.last_followup) return true;
                 const st = (l.status || 'warm').toLowerCase();
-                return (st === 'warm' || st === 'cold' || st === 'hot') && !l.ai_paused;
+                return (st === 'warm' || st === 'cold' || st === 'hot');
             });
 
             if (queue.length === 0) {
                 tbody.innerHTML = `
                     <tr>
                         <td colspan="4" style="padding:28px;text-align:center;color:var(--t3);font-size:13px">
-                            No queued AI follow-ups pending.
+                            No queued AI follow-ups or active human takeover leads.
                         </td>
                     </tr>
                 `;
@@ -585,21 +586,26 @@
             tbody.innerHTML = queue.map(l => {
                 const phone = String(l.Phone_No || l.phone_no || 'Lead');
                 const targetId = l.id || phone;
+                const isHuman = !!l.ai_paused;
                 const timeStr = l.last_followup ? timeAgo(l.last_followup) : (l.updated ? timeAgo(l.updated) : 'Scheduled Today');
-                const preview = String(l.Chat_Summary || l.chat_summary || 'Follow-up on property inquiry');
-                const statusLabel = l.follow_up_status || (l.status ? `${l.status.toUpperCase()} Lead` : 'Queued');
+                const preview = String(l.Chat_Summary || l.chat_summary || (isHuman ? 'Human Takeover active on this lead' : 'Follow-up on property inquiry'));
+                const badgeClass = isHuman ? 'b-purple' : 'b-blue';
+                const statusLabel = isHuman 
+                    ? 'HUMAN TAKEOVER' 
+                    : (l.follow_up_status || (l.status ? `${l.status.toUpperCase()} Lead` : 'Queued'));
+
                 return `
                     <tr>
                         <td>
                             <div onclick="window.openChat('${escapeHtml(targetId)}'); nav('inbox');" style="cursor:pointer" title="Open conversation in Inbox">
-                                <strong style="color:var(--blue);text-decoration:underline;text-underline-offset:2px">${escapeHtml(phone)}</strong>
+                                <strong style="color:var(--blue);text-decoration:none">${escapeHtml(phone)}</strong>
                             </div>
                         </td>
                         <td style="color:var(--t3)">${escapeHtml(timeStr)}</td>
                         <td onclick="window.openChat('${escapeHtml(targetId)}'); nav('inbox');" style="color:var(--t3);font-size:12px;max-width:260px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer" title="Open conversation in Inbox">
                             "${escapeHtml(preview)}"
                         </td>
-                        <td><span class="badge b-blue">${escapeHtml(statusLabel)}</span></td>
+                        <td><span class="badge ${badgeClass}">${escapeHtml(statusLabel)}</span></td>
                     </tr>
                 `;
             }).join('');
