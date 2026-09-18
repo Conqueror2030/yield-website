@@ -860,10 +860,10 @@ select.sel{
 <!-- ═══════ SIDEBAR ═══════ -->
 <aside class="sidebar">
   <div class="sb-logo">
-    <div class="logo-box">🏡</div>
+    <div class="logo-box" id="app-logo-icon">🏡</div>
     <div>
-      <div class="logo-name">Prime Realty</div>
-      <div class="logo-sub">Operations Hub</div>
+      <div class="logo-name" id="app-logo-name"></div>
+      <div class="logo-sub" id="app-logo-sub"></div>
     </div>
   </div>
   <nav class="sb-nav">
@@ -874,20 +874,20 @@ select.sel{
 
     <div class="sb-item" data-page="inbox">
       <span class="ico">💬</span>Inbox
-      <span class="sb-badge red">7</span>
+      <span class="sb-badge red" id="sb-inbox-badge"></span>
     </div>
     <div class="sb-item" data-page="leads">
       <span class="ico">👥</span>Leads
-      <span class="sb-badge blue">5</span>
+      <span class="sb-badge blue" id="sb-leads-badge"></span>
     </div>
     <div class="sb-item" data-page="followups">
       <span class="ico">📅</span>Follow-ups
-      <span class="sb-badge blue">12</span>
+      <span class="sb-badge blue" id="sb-followups-badge"></span>
     </div>
     <div class="sb-section">Properties</div>
     <div class="sb-item" data-page="inventory">
       <span class="ico">🏠</span>Inventory
-      <span class="sb-badge green">24</span>
+      <span class="sb-badge green" id="sb-inventory-badge"></span>
     </div>
     <div class="sb-section agency-only">Team</div>
     <div class="sb-item agency-only" data-page="brokers">
@@ -896,7 +896,7 @@ select.sel{
     <div class="sb-section">Automation</div>
     <div class="sb-item" data-page="aiagents">
       <span class="ico">🤖</span>AI Agents
-      <span class="sb-badge green">2</span>
+      <span class="sb-badge green" id="sb-aiagents-badge"></span>
     </div>
 
     <div class="sb-section">System</div>
@@ -905,10 +905,10 @@ select.sel{
     </div>
   </nav>
   <div class="sb-user">
-    <div class="avi" style="background:linear-gradient(135deg,#344054,#667085)">AK</div>
+    <div class="avi" id="sb-user-avi" style="background:linear-gradient(135deg,#344054,#667085)"></div>
     <div>
-      <div class="uname">Arvind Kumar</div>
-      <div class="urole">Admin · Owner</div>
+      <div class="uname" id="sb-user-name"></div>
+      <div class="urole" id="sb-user-role"></div>
     </div>
   </div>
 </aside>
@@ -919,7 +919,7 @@ select.sel{
   <header class="topbar">
     <div>
       <span class="tb-title" id="tb-title">Dashboard</span>
-      <span class="tb-sub" id="tb-sub">— Good morning, Arvind 👋</span>
+      <span class="tb-sub" id="tb-sub"></span>
     </div>
     <div class="tb-gap"></div>
     <div class="mode-switch">
@@ -987,27 +987,27 @@ select.sel{
       <div class="g4" style="margin-bottom:18px">
         <div class="card stat-card">
           <div class="stat-ico" style="background:#EBF2FF">📥</div>
-          <div class="stat-val" id="metric-leads">142</div>
-          <div class="stat-lbl">Total Leads (August)</div>
-          <div class="stat-ch up">↑ 18% vs last month</div>
+          <div class="stat-val" id="metric-leads">0</div>
+          <div class="stat-lbl">Total Leads</div>
+          <div class="stat-ch up">↑ Live from database</div>
         </div>
         <div class="card stat-card">
           <div class="stat-ico" style="background:#ECFDF5">✅</div>
-          <div class="stat-val" id="metric-bookings">38</div>
+          <div class="stat-val" id="metric-bookings">0</div>
           <div class="stat-lbl">Bookings Confirmed</div>
-          <div class="stat-ch up">↑ 12% vs July</div>
+          <div class="stat-ch up">↑ Live from database</div>
         </div>
         <div class="card stat-card">
           <div class="stat-ico" style="background:#FFFAEB">🏡</div>
-          <div class="stat-val" id="metric-active-props">24</div>
+          <div class="stat-val" id="metric-active-props">0</div>
           <div class="stat-lbl">Active Properties</div>
-          <div class="stat-ch up">↑ 4 new this week</div>
+          <div class="stat-ch up">↑ Live from database</div>
         </div>
         <div class="card stat-card">
           <div class="stat-ico" style="background:#F9F5FF">💰</div>
-          <div class="stat-val" id="metric-pipeline-value">₹4.2Cr</div>
+          <div class="stat-val" id="metric-pipeline-value">₹0</div>
           <div class="stat-lbl">Revenue Pipeline</div>
-          <div class="stat-ch up">↑ 24% vs last month</div>
+          <div class="stat-ch up">↑ Live from database</div>
         </div>
       </div>
 
@@ -1702,15 +1702,15 @@ select.sel{
 // ══════════════════════════════════════════════════════════════
 
 const PAGE_META = {
-  dashboard:  { title:'Dashboard',          sub:'— Good morning, Arvind 👋' },
-  client:     { title:'Client Dashboard',   sub:'— Ahmed Abdelsalam' },
-  inbox:      { title:'Inbox',              sub:'— 7 unread conversations' },
-  leads:      { title:'Lead Profiles',      sub:'— 5 leads captured' },
+  dashboard:  { title:'Dashboard',          sub:'' },
+  client:     { title:'Client Dashboard',   sub:'' },
+  inbox:      { title:'Inbox',              sub:'— Live conversations' },
+  leads:      { title:'Lead Profiles',      sub:'— Leads captured' },
   followups:  { title:'Follow-ups & Visits',sub:'— Auto-scheduled by AI' },
-  inventory:  { title:'Property Inventory', sub:'— 24 active listings' },
-  brokers:    { title:'Brokers',            sub:'— 3 active agents' },
+  inventory:  { title:'Property Inventory', sub:'— Active listings' },
+  brokers:    { title:'Brokers',            sub:'— Active agents' },
   aiagents:   { title:'AI Agents',          sub:'— AI agent & workflow automation' },
-  recordings: { title:'Call Recordings',    sub:'— 89 calls this month' },
+  recordings: { title:'Call Recordings',    sub:'— Call recordings' },
   settings:   { title:'Settings',           sub:'— System configuration' },
 };
 
@@ -2187,7 +2187,24 @@ function nav(page){
   // Update topbar
   const meta = PAGE_META[page]||{title:page,sub:''};
   document.getElementById('tb-title').textContent = meta.title;
-  document.getElementById('tb-sub').textContent   = meta.sub;
+  let subText = meta.sub;
+  if (page === 'dashboard') {
+    let tName = '';
+    if (window.currentTenant) {
+      tName = window.currentTenant.Leads_Name || window.currentTenant.leads_name || '';
+    }
+    if (!tName) {
+      try {
+        const stored = localStorage.getItem('dashboard_tenant');
+        if (stored) {
+          const t = JSON.parse(stored);
+          tName = t.Leads_Name || t.leads_name || '';
+        }
+      } catch (e) {}
+    }
+    subText = tName ? `— Good morning, ${tName} 👋` : '— Overview & Live Operations';
+  }
+  document.getElementById('tb-sub').textContent = subText;
 
   // Close notif panel
   document.getElementById('notif-panel').classList.remove('show');

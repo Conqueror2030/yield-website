@@ -1396,22 +1396,136 @@
     };
 
     // ══════════════════════════════════════════════════════════════════
+    //  DYNAMIC HYDRATION & TENANT IDENTITY
+    // ══════════════════════════════════════════════════════════════════
+    function getInitials(name) {
+        if (!name) return 'JK';
+        const parts = String(name).trim().split(/\s+/).filter(Boolean);
+        if (parts.length >= 2) {
+            return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+        } else if (parts.length === 1 && parts[0].length > 0) {
+            return parts[0].slice(0, 2).toUpperCase();
+        }
+        return 'JK';
+    }
+
+    function updateSidebarBadges() {
+        const inboxBadge = document.getElementById('sb-inbox-badge');
+        if (inboxBadge) {
+            inboxBadge.textContent = currentLeads ? currentLeads.length : 0;
+        }
+        const leadsBadge = document.getElementById('sb-leads-badge');
+        if (leadsBadge) {
+            leadsBadge.textContent = currentLeads ? currentLeads.length : 0;
+        }
+        const followupsBadge = document.getElementById('sb-followups-badge');
+        if (followupsBadge) {
+            followupsBadge.textContent = currentAppointments ? currentAppointments.length : 0;
+        }
+        const inventoryBadge = document.getElementById('sb-inventory-badge');
+        if (inventoryBadge) {
+            inventoryBadge.textContent = currentProperties ? currentProperties.length : 0;
+        }
+        const aiagentsBadge = document.getElementById('sb-aiagents-badge');
+        if (aiagentsBadge) {
+            aiagentsBadge.textContent = '2';
+        }
+    }
+
+    function hydrateTenantIdentity() {
+        if (!currentTenant) return;
+
+        const userName = currentTenant.Leads_Name || currentTenant.leads_name || 'James Kingston';
+        const clientBadge = currentTenant.Client_Badge || currentTenant.client_badge || currentTenant.company_name || 'Yield.ai';
+        const role = currentTenant.role || 'Admin · Owner';
+
+        // 1. User Name
+        const unameEl = document.getElementById('sb-user-name') || document.querySelector('.uname');
+        if (unameEl) {
+            unameEl.textContent = userName;
+        }
+
+        // 2. User Avatar Text / Initials
+        const aviEl = document.getElementById('sb-user-avi') || document.querySelector('.sb-user .avi');
+        if (aviEl) {
+            aviEl.textContent = getInitials(userName);
+        }
+
+        // 3. User Role
+        const uroleEl = document.getElementById('sb-user-role') || document.querySelector('.urole');
+        if (uroleEl) {
+            uroleEl.textContent = role;
+        }
+
+        // 4. Logo Name / Client Badge
+        const logoNameEl = document.getElementById('app-logo-name') || document.querySelector('.logo-name');
+        if (logoNameEl) {
+            logoNameEl.textContent = clientBadge;
+        }
+
+        // 5. Logo Subtitle
+        const logoSubEl = document.getElementById('app-logo-sub') || document.querySelector('.logo-sub');
+        if (logoSubEl) {
+            logoSubEl.textContent = 'Operations Hub';
+        }
+
+        // 6. Topbar Subtitle Greeting
+        const tbSub = document.getElementById('tb-sub');
+        if (tbSub) {
+            tbSub.textContent = `— Good morning, ${userName} 👋`;
+        }
+
+        // 7. Settings Company Info (if present)
+        const settingsCompany = document.getElementById('settings-company-name');
+        if (settingsCompany && !settingsCompany.value) {
+            settingsCompany.value = clientBadge;
+        }
+        const settingsSub = document.getElementById('settings-company-sub');
+        if (settingsSub) {
+            settingsSub.textContent = `Configure your ${clientBadge} automation system`;
+        }
+    }
+
+    // ══════════════════════════════════════════════════════════════════
     //  INITIALIZATION & ORCHESTRATION
     // ══════════════════════════════════════════════════════════════════
-    function initBackend() {
+    async function initBackend() {
         const fresh = localStorage.getItem('dashboard_tenant');
         if (fresh) {
             try { currentTenant = JSON.parse(fresh); } catch (e) {}
         }
         if (!currentTenant) return;
 
-        if (typeof lucide !== 'undefined') lucide.createIcons();
-        
-        // Populate Tenant UI
-        const tbSub = document.getElementById('tb-sub');
-        if (tbSub && currentTenant) {
-            tbSub.textContent = `— Good morning, ${currentTenant.leads_name || currentTenant.Leads_Name || 'Client'} 👋`;
+        window.currentTenant = currentTenant;
+
+        // Dynamic PocketBase live tenant verification
+        if (pb && (currentTenant.id || currentTenant.phone_id)) {
+            try {
+                let record = null;
+                if (currentTenant.id) {
+                    record = await pb.collection('Tenants').getOne(currentTenant.id).catch(() => null);
+                }
+                if (!record && currentTenant.phone_id) {
+                    const list = await pb.collection('Tenants').getFullList({
+                        filter: `phone_id = "${currentTenant.phone_id}"`
+                    }).catch(() => []);
+                    if (list && list.length > 0) record = list[0];
+                }
+                if (record) {
+                    currentTenant = { ...currentTenant, ...record };
+                    window.currentTenant = currentTenant;
+                    localStorage.setItem('dashboard_tenant', JSON.stringify(currentTenant));
+                }
+            } catch (err) {
+                console.warn('[Dashboard] Live tenant hydration fetch warning:', err.message);
+            }
         }
+
+        // Immediately hydrate DOM with tenant identity & initial badge state
+        hydrateTenantIdentity();
+        updateSidebarBadges();
+
+        if (typeof lucide !== 'undefined') lucide.createIcons();
 
         const logoutBtn = document.getElementById('logout-btn');
         if (logoutBtn) {
@@ -1421,7 +1535,8 @@
             });
         }
 
-        refreshAllData();
+        await refreshAllData();
+        updateSidebarBadges();
         startAutoRefresh();
         initRealtimeUpdates();
     }
@@ -1473,6 +1588,7 @@
             refreshAppointments(),
             refreshProperties()
         ]);
+        updateSidebarBadges();
     }
 
     // ---- REFRESH LEADS -----------------------------------------------
@@ -1569,6 +1685,7 @@
         InboxController.setLeads(currentLeads);
         FollowupsController.renderFollowupQueue();
         renderDynamicAgents(currentLeads, currentAppointments);
+        updateSidebarBadges();
         // Notify index.html lead profile grid
         if (typeof window.onLeadsLoaded === 'function') window.onLeadsLoaded(currentLeads);
     }
@@ -1629,6 +1746,7 @@
         currentAppointments = aptsData;
         FollowupsController.setAppointments(currentAppointments);
         renderDynamicAgents(currentLeads, currentAppointments);
+        updateSidebarBadges();
         // Notify index.html bookings table
         if (typeof window.onAppointmentsLoaded === 'function') window.onAppointmentsLoaded(currentAppointments);
     }
@@ -1677,6 +1795,9 @@
 
         currentProperties = propsData || [];
         InventoryController.setProperties(currentProperties);
+        const activePropsEl = document.getElementById('metric-active-props');
+        if (activePropsEl) activePropsEl.textContent = currentProperties.length;
+        updateSidebarBadges();
     }
 
     // ---- AUTO-REFRESH ------------------------------------------------
@@ -1726,17 +1847,20 @@
                     // Dynamically update InboxController
                     InboxController.handleRealtimeUpdate(e.record, e.action);
                     FollowupsController.renderFollowupQueue();
+                    updateSidebarBadges();
                 }
             });
 
             // 2. Appointments Realtime Subscription
             pb.collection('Appointments').subscribe('*', () => {
                 refreshAppointments();
+                updateSidebarBadges();
             });
 
             // 3. Properties Realtime Subscription
             pb.collection('Properties').subscribe('*', () => {
                 refreshProperties();
+                updateSidebarBadges();
             });
 
             pbSubscribed = true;
