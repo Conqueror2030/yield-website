@@ -1545,17 +1545,18 @@
             Title: title,
             Status: status,
             Info: infoText,
-            Tenant_ID: [tenantId],
-            Tenants_ID: tenantId
+            Tenant_ID: tenantId ? [tenantId] : []
         };
 
         let created = false;
+        let createError = '';
         if (pb) {
             try {
                 await pb.collection('Properties').create(newRecord);
                 created = true;
             } catch (e) {
-                console.warn('[saveProperty] PocketBase create failed:', e.message);
+                createError = e.message || 'PocketBase create failed';
+                console.warn('[saveProperty] PocketBase create failed:', createError);
             }
         }
 
@@ -1570,7 +1571,11 @@
         }
 
         if (typeof closeModal === 'function') closeModal('modal-add-prop');
-        if (typeof toast === 'function') toast('✅ Property added & synced to PocketBase!');
+        if (created) {
+            if (typeof toast === 'function') toast('✅ Property added & synced to PocketBase!');
+        } else {
+            if (typeof toast === 'function') toast(`⚠️ Property saved locally (${createError || 'offline'})`);
+        }
 
         refreshProperties();
     };
@@ -1595,7 +1600,9 @@
             Scheduled_Time: date,
             Status: 'Confirmed',
             Notes: `${prop} · Budget: ${budget} · Client: ${name} · Broker: ${broker}`,
-            Tenants_ID: tenantId
+            Tenants_ID: tenantId,
+            Assigned_Broker: broker,
+            Type: 'Site Visit'
         };
 
         let created = false;
