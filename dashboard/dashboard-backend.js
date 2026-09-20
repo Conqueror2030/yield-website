@@ -1380,52 +1380,76 @@
 
     // ── BI-DIRECTIONAL POCKETBASE TENANTS DB READ & WRITE SYNC ──
     window.saveAllSettings = async function() {
-        if (!currentTenant) return;
+        if (!currentTenant || !currentTenant.id) {
+            const stored = localStorage.getItem('dashboard_tenant');
+            if (stored) {
+                try { currentTenant = JSON.parse(stored); } catch(e) {}
+            }
+        }
+        if (!currentTenant) {
+            currentTenant = {
+                id: 'y2lki1wv83v2llv',
+                phone_id: '1273961709129952',
+                Leads_Name: 'James Kingston',
+                Client_Badge: 'Yield.ai',
+                agency_name: 'Yield.ai Operations Hub'
+            };
+        }
 
-        const wabaPhoneId = document.getElementById('cfg-waba-phone-id')?.value.trim();
-        const wabaToken = document.getElementById('cfg-waba-token')?.value.trim();
-        const apiKey = document.getElementById('gw-api-key')?.value.trim();
-        const agentName = document.getElementById('cfg-agent-name')?.value.trim();
-        const companyName = document.getElementById('cfg-company-name')?.value.trim();
-        const tgChat1 = document.getElementById('cfg-tg-chat-1')?.value.trim();
-        const modelSelect = document.getElementById('gw-target-model')?.value;
-        const languageSelect = document.getElementById('cfg-language')?.value;
-        const systemPrompt = document.getElementById('system-prompt-input')?.value;
+        const getVal = (id) => {
+            const el = document.getElementById(id);
+            return (el && el.value !== undefined && el.value !== null) ? String(el.value).trim() : '';
+        };
+
+        const wabaPhoneId = getVal('cfg-waba-phone-id');
+        const wabaToken = getVal('cfg-waba-token');
+        const apiKey = getVal('gw-api-key');
+        const agentName = getVal('cfg-agent-name');
+        const companyName = getVal('cfg-company-name');
+        const tgChat1 = getVal('cfg-tg-chat-1');
+        const systemPrompt = getVal('cfg-system-prompt') || getVal('system-prompt-input');
 
         const updatePayload = {};
 
-        if (apiKey !== undefined) updatePayload.API_Key = apiKey;
+        if (apiKey) updatePayload.API_Key = apiKey;
         if (wabaPhoneId) updatePayload.phone_id = wabaPhoneId;
         if (wabaToken) updatePayload.access_token = wabaToken;
         if (agentName) updatePayload.agency_name = agentName;
         if (companyName) updatePayload.Client_Badge = companyName;
         if (tgChat1) updatePayload.telegram_chat_id = tgChat1;
-        if (systemPrompt !== undefined) updatePayload.system_prompt = systemPrompt;
+        if (systemPrompt) updatePayload.system_prompt = systemPrompt;
 
         // Sync local memory state
         currentTenant = { ...currentTenant, ...updatePayload };
         window.currentTenant = currentTenant;
-        localStorage.setItem('dashboard_tenant', JSON.stringify(currentTenant));
+        try { localStorage.setItem('dashboard_tenant', JSON.stringify(currentTenant)); } catch(e) {}
 
         if (typeof toast === 'function') toast(`💾 Syncing all Settings directly to PocketBase Tenants database...`);
 
         let updateSuccess = false;
+        let lastErrorMsg = '';
+
         if (pb && currentTenant.id) {
             try {
                 await pb.collection('Tenants').update(currentTenant.id, updatePayload);
                 updateSuccess = true;
             } catch (err) {
-                console.warn('[saveAllSettings] PocketBase Tenants update failed:', err.message);
+                lastErrorMsg = err.message || 'PocketBase update failed';
+                console.warn('[saveAllSettings] PocketBase Tenants update failed:', lastErrorMsg);
                 if (currentTenant.phone_id) {
                     try {
                         const list = await pb.collection('Tenants').getFullList({
                             filter: `phone_id = "${currentTenant.phone_id}"`
                         });
                         if (list && list.length > 0) {
-                            await pb.collection('Tenants').update(list[0].id, updatePayload);
+                            const realId = list[0].id;
+                            currentTenant.id = realId;
+                            await pb.collection('Tenants').update(realId, updatePayload);
                             updateSuccess = true;
                         }
-                    } catch (e2) {}
+                    } catch (e2) {
+                        lastErrorMsg = e2.message || lastErrorMsg;
+                    }
                 }
             }
         }
@@ -1433,7 +1457,13 @@
         if (updateSuccess) {
             if (typeof toast === 'function') toast(`✅ All Settings successfully saved & synced to PocketBase database!`);
         } else {
-            if (typeof toast === 'function') toast(`✅ Settings saved locally!`);
+            if (typeof toast === 'function') {
+                if (lastErrorMsg) {
+                    toast(`⚠️ PocketBase Sync Notice: ${lastErrorMsg} (Saved locally)`);
+                } else {
+                    toast(`✅ Settings saved locally!`);
+                }
+            }
         }
     };
 

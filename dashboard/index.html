@@ -2325,9 +2325,10 @@ window.fetchGwModels = async function() {
 };
 
 window.testGatewayPayload = function() {
-  const key = document.getElementById('gw-api-key')?.value.trim();
+  const el = document.getElementById('gw-api-key');
+  const key = el ? el.value.trim() : '';
   const model = document.getElementById('gw-target-model')?.value || 'gemini-1.5-flash';
-  const provider = currentGwProvider.toUpperCase();
+  const provider = (window.currentGwProvider || 'gemini').toUpperCase();
   
   toast(`🚀 Testing ${provider} payload (${model})...`);
   setTimeout(() => {
@@ -2336,13 +2337,14 @@ window.testGatewayPayload = function() {
 };
 
 window.saveGatewayConfig = function() {
-  const key = document.getElementById('gw-api-key')?.value.trim();
-  const model = document.getElementById('gw-target-model')?.value;
-  const name = document.getElementById('cfg-agent-name')?.value;
-  const lang = document.getElementById('cfg-language')?.value;
+  const el = document.getElementById('gw-api-key');
+  const key = el ? el.value.trim() : '';
+  const model = document.getElementById('gw-target-model')?.value || 'gemini-1.5-flash';
+  const name = document.getElementById('cfg-agent-name')?.value || '';
+  const lang = document.getElementById('cfg-language')?.value || '';
   
   const configObj = {
-    provider: currentGwProvider,
+    provider: window.currentGwProvider || 'gemini',
     key: key,
     model: model,
     agentName: name,
@@ -2350,7 +2352,11 @@ window.saveGatewayConfig = function() {
   };
   
   localStorage.setItem('yieldai_gateway_config', JSON.stringify(configObj));
-  toast(`✅ Universal Gateway Configuration saved for ${currentGwProvider.toUpperCase()} (${model})!`);
+  if (window.saveAllSettings) {
+    window.saveAllSettings();
+  } else {
+    toast(`✅ Universal Gateway Configuration saved for ${(window.currentGwProvider || 'gemini').toUpperCase()} (${model})!`);
+  }
 };
 // Receives live Leads array and hydrates the leads profile grid & conversation list
 window.onLeadsLoaded = function(leads) {
