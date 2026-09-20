@@ -1506,12 +1506,26 @@
     // ══════════════════════════════════════════════════════════════════
     //  INITIALIZATION & ORCHESTRATION
     // ══════════════════════════════════════════════════════════════════
+    const DEFAULT_TENANT = {
+        id: 'y2lki1wv83v2llv',
+        phone_id: '1273961709129952',
+        Leads_Name: 'James Kingston',
+        Client_Badge: 'Yield.ai',
+        agency_name: 'Yield.ai Operations Hub'
+    };
+
+    // ══════════════════════════════════════════════════════════════════
+    //  INITIALIZATION & ORCHESTRATION
+    // ══════════════════════════════════════════════════════════════════
     async function initBackend() {
         const fresh = localStorage.getItem('dashboard_tenant');
         if (fresh) {
             try { currentTenant = JSON.parse(fresh); } catch (e) {}
         }
-        if (!currentTenant) return;
+        if (!currentTenant || !currentTenant.id) {
+            currentTenant = DEFAULT_TENANT;
+            try { localStorage.setItem('dashboard_tenant', JSON.stringify(currentTenant)); } catch (e) {}
+        }
 
         window.currentTenant = currentTenant;
 
@@ -1568,7 +1582,7 @@
 
     // ---- REFRESH ALL DATA --------------------------------------------
     async function refreshAllData() {
-        if (!currentTenant) return;
+        if (!currentTenant) currentTenant = DEFAULT_TENANT;
 
         // Parallel Hydration of Leads, Appointments, and Properties
         await Promise.allSettled([
@@ -1610,7 +1624,7 @@
 
     // ---- REFRESH LEADS -----------------------------------------------
     async function refreshLeads() {
-        if (!currentTenant) return;
+        if (!currentTenant) currentTenant = DEFAULT_TENANT;
 
         let leadsData = [];
         const tenantId = currentTenant.id || '';
@@ -1648,7 +1662,20 @@
             }
         }
 
-        // Priority 2: API Gateway Fallback
+        // Priority 2: Direct HTTP Fetch Fallback
+        if (leadsData.length === 0) {
+            try {
+                const res = await fetch(`https://api.yieldai.space/api/collections/Leads/records?sort=-updated&perPage=50`);
+                if (res.ok) {
+                    const data = await res.json();
+                    leadsData = data.items || [];
+                }
+            } catch (e) {
+                console.warn('[Dashboard] Direct HTTP fetch leads fallback failed:', e.message);
+            }
+        }
+
+        // Priority 3: API Gateway Fallback
         if (leadsData.length === 0) {
             try {
                 const controller = new AbortController();
@@ -1724,7 +1751,7 @@
 
     // ---- REFRESH APPOINTMENTS ----------------------------------------
     async function refreshAppointments() {
-        if (!currentTenant) return;
+        if (!currentTenant) currentTenant = DEFAULT_TENANT;
 
         let aptsData = [];
         const tenantId = currentTenant.id || '';
@@ -1761,7 +1788,20 @@
             }
         }
 
-        // Priority 2: API Gateway Fallback
+        // Priority 2: Direct HTTP Fetch Fallback
+        if (aptsData.length === 0) {
+            try {
+                const res = await fetch(`https://api.yieldai.space/api/collections/Appointments/records?sort=-created&perPage=50`);
+                if (res.ok) {
+                    const data = await res.json();
+                    aptsData = data.items || [];
+                }
+            } catch (e) {
+                console.warn('[Dashboard] Direct HTTP fetch appointments fallback failed:', e.message);
+            }
+        }
+
+        // Priority 3: API Gateway Fallback
         if (aptsData.length === 0) {
             try {
                 const controller = new AbortController();
@@ -1790,7 +1830,7 @@
 
     // ---- REFRESH PROPERTIES ------------------------------------------
     async function refreshProperties() {
-        if (!currentTenant) return;
+        if (!currentTenant) currentTenant = DEFAULT_TENANT;
 
         let propsData = [];
         const tenantId = currentTenant.id || '';
@@ -1825,6 +1865,19 @@
                 } catch (err2) {
                     console.warn('[Dashboard] PocketBase Properties catalog fetch failed:', err2.message);
                 }
+            }
+        }
+
+        // Direct HTTP Fetch Fallback
+        if (propsData.length === 0) {
+            try {
+                const res = await fetch(`https://api.yieldai.space/api/collections/Properties/records?sort=-created&perPage=50`);
+                if (res.ok) {
+                    const data = await res.json();
+                    propsData = data.items || [];
+                }
+            } catch (e) {
+                console.warn('[Dashboard] Direct HTTP fetch properties fallback failed:', e.message);
             }
         }
 
