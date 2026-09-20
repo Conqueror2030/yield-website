@@ -1401,28 +1401,72 @@
             return (el && el.value !== undefined && el.value !== null) ? String(el.value).trim() : '';
         };
 
-        const wabaPhoneId = getVal('cfg-waba-phone-id');
-        const wabaToken = getVal('cfg-waba-token');
-        const apiKey = getVal('gw-api-key');
-        const agentName = getVal('cfg-agent-name');
-        const companyName = getVal('cfg-company-name');
-        const tgChat1 = getVal('cfg-tg-chat-1');
-        const systemPrompt = getVal('cfg-system-prompt') || getVal('system-prompt-input');
-
         const updatePayload = {};
+        const setPayloadField = (key, val) => {
+            if (val !== undefined && val !== null && val !== '') {
+                updatePayload[key] = val;
+            }
+        };
 
-        if (apiKey) updatePayload.API_Key = apiKey;
-        if (wabaPhoneId) updatePayload.phone_id = wabaPhoneId;
-        if (wabaToken) updatePayload.access_token = wabaToken;
-        if (agentName) updatePayload.agency_name = agentName;
-        if (companyName) updatePayload.Client_Badge = companyName;
-        if (tgChat1) updatePayload.telegram_chat_id = tgChat1;
-        if (systemPrompt) updatePayload.system_prompt = systemPrompt;
+        // WhatsApp / Meta API
+        setPayloadField('phone_id', getVal('cfg-waba-phone-id'));
+        setPayloadField('waba_id', getVal('cfg-waba-phone-id'));
+        setPayloadField('access_token', getVal('cfg-waba-token'));
+        setPayloadField('webhook_verify_token', getVal('cfg-waba-verify-token'));
 
-        // Sync local memory state
+        // AI Agent Config & Universal Gateway
+        const agentName = getVal('cfg-agent-name');
+        if (agentName) {
+            setPayloadField('agency_name', agentName);
+            setPayloadField('agent_name', agentName);
+        }
+        setPayloadField('primary_language', getVal('cfg-language'));
+        setPayloadField('API_Key', getVal('gw-api-key'));
+        setPayloadField('target_model', getVal('gw-target-model'));
+        setPayloadField('protocol_provider', window.currentGwProvider || 'google');
+
+        const sysPrompt = getVal('cfg-system-prompt') || getVal('system-prompt-input');
+        if (sysPrompt) setPayloadField('system_prompt', sysPrompt);
+
+        // Telegram Broker Notifications
+        setPayloadField('telegram_bot_token', getVal('cfg-tg-bot-token'));
+        setPayloadField('telegram_chat_id', getVal('cfg-tg-chat-1'));
+        setPayloadField('telegram_chat_id_2', getVal('cfg-tg-chat-2'));
+        setPayloadField('telegram_chat_id_3', getVal('cfg-tg-chat-3'));
+
+        // Google Sheets
+        setPayloadField('sheets_id', getVal('cfg-gsheet-id'));
+        setPayloadField('sheets_bookings_tab', getVal('cfg-gsheet-bookings'));
+        setPayloadField('sheets_followup_tab', getVal('cfg-gsheet-followups'));
+
+        // Follow-up Scheduler
+        const intervalVal = getVal('cfg-sched-interval');
+        if (intervalVal) setPayloadField('scheduler_run_every', parseInt(intervalVal, 10) || 4);
+
+        const maxVal = getVal('cfg-sched-max');
+        if (maxVal) setPayloadField('scheduler_max_followups', parseInt(maxVal, 10) || 3);
+
+        const delayVal = getVal('cfg-sched-delay');
+        if (delayVal) setPayloadField('scheduler_delay_hours', parseInt(delayVal, 10) || 24);
+
+        // Company Info
+        const companyName = getVal('cfg-company-name');
+        if (companyName) {
+            setPayloadField('Client_Badge', companyName);
+            setPayloadField('company_name', companyName);
+        }
+        setPayloadField('office_phone', getVal('cfg-company-phone'));
+        setPayloadField('company_email', getVal('cfg-company-email'));
+        setPayloadField('company_city', getVal('cfg-company-city'));
+
+        // Sync local memory state & localStorage immediately
         currentTenant = { ...currentTenant, ...updatePayload };
         window.currentTenant = currentTenant;
         try { localStorage.setItem('dashboard_tenant', JSON.stringify(currentTenant)); } catch(e) {}
+
+        if (typeof hydrateTenantIdentity === 'function') {
+            try { hydrateTenantIdentity(); } catch(e) {}
+        }
 
         if (typeof toast === 'function') toast(`💾 Syncing all Settings directly to PocketBase Tenants database...`);
 
@@ -1431,11 +1475,16 @@
 
         if (pb && currentTenant.id) {
             try {
-                await pb.collection('Tenants').update(currentTenant.id, updatePayload);
-                updateSuccess = true;
+                const updatedRecord = await pb.collection('Tenants').update(currentTenant.id, updatePayload);
+                if (updatedRecord) {
+                    currentTenant = { ...currentTenant, ...updatedRecord };
+                    window.currentTenant = currentTenant;
+                    try { localStorage.setItem('dashboard_tenant', JSON.stringify(currentTenant)); } catch(e) {}
+                    updateSuccess = true;
+                }
             } catch (err) {
                 lastErrorMsg = err.message || 'PocketBase update failed';
-                console.warn('[saveAllSettings] PocketBase Tenants update failed:', lastErrorMsg);
+                console.warn('[saveAllSettings] Direct ID update failed:', lastErrorMsg);
                 if (currentTenant.phone_id) {
                     try {
                         const list = await pb.collection('Tenants').getFullList({
@@ -1444,8 +1493,13 @@
                         if (list && list.length > 0) {
                             const realId = list[0].id;
                             currentTenant.id = realId;
-                            await pb.collection('Tenants').update(realId, updatePayload);
-                            updateSuccess = true;
+                            const updatedRecord = await pb.collection('Tenants').update(realId, updatePayload);
+                            if (updatedRecord) {
+                                currentTenant = { ...currentTenant, ...updatedRecord };
+                                window.currentTenant = currentTenant;
+                                try { localStorage.setItem('dashboard_tenant', JSON.stringify(currentTenant)); } catch(e) {}
+                                updateSuccess = true;
+                            }
                         }
                     } catch (e2) {
                         lastErrorMsg = e2.message || lastErrorMsg;
@@ -1668,20 +1722,47 @@
             settingsSub.textContent = `Configure your ${clientBadge} automation system`;
         }
 
-        // 8. Hydrate Settings Form Inputs from Live PocketBase Tenant Record
+        // 8. Hydrate ALL Settings Form Inputs from Live PocketBase Tenant Record
         const setVal = (id, val) => {
             if (val === undefined || val === null || val === '') return;
             const el = document.getElementById(id);
             if (el) el.value = val;
         };
 
-        setVal('gw-api-key', currentTenant.API_Key);
+        // WhatsApp / Meta API
         setVal('cfg-waba-phone-id', currentTenant.phone_id || currentTenant.waba_id);
         setVal('cfg-waba-token', currentTenant.access_token);
-        setVal('cfg-agent-name', currentTenant.agency_name || currentTenant.Leads_Name);
-        setVal('cfg-company-name', currentTenant.Client_Badge || currentTenant.agency_name);
-        setVal('cfg-tg-chat-1', currentTenant.telegram_chat_id);
+        setVal('cfg-waba-verify-token', currentTenant.webhook_verify_token);
+
+        // AI Agent Config & Universal Gateway
+        setVal('cfg-agent-name', currentTenant.agency_name || currentTenant.agent_name || currentTenant.Leads_Name);
+        setVal('cfg-language', currentTenant.primary_language);
+        setVal('gw-api-key', currentTenant.API_Key);
+        setVal('gw-target-model', currentTenant.target_model);
+        setVal('cfg-system-prompt', currentTenant.system_prompt);
         setVal('system-prompt-input', currentTenant.system_prompt);
+
+        // Telegram Broker Notifications
+        setVal('cfg-tg-bot-token', currentTenant.telegram_bot_token);
+        setVal('cfg-tg-chat-1', currentTenant.telegram_chat_id);
+        setVal('cfg-tg-chat-2', currentTenant.telegram_chat_id_2);
+        setVal('cfg-tg-chat-3', currentTenant.telegram_chat_id_3);
+
+        // Google Sheets
+        setVal('cfg-gsheet-id', currentTenant.sheets_id);
+        setVal('cfg-gsheet-bookings', currentTenant.sheets_bookings_tab);
+        setVal('cfg-gsheet-followups', currentTenant.sheets_followup_tab);
+
+        // Follow-up Scheduler
+        setVal('cfg-sched-interval', currentTenant.scheduler_run_every);
+        setVal('cfg-sched-max', currentTenant.scheduler_max_followups);
+        setVal('cfg-sched-delay', currentTenant.scheduler_delay_hours);
+
+        // Company Info
+        setVal('cfg-company-name', currentTenant.Client_Badge || currentTenant.company_name || currentTenant.agency_name);
+        setVal('cfg-company-phone', currentTenant.office_phone || currentTenant.company_phone);
+        setVal('cfg-company-email', currentTenant.company_email);
+        setVal('cfg-company-city', currentTenant.company_city);
     }
 
     // ══════════════════════════════════════════════════════════════════
@@ -1710,6 +1791,11 @@
 
         window.currentTenant = currentTenant;
 
+        // Immediately hydrate DOM with cached tenant values
+        try {
+            hydrateTenantIdentity();
+        } catch (e) {}
+
         // Dynamic PocketBase live tenant verification
         if (pb && (currentTenant.id || currentTenant.phone_id)) {
             try {
@@ -1733,7 +1819,7 @@
             }
         }
 
-        // Immediately hydrate DOM with tenant identity & initial badge state
+        // Hydrate DOM again after fresh PocketBase record sync
         try {
             hydrateTenantIdentity();
             updateSidebarBadges();
