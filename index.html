@@ -1,16 +1,20 @@
 <!DOCTYPE html>
 <html lang="en" id="html-root">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Yield.ai | WhatsApp AI Automation for High-Velocity Teams</title>
-    <meta name="description" content="The premium WhatsApp automation engine built for high-velocity teams. Qualify leads 24/7, book viewings instantly, and route top-tier prospects on complete autopilot.">
+    <meta name="description"
+        content="The premium WhatsApp automation engine built for high-velocity teams. Qualify leads 24/7, book viewings instantly, and route top-tier prospects on complete autopilot.">
     <link rel="canonical" href="https://yieldai.space/">
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap"
+        rel="stylesheet">
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -37,17 +41,17 @@
 
     <!-- Instant theme apply — prevents flash of wrong theme -->
     <script>
-        (function(){
-            var theme = localStorage.getItem('yieldai_theme');
-            var root = document.getElementById('html-root') || document.documentElement;
-            if (theme === 'light') {
-                root.classList.add('light-mode');
-                root.setAttribute('data-theme', 'light');
-            } else if (theme === 'dark') {
-                root.classList.add('dark-mode');
-                root.setAttribute('data-theme', 'dark');
-            }
-        })();
+            (function () {
+                var theme = localStorage.getItem('yieldai_theme');
+                var root = document.getElementById('html-root') || document.documentElement;
+                if (theme === 'light') {
+                    root.classList.add('light-mode');
+                    root.setAttribute('data-theme', 'light');
+                } else if (theme === 'dark') {
+                    root.classList.add('dark-mode');
+                    root.setAttribute('data-theme', 'dark');
+                }
+            })();
     </script>
 
     <!-- Lucide Icons -->
@@ -81,104 +85,195 @@
                 radial-gradient(circle at 50% 0%, rgba(22, 207, 130, 0.09) 0%, transparent 55%),
                 radial-gradient(circle at 80% 60%, rgba(22, 207, 130, 0.05) 0%, transparent 40%);
         }
+
         [data-theme="light"] .glass-nav {
             background: rgba(245, 248, 252, 0.92) !important;
-            border-bottom: 1px solid rgba(0,0,0,0.08) !important;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
         }
+
         [data-theme="light"] #navbar.scrolled {
             background: rgba(245, 248, 252, 0.97) !important;
         }
+
         [data-theme="light"] .card-glass {
-            background: rgba(255,255,255,0.85) !important;
-            border: 1px solid rgba(0,0,0,0.07) !important;
-            box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+            background: rgba(255, 255, 255, 0.85) !important;
+            border: 1px solid rgba(0, 0, 0, 0.07) !important;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
         }
+
         [data-theme="light"] .card-hover {
             background-color: #FFFFFF !important;
-            border: 1px solid rgba(0,0,0,0.08) !important;
+            border: 1px solid rgba(0, 0, 0, 0.08) !important;
         }
-        [data-theme="light"] h1, [data-theme="light"] h2, [data-theme="light"] h3, [data-theme="light"] h4 { color: #0F172A; }
-        [data-theme="light"] p { color: #475569; }
-        [data-theme="light"] .text-white { color: #0F172A !important; }
-        [data-theme="light"] .text-gray-400 { color: #64748B !important; }
-        [data-theme="light"] .text-gray-500 { color: #94A3B8 !important; }
-        [data-theme="light"] .text-gray-600 { color: #64748B !important; }
-        [data-theme="light"] input, [data-theme="light"] select, [data-theme="light"] textarea {
+
+        [data-theme="light"] h1,
+        [data-theme="light"] h2,
+        [data-theme="light"] h3,
+        [data-theme="light"] h4 {
+            color: #0F172A;
+        }
+
+        [data-theme="light"] p {
+            color: #475569;
+        }
+
+        [data-theme="light"] .text-white {
+            color: #0F172A !important;
+        }
+
+        [data-theme="light"] .text-gray-400 {
+            color: #64748B !important;
+        }
+
+        [data-theme="light"] .text-gray-500 {
+            color: #94A3B8 !important;
+        }
+
+        [data-theme="light"] .text-gray-600 {
+            color: #64748B !important;
+        }
+
+        [data-theme="light"] input,
+        [data-theme="light"] select,
+        [data-theme="light"] textarea {
             background-color: #FFFFFF !important;
-            border: 1px solid rgba(0,0,0,0.2) !important;
+            border: 1px solid rgba(0, 0, 0, 0.2) !important;
             color: #0F172A !important;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05) !important;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
         }
-        [data-theme="light"] input::placeholder, [data-theme="light"] textarea::placeholder { color: #94A3B8 !important; }
-        [data-theme="light"] select option { background-color: #fff; color: #0F172A; }
+
+        [data-theme="light"] input::placeholder,
+        [data-theme="light"] textarea::placeholder {
+            color: #94A3B8 !important;
+        }
+
+        [data-theme="light"] select option {
+            background-color: #fff;
+            color: #0F172A;
+        }
+
         [data-theme="light"] .btn-glass {
-            background: rgba(0,0,0,0.04) !important;
-            border: 1px solid rgba(0,0,0,0.12) !important;
+            background: rgba(0, 0, 0, 0.04) !important;
+            border: 1px solid rgba(0, 0, 0, 0.12) !important;
             color: #0F172A !important;
         }
+
         [data-theme="light"] .btn-glass:hover {
-            background: rgba(0,0,0,0.08) !important;
+            background: rgba(0, 0, 0, 0.08) !important;
         }
+
         [data-theme="light"] .btn-secondary {
-            border-color: rgba(0,0,0,0.15) !important;
+            border-color: rgba(0, 0, 0, 0.15) !important;
             color: #0F172A !important;
         }
+
         [data-theme="light"] #mobile-menu {
             background: #F5F8FC !important;
-            border-color: rgba(0,0,0,0.08) !important;
+            border-color: rgba(0, 0, 0, 0.08) !important;
         }
+
         [data-theme="light"] .gradient-text {
             background: linear-gradient(135deg, #0F172A 0%, #475569 100%) !important;
             -webkit-background-clip: text !important;
             -webkit-text-fill-color: transparent !important;
             background-clip: text !important;
         }
+
         [data-theme="light"] .phone-mockup {
             background-color: #f5f5f5 !important;
             border-color: #d1d5db !important;
         }
+
         [data-theme="light"] .chat-bubble-left {
             background-color: #F1F5F9 !important;
             color: #0F172A !important;
         }
+
         [data-theme="light"] .icon-wrapper {
-            background: linear-gradient(135deg, rgba(22,207,130,0.12) 0%, rgba(14,187,114,0.06) 100%) !important;
-            border: 1px solid rgba(22,207,130,0.25) !important;
+            background: linear-gradient(135deg, rgba(22, 207, 130, 0.12) 0%, rgba(14, 187, 114, 0.06) 100%) !important;
+            border: 1px solid rgba(22, 207, 130, 0.25) !important;
         }
+
         [data-theme="light"] .calendly-inner {
             background: #fff !important;
         }
+
         /* Override specific Tailwind utility background classes for Light Mode */
-        [data-theme="light"] .bg-\[\#080808\] { background-color: #F5F8FC !important; border-color: rgba(0,0,0,0.08) !important; }
-        [data-theme="light"] .bg-\[\#030303\] { background-color: #E8EEF4 !important; border-color: rgba(0,0,0,0.08) !important; }
-        [data-theme="light"] .bg-\[rgba\(15\,15\,15\,0\.9\)\] { background: rgba(255, 255, 255, 0.95) !important; border-color: rgba(0,0,0,0.08) !important; }
-        [data-theme="light"] .bg-\[\#0f0f0f\]\/95 { background: rgba(255,255,255,0.95) !important; }
-        [data-theme="light"] .bg-\[\#0e0e0e\] { background-color: #F8FAFC !important; border-color: #E2E8F0 !important; }
-        [data-theme="light"] .bg-\[\#0a0a0a\] { background-color: #F1F5F9 !important; }
-        [data-theme="light"] .bg-\[\#0f1f17\] { background-color: #ffffff !important; }
-        [data-theme="light"] .text-gray-300 { color: #475569 !important; }
-        [data-theme="light"] .hover\:text-white:hover { color: #0F172A !important; }
-        [data-theme="light"] .text-brand-accentLight { color: #10B981 !important; }
+        [data-theme="light"] .bg-\[\#080808\] {
+            background-color: #F5F8FC !important;
+            border-color: rgba(0, 0, 0, 0.08) !important;
+        }
+
+        [data-theme="light"] .bg-\[\#030303\] {
+            background-color: #E8EEF4 !important;
+            border-color: rgba(0, 0, 0, 0.08) !important;
+        }
+
+        [data-theme="light"] .bg-\[rgba\(15\,15\,15\,0\.9\)\] {
+            background: rgba(255, 255, 255, 0.95) !important;
+            border-color: rgba(0, 0, 0, 0.08) !important;
+        }
+
+        [data-theme="light"] .bg-\[\#0f0f0f\]\/95 {
+            background: rgba(255, 255, 255, 0.95) !important;
+        }
+
+        [data-theme="light"] .bg-\[\#0e0e0e\] {
+            background-color: #F8FAFC !important;
+            border-color: #E2E8F0 !important;
+        }
+
+        [data-theme="light"] .bg-\[\#0a0a0a\] {
+            background-color: #F1F5F9 !important;
+        }
+
+        [data-theme="light"] .bg-\[\#0f1f17\] {
+            background-color: #ffffff !important;
+        }
+
+        [data-theme="light"] .text-gray-300 {
+            color: #475569 !important;
+        }
+
+        [data-theme="light"] .hover\:text-white:hover {
+            color: #0F172A !important;
+        }
+
+        [data-theme="light"] .text-brand-accentLight {
+            color: #10B981 !important;
+        }
 
         /* Theme toggle button */
         .theme-toggle {
-            width: 36px; height: 36px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
-            border: 1px solid rgba(255,255,255,0.12);
-            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            background: rgba(255, 255, 255, 0.04);
             color: #94A3B8;
             transition: all 0.2s ease;
             flex-shrink: 0;
         }
-        .theme-toggle:hover { background: rgba(255,255,255,0.1); color: #fff; }
+
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
         [data-theme="light"] .theme-toggle {
-            border: 1px solid rgba(0,0,0,0.12) !important;
-            background: rgba(0,0,0,0.04) !important;
+            border: 1px solid rgba(0, 0, 0, 0.12) !important;
+            background: rgba(0, 0, 0, 0.04) !important;
             color: #475569 !important;
         }
-        [data-theme="light"] .theme-toggle:hover { background: rgba(0,0,0,0.08) !important; color: #0F172A !important; }
+
+        [data-theme="light"] .theme-toggle:hover {
+            background: rgba(0, 0, 0, 0.08) !important;
+            color: #0F172A !important;
+        }
 
         .glass-nav {
             background: rgba(5, 5, 5, 0.75);
@@ -205,7 +300,7 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
             transition: left 0.5s ease;
         }
 
@@ -244,7 +339,7 @@
         }
 
         .btn-secondary:hover {
-            background-color: rgba(255,255,255,0.05);
+            background-color: rgba(255, 255, 255, 0.05);
             border-color: #444;
         }
 
@@ -276,7 +371,7 @@
         }
 
         .icon-wrapper {
-            background: linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(5,150,105,0.05) 100%);
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.05) 100%);
             border: 1px solid rgba(16, 185, 129, 0.2);
             color: #34D399;
         }
@@ -303,13 +398,29 @@
         }
 
         @keyframes badge-glow {
-            0%, 100% { box-shadow: 0 0 16px rgba(16, 185, 129, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.1); }
-            50% { box-shadow: 0 0 24px rgba(16, 185, 129, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15); }
+
+            0%,
+            100% {
+                box-shadow: 0 0 16px rgba(16, 185, 129, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            }
+
+            50% {
+                box-shadow: 0 0 24px rgba(16, 185, 129, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+            }
         }
 
         @keyframes dot-pulse {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.2); opacity: 0.8; }
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.2);
+                opacity: 0.8;
+            }
         }
 
         .badge-soon {
@@ -318,20 +429,25 @@
             color: #71717a;
         }
 
-        input, select, textarea {
-            background-color: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.1);
+        input,
+        select,
+        textarea {
+            background-color: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             color: white;
             transition: all 0.3s ease;
         }
 
-        input:focus, select:focus, textarea:focus {
+        input:focus,
+        select:focus,
+        textarea:focus {
             outline: none;
             border-color: #10B981;
             box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
         }
 
-        input::placeholder, textarea::placeholder {
+        input::placeholder,
+        textarea::placeholder {
             color: #4a4a52;
         }
 
@@ -344,7 +460,7 @@
             border: 8px solid #1a1a1a;
             border-radius: 2rem;
             background-color: #050505;
-            box-shadow: 0 25px 80px rgba(0,0,0,0.7), 0 0 0 1px #2a2a2a, 0 0 60px rgba(16,185,129,0.06);
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.7), 0 0 0 1px #2a2a2a, 0 0 60px rgba(16, 185, 129, 0.06);
             overflow: hidden;
             position: relative;
             transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
@@ -352,7 +468,7 @@
 
         .phone-mockup:hover {
             transform: translateY(-8px) scale(1.01);
-            box-shadow: 0 35px 100px rgba(0,0,0,0.8), 0 0 0 1px #333, 0 0 80px rgba(16,185,129,0.1);
+            box-shadow: 0 35px 100px rgba(0, 0, 0, 0.8), 0 0 0 1px #333, 0 0 80px rgba(16, 185, 129, 0.1);
         }
 
         .chat-bubble-left {
@@ -398,13 +514,14 @@
             position: fixed;
             inset: 0;
             z-index: 9000;
-            background: rgba(0,0,0,0.85);
+            background: rgba(0, 0, 0, 0.85);
             backdrop-filter: blur(8px);
             align-items: center;
             justify-content: center;
         }
+
         [data-theme="light"] #calendly-modal {
-            background: rgba(0,0,0,0.6) !important;
+            background: rgba(0, 0, 0, 0.6) !important;
         }
 
         #calendly-modal.open {
@@ -413,14 +530,14 @@
 
         .calendly-inner {
             background: #0f0f0f;
-            border: 1px solid rgba(255,255,255,0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 1.5rem;
             width: 90%;
             max-width: 680px;
             max-height: 90vh;
             overflow: hidden;
             position: relative;
-            box-shadow: 0 40px 100px rgba(0,0,0,0.7);
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.7);
         }
 
         /* Animated glow ring on hero */
@@ -429,7 +546,7 @@
             width: 600px;
             height: 600px;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(16,185,129,0.1) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.1) 0%, transparent 70%);
             top: 50%;
             left: 50%;
             transform: translate(-50%, -70%);
@@ -438,29 +555,43 @@
         }
 
         @keyframes hero-glow-pulse {
-            0%, 100% { opacity: 0.6; transform: translate(-50%, -70%) scale(1); }
-            50% { opacity: 1; transform: translate(-50%, -70%) scale(1.1); }
+
+            0%,
+            100% {
+                opacity: 0.6;
+                transform: translate(-50%, -70%) scale(1);
+            }
+
+            50% {
+                opacity: 1;
+                transform: translate(-50%, -70%) scale(1.1);
+            }
         }
 
         /* Smooth scroll */
-        html { scroll-behavior: smooth; }
+        html {
+            scroll-behavior: smooth;
+        }
 
         /* Selection */
         ::selection {
             background: rgba(16, 185, 129, 0.3);
             color: #fff;
         }
+
         [data-theme="light"] ::selection {
             background: rgba(16, 185, 129, 0.2);
             color: #0F172A;
         }
     </style>
 </head>
+
 <body class="antialiased selection:bg-brand-accent selection:text-white">
 
     <!-- Toast Notification -->
     <div id="toast" role="alert">
-        <div class="flex items-center gap-3 px-5 py-4 rounded-xl bg-[#0f1f17] border border-[#10B981]/40 shadow-xl shadow-black/40">
+        <div
+            class="flex items-center gap-3 px-5 py-4 rounded-xl bg-[#0f1f17] border border-[#10B981]/40 shadow-xl shadow-black/40">
             <div class="w-8 h-8 rounded-full bg-brand-accent/20 flex items-center justify-center flex-shrink-0">
                 <i data-lucide="check" class="w-4 h-4 text-brand-accentLight"></i>
             </div>
@@ -476,12 +607,15 @@
         <div class="calendly-inner">
             <div class="flex items-center justify-between px-6 py-4 border-b border-white/10">
                 <p class="text-white font-medium text-sm">Book your strategy call</p>
-                <button id="close-calendly" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 transition-colors text-gray-400 hover:text-white">
+                <button id="close-calendly"
+                    class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 transition-colors text-gray-400 hover:text-white">
                     <i data-lucide="x" class="w-4 h-4"></i>
                 </button>
             </div>
             <!-- Calendly inline widget — replace href with your actual Calendly URL -->
-            <div class="calendly-inline-widget" data-url="https://calendly.com/pathanaman2030/30min?hide_gdpr_banner=1&background_color=050505&text_color=F8FAFC&primary_color=10B981" style="min-width:320px;height:600px;"></div>
+            <div class="calendly-inline-widget"
+                data-url="https://calendly.com/pathanaman2030/30min?hide_gdpr_banner=1&background_color=050505&text_color=F8FAFC&primary_color=10B981"
+                style="min-width:320px;height:600px;"></div>
             <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
         </div>
     </div>
@@ -495,7 +629,7 @@
 
             <div class="hidden md:flex items-center space-x-6 text-sm font-medium text-gray-400">
                 <a href="/" class="hover:text-white transition-colors">Home</a>
-                <a href="/dashboard" class="hover:text-white transition-colors">Dashboard</a>
+                <a href="/dashboard/" class="hover:text-white transition-colors">Dashboard</a>
                 <a href="/properties" class="hover:text-white transition-colors">Properties</a>
                 <a href="/connect" class="hover:text-white transition-colors">Connect WhatsApp</a>
                 <a href="/setup-guide" class="hover:text-white transition-colors">Setup Guide</a>
@@ -507,13 +641,17 @@
                 <button class="theme-toggle" id="theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle theme">
                     <i data-lucide="sun" class="w-4 h-4" id="theme-icon"></i>
                 </button>
-                <a href="/connect" id="nav-connect-btn" class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-full text-brand-accent hover:text-brand-accentLight transition-colors">
+                <a href="/connect" id="nav-connect-btn"
+                    class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-full text-brand-accent hover:text-brand-accentLight transition-colors">
                     Connect
                 </a>
-                <a href="/dashboard" id="client-login-btn" class="inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium rounded-full btn-glass">
+                <a href="/dashboard/" id="client-login-btn"
+                    class="inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium rounded-full btn-glass">
                     Login
                 </a>
-                <button onclick="handleLogout()" id="nav-logout-btn" class="hidden text-sm font-medium text-gray-500 hover:text-white transition-colors" style="display: none;">
+                <button onclick="handleLogout()" id="nav-logout-btn"
+                    class="hidden text-sm font-medium text-gray-500 hover:text-white transition-colors"
+                    style="display: none;">
                     Logout
                 </button>
             </div>
@@ -527,17 +665,24 @@
         <!-- Mobile Menu -->
         <div id="mobile-menu" class="hidden md:hidden bg-[#080808] border-b border-[#1a1a1a] pb-5 px-6 shadow-xl">
             <div class="flex flex-col space-y-4 pt-3">
-                <a href="#features" class="text-sm font-medium text-gray-400 hover:text-white transition-colors">Features</a>
-                <a href="#platform" class="text-sm font-medium text-gray-400 hover:text-white transition-colors">Platform</a>
-                <a href="#book-demo" class="text-sm font-medium text-gray-400 hover:text-white transition-colors">Book a Demo</a>
+                <a href="#features"
+                    class="text-sm font-medium text-gray-400 hover:text-white transition-colors">Features</a>
+                <a href="#platform"
+                    class="text-sm font-medium text-gray-400 hover:text-white transition-colors">Platform</a>
+                <a href="#book-demo" class="text-sm font-medium text-gray-400 hover:text-white transition-colors">Book a
+                    Demo</a>
                 <div class="flex flex-col gap-3 pt-1">
-                    <a href="/connect" class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-full text-brand-accent hover:text-brand-accentLight transition-colors">
+                    <a href="/connect"
+                        class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-full text-brand-accent hover:text-brand-accentLight transition-colors">
                         Connect
                     </a>
-                    <a href="/dashboard" id="mobile-client-login-btn" class="inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium rounded-full btn-glass">
+                    <a href="/dashboard/" id="mobile-client-login-btn"
+                        class="inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium rounded-full btn-glass">
                         Login
                     </a>
-                    <button onclick="handleLogout()" id="mobile-nav-logout-btn" class="hidden text-sm font-medium text-gray-500 hover:text-white transition-colors" style="display: none;">
+                    <button onclick="handleLogout()" id="mobile-nav-logout-btn"
+                        class="hidden text-sm font-medium text-gray-500 hover:text-white transition-colors"
+                        style="display: none;">
                         Logout
                     </button>
                 </div>
@@ -549,7 +694,8 @@
     <section class="relative pt-36 pb-24 md:pt-52 md:pb-36 overflow-hidden px-6">
         <div class="hero-glow"></div>
         <div class="max-w-4xl mx-auto text-center relative z-10">
-            <div class="inline-flex items-center px-3 py-1.5 rounded-full bg-brand-accent/10 border border-brand-accent/20 text-brand-accentLight text-xs font-medium mb-8">
+            <div
+                class="inline-flex items-center px-3 py-1.5 rounded-full bg-brand-accent/10 border border-brand-accent/20 text-brand-accentLight text-xs font-medium mb-8">
                 <span class="flex w-2 h-2 rounded-full bg-brand-accent mr-2 animate-pulse"></span>
                 WhatsApp AI Automation is Live
             </div>
@@ -559,15 +705,18 @@
             </h1>
 
             <p class="text-lg md:text-xl text-gray-400 font-light max-w-2xl mx-auto mb-10 leading-relaxed">
-                Scale your real estate pipeline instantly. Turn passive inquiries into locked appointments with elite AI logic, zero manual effort.
+                Scale your real estate pipeline instantly. Turn passive inquiries into locked appointments with elite AI
+                logic, zero manual effort.
             </p>
 
             <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <a href="/connect" id="hero-get-started-btn" class="w-full sm:w-auto px-8 py-4 text-sm font-medium rounded-full btn-primary flex items-center justify-center gap-2">
+                <a href="/connect" id="hero-get-started-btn"
+                    class="w-full sm:w-auto px-8 py-4 text-sm font-medium rounded-full btn-primary flex items-center justify-center gap-2">
                     Get Started Now
                     <i data-lucide="arrow-right" class="w-4 h-4"></i>
                 </a>
-                <a href="#platform" class="w-full sm:w-auto px-8 py-4 text-sm font-medium rounded-full btn-secondary flex items-center justify-center gap-2">
+                <a href="#platform"
+                    class="w-full sm:w-auto px-8 py-4 text-sm font-medium rounded-full btn-secondary flex items-center justify-center gap-2">
                     See How It Works
                     <i data-lucide="play-circle" class="w-4 h-4"></i>
                 </a>
@@ -581,9 +730,12 @@
 
             <!-- Text Content -->
             <div>
-                <h2 class="text-3xl md:text-4xl font-semibold mb-6 leading-tight">Turn conversations into conversions.</h2>
+                <h2 class="text-3xl md:text-4xl font-semibold mb-6 leading-tight">Turn conversations into conversions.
+                </h2>
                 <p class="text-gray-400 mb-8 leading-relaxed font-light">
-                    Stop letting leads slip through the cracks. Yield.ai transforms your WhatsApp into a high-converting sales engine. We handle the initial outreach, FAQs, and qualification—so you only step in when it's time to close.
+                    Stop letting leads slip through the cracks. Yield.ai transforms your WhatsApp into a high-converting
+                    sales engine. We handle the initial outreach, FAQs, and qualification—so you only step in when it's
+                    time to close.
                 </p>
 
                 <ul class="space-y-4">
@@ -625,18 +777,21 @@
                             Hi! I saw your ad about the premium listing package.
                         </div>
                         <div class="chat-bubble-left">
-                            Hello! 👋 Thanks for reaching out. We'd love to help you scale. Are you currently handling more than 100 inquiries a week?
+                            Hello! 👋 Thanks for reaching out. We'd love to help you scale. Are you currently handling
+                            more than 100 inquiries a week?
                         </div>
                         <div class="chat-bubble-right opacity-80">
                             Yes, it's getting hard to manage manually.
                         </div>
                         <div class="chat-bubble-left">
-                            Perfect. Yield.ai is designed exactly for that volume. When are you free for a quick 10-min call today?
+                            Perfect. Yield.ai is designed exactly for that volume. When are you free for a quick 10-min
+                            call today?
                         </div>
                         <div class="chat-bubble-right opacity-80">
                             How about 3 PM IST?
                         </div>
-                        <div class="chat-bubble-left shadow-[0_0_15px_rgba(16,185,129,0.15)] border border-brand-accent/30">
+                        <div
+                            class="chat-bubble-left shadow-[0_0_15px_rgba(16,185,129,0.15)] border border-brand-accent/30">
                             Booked! ✅ I've just sent you the calendar invite. Talk soon!
                         </div>
                     </div>
@@ -649,13 +804,15 @@
     <!-- Platform / Ecosystem Section -->
     <section id="platform" class="py-24 px-6 relative z-10 bg-[#080808] border-y border-white/[0.06] mt-12">
         <div class="max-w-7xl mx-auto text-center">
-            <div class="inline-flex items-center px-3 py-1 rounded-full bg-white/5 border border-white/10 text-gray-400 text-xs font-medium mb-6">
+            <div
+                class="inline-flex items-center px-3 py-1 rounded-full bg-white/5 border border-white/10 text-gray-400 text-xs font-medium mb-6">
                 <i data-lucide="layers" class="w-3 h-3 mr-2"></i>
                 Enterprise Expansion
             </div>
             <h2 class="text-3xl md:text-4xl font-semibold mb-4">A growing ecosystem.</h2>
             <p class="text-gray-400 mb-16 max-w-2xl mx-auto font-light leading-relaxed">
-                We're starting with WhatsApp because it's where your customers already live. Our vision is a unified AI automation layer across every high-velocity industry.
+                We're starting with WhatsApp because it's where your customers already live. Our vision is a unified AI
+                automation layer across every high-velocity industry.
             </p>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 text-left">
@@ -666,46 +823,54 @@
                         <div class="w-11 h-11 rounded-xl icon-wrapper flex items-center justify-center">
                             <i data-lucide="building-2" class="w-5 h-5"></i>
                         </div>
-                        <span class="badge-live inline-flex items-center px-2.5 py-1 text-[10px] uppercase font-bold rounded-full gap-1.5">
+                        <span
+                            class="badge-live inline-flex items-center px-2.5 py-1 text-[10px] uppercase font-bold rounded-full gap-1.5">
                             <span class="dot w-1.5 h-1.5 rounded-full animate-pulse"></span>
                             Live
                         </span>
                     </div>
                     <h3 class="text-base font-semibold mb-2 text-white">Real Estate Agent AI</h3>
                     <p class="text-gray-400 text-sm leading-relaxed">
-                        End-to-end BANT qualification, property matching, and automated viewing scheduling for real estate brokers.
+                        End-to-end BANT qualification, property matching, and automated viewing scheduling for real
+                        estate brokers.
                     </p>
                 </div>
 
                 <!-- Card 2 — E-Commerce (LAUNCHING SOON) -->
                 <div class="p-7 rounded-2xl card-glass relative overflow-hidden opacity-75">
                     <div class="flex items-center justify-between mb-5">
-                        <div class="w-11 h-11 rounded-xl bg-white/[0.04] border border-white/10 flex items-center justify-center text-gray-500">
+                        <div
+                            class="w-11 h-11 rounded-xl bg-white/[0.04] border border-white/10 flex items-center justify-center text-gray-500">
                             <i data-lucide="shopping-bag" class="w-5 h-5"></i>
                         </div>
-                        <span class="badge-soon inline-flex items-center px-2.5 py-1 text-[10px] uppercase font-bold rounded-full">
+                        <span
+                            class="badge-soon inline-flex items-center px-2.5 py-1 text-[10px] uppercase font-bold rounded-full">
                             Launching Soon
                         </span>
                     </div>
                     <h3 class="text-base font-semibold mb-2 text-gray-300">E-Commerce Sales &amp; Support AI</h3>
                     <p class="text-gray-500 text-sm leading-relaxed">
-                        Automated order tracking, abandon cart recovery, and 24/7 customer support via native WhatsApp API.
+                        Automated order tracking, abandon cart recovery, and 24/7 customer support via native WhatsApp
+                        API.
                     </p>
                 </div>
 
                 <!-- Card 3 — Automotive (LAUNCHING SOON) -->
                 <div class="p-7 rounded-2xl card-glass relative overflow-hidden opacity-75">
                     <div class="flex items-center justify-between mb-5">
-                        <div class="w-11 h-11 rounded-xl bg-white/[0.04] border border-white/10 flex items-center justify-center text-gray-500">
+                        <div
+                            class="w-11 h-11 rounded-xl bg-white/[0.04] border border-white/10 flex items-center justify-center text-gray-500">
                             <i data-lucide="car" class="w-5 h-5"></i>
                         </div>
-                        <span class="badge-soon inline-flex items-center px-2.5 py-1 text-[10px] uppercase font-bold rounded-full">
+                        <span
+                            class="badge-soon inline-flex items-center px-2.5 py-1 text-[10px] uppercase font-bold rounded-full">
                             Launching Soon
                         </span>
                     </div>
                     <h3 class="text-base font-semibold mb-2 text-gray-300">Automotive &amp; Dealership AI</h3>
                     <p class="text-gray-500 text-sm leading-relaxed">
-                        Test-drive scheduling, vehicle inquiry handling, and service reminders for automotive dealerships.
+                        Test-drive scheduling, vehicle inquiry handling, and service reminders for automotive
+                        dealerships.
                     </p>
                 </div>
 
@@ -715,14 +880,16 @@
                         <div class="w-11 h-11 rounded-xl icon-wrapper flex items-center justify-center">
                             <i data-lucide="git-merge" class="w-5 h-5"></i>
                         </div>
-                        <span class="badge-live inline-flex items-center px-2.5 py-1 text-[10px] uppercase font-bold rounded-full gap-1.5">
+                        <span
+                            class="badge-live inline-flex items-center px-2.5 py-1 text-[10px] uppercase font-bold rounded-full gap-1.5">
                             <span class="dot w-1.5 h-1.5 rounded-full animate-pulse"></span>
                             Live
                         </span>
                     </div>
                     <h3 class="text-base font-semibold mb-2 text-white">Omnichannel &amp; CRM Sync</h3>
                     <p class="text-gray-400 text-sm leading-relaxed">
-                        Native webhooks and real-time synchronization with PocketBase, HubSpot, Salesforce, and custom CRMs.
+                        Native webhooks and real-time synchronization with PocketBase, HubSpot, Salesforce, and custom
+                        CRMs.
                     </p>
                 </div>
 
@@ -736,27 +903,35 @@
             <!-- Glow decoration -->
             <div class="absolute inset-0 bg-brand-accent/5 blur-[80px] rounded-full pointer-events-none"></div>
 
-            <div class="relative bg-[rgba(15,15,15,0.9)] border border-white/[0.08] rounded-3xl p-8 md:p-12 shadow-2xl backdrop-blur-xl">
+            <div
+                class="relative bg-[rgba(15,15,15,0.9)] border border-white/[0.08] rounded-3xl p-8 md:p-12 shadow-2xl backdrop-blur-xl">
                 <div class="text-center mb-8">
                     <h2 class="text-3xl md:text-4xl font-semibold mb-3">Ready to close more deals?</h2>
-                    <p class="text-gray-400 font-light">Book a brief strategy call to see if Yield.ai is a fit for your sales operation.</p>
+                    <p class="text-gray-400 font-light">Book a brief strategy call to see if Yield.ai is a fit for your
+                        sales operation.</p>
                 </div>
 
                 <form id="lead-form" class="space-y-5">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div class="space-y-1.5">
-                            <label for="name" class="text-xs font-medium text-gray-400 uppercase tracking-wider">Full Name</label>
-                            <input type="text" id="name" name="name" required class="w-full px-4 py-3 rounded-xl text-sm" placeholder="John Doe">
+                            <label for="name" class="text-xs font-medium text-gray-400 uppercase tracking-wider">Full
+                                Name</label>
+                            <input type="text" id="name" name="name" required
+                                class="w-full px-4 py-3 rounded-xl text-sm" placeholder="John Doe">
                         </div>
                         <div class="space-y-1.5">
-                            <label for="email" class="text-xs font-medium text-gray-400 uppercase tracking-wider">Work Email</label>
-                            <input type="email" id="email" name="email" required class="w-full px-4 py-3 rounded-xl text-sm" placeholder="john@company.com">
+                            <label for="email" class="text-xs font-medium text-gray-400 uppercase tracking-wider">Work
+                                Email</label>
+                            <input type="email" id="email" name="email" required
+                                class="w-full px-4 py-3 rounded-xl text-sm" placeholder="john@company.com">
                         </div>
                     </div>
 
                     <div class="space-y-1.5">
-                        <label for="volume" class="text-xs font-medium text-gray-400 uppercase tracking-wider">Monthly Lead Volume</label>
-                        <select id="volume" name="volume" required class="w-full px-4 py-3 rounded-xl text-sm appearance-none cursor-pointer">
+                        <label for="volume" class="text-xs font-medium text-gray-400 uppercase tracking-wider">Monthly
+                            Lead Volume</label>
+                        <select id="volume" name="volume" required
+                            class="w-full px-4 py-3 rounded-xl text-sm appearance-none cursor-pointer">
                             <option value="" disabled selected>Select estimated volume...</option>
                             <option value="under_100">Under 100 leads / mo</option>
                             <option value="100_500">100 - 500 leads / mo</option>
@@ -765,37 +940,52 @@
                     </div>
 
                     <div class="space-y-1.5">
-                        <label for="goal" class="text-xs font-medium text-gray-400 uppercase tracking-wider">Primary Goal</label>
-                        <textarea id="goal" name="goal" rows="2" class="w-full px-4 py-3 rounded-xl text-sm resize-none" placeholder="e.g., We need to automate our WhatsApp lead qualification..."></textarea>
+                        <label for="goal" class="text-xs font-medium text-gray-400 uppercase tracking-wider">Primary
+                            Goal</label>
+                        <textarea id="goal" name="goal" rows="2" class="w-full px-4 py-3 rounded-xl text-sm resize-none"
+                            placeholder="e.g., We need to automate our WhatsApp lead qualification..."></textarea>
                     </div>
 
                     <div class="space-y-1.5">
-                        <label for="whatsapp" class="text-xs font-medium text-gray-400 uppercase tracking-wider">WhatsApp Number <span class="font-normal normal-case text-gray-600">(optional)</span></label>
+                        <label for="whatsapp"
+                            class="text-xs font-medium text-gray-400 uppercase tracking-wider">WhatsApp Number <span
+                                class="font-normal normal-case text-gray-600">(optional)</span></label>
                         <div class="relative">
-                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-sm select-none">+</span>
-                            <input type="tel" id="whatsapp" name="whatsapp" class="w-full pl-7 pr-4 py-3 rounded-xl text-sm" placeholder="91 98765 43210" autocomplete="tel">
+                            <span
+                                class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-sm select-none">+</span>
+                            <input type="tel" id="whatsapp" name="whatsapp"
+                                class="w-full pl-7 pr-4 py-3 rounded-xl text-sm" placeholder="91 98765 43210"
+                                autocomplete="tel">
                         </div>
-                        <p class="text-[11px] text-gray-600">We'll reach out here first — since this is a WhatsApp product.</p>
+                        <p class="text-[11px] text-gray-600">We'll reach out here first — since this is a WhatsApp
+                            product.</p>
                     </div>
 
-                    <button type="submit" class="w-full py-4 rounded-xl btn-primary font-medium text-base mt-2 flex items-center justify-center gap-2" id="submit-btn">
+                    <button type="submit"
+                        class="w-full py-4 rounded-xl btn-primary font-medium text-base mt-2 flex items-center justify-center gap-2"
+                        id="submit-btn">
                         Book Onboarding Call
                         <i data-lucide="arrow-right" class="w-4 h-4"></i>
                     </button>
                 </form>
 
                 <!-- Success Message overlay -->
-                <div id="success-message" class="hidden absolute inset-0 bg-[#0f0f0f]/95 backdrop-blur-sm z-20 flex flex-col items-center justify-center p-8 text-center rounded-3xl">
-                    <div class="w-16 h-16 rounded-full bg-brand-accent/10 text-brand-accentLight flex items-center justify-center mb-6 border border-brand-accent/20">
+                <div id="success-message"
+                    class="hidden absolute inset-0 bg-[#0f0f0f]/95 backdrop-blur-sm z-20 flex flex-col items-center justify-center p-8 text-center rounded-3xl">
+                    <div
+                        class="w-16 h-16 rounded-full bg-brand-accent/10 text-brand-accentLight flex items-center justify-center mb-6 border border-brand-accent/20">
                         <i data-lucide="check" class="w-8 h-8"></i>
                     </div>
                     <h3 class="text-2xl font-semibold text-white mb-2">Request Received</h3>
-                    <p class="text-gray-400 max-w-sm mb-6">An agent will contact you within 15 minutes to schedule your strategy call.</p>
-                    <button id="open-calendly-btn" class="px-6 py-2.5 rounded-full btn-primary text-sm font-medium flex items-center gap-2 mb-3">
+                    <p class="text-gray-400 max-w-sm mb-6">An agent will contact you within 15 minutes to schedule your
+                        strategy call.</p>
+                    <button id="open-calendly-btn"
+                        class="px-6 py-2.5 rounded-full btn-primary text-sm font-medium flex items-center gap-2 mb-3">
                         <i data-lucide="calendar" class="w-4 h-4"></i>
                         Book a time now
                     </button>
-                    <button id="reset-form" class="px-6 py-2 border border-white/10 rounded-full text-sm hover:bg-white/5 transition-colors text-gray-400 hover:text-white">
+                    <button id="reset-form"
+                        class="px-6 py-2 border border-white/10 rounded-full text-sm hover:bg-white/5 transition-colors text-gray-400 hover:text-white">
                         Close
                     </button>
                 </div>
@@ -805,14 +995,16 @@
 
     <!-- Footer -->
     <footer class="border-t border-white/[0.06] bg-[#030303] py-14 px-6">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-10 mb-10">
+        <div
+            class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-10 mb-10">
             <div class="flex flex-col">
                 <a href="/" class="font-semibold text-xl tracking-tight text-white mb-3 flex items-center gap-1">
                     Yield<span class="text-brand-accent">.ai</span>
                 </a>
                 <p class="text-sm font-semibold text-white mb-1">YIELD AI</p>
                 <p class="text-sm text-gray-500">Torna Complex, Rajgurunagar, Pune, Maharashtra, India - 410505</p>
-                <p class="text-sm text-gray-500 mt-1"><a href="mailto:support.yieldai@gmail.com" class="hover:text-white transition-colors">support.yieldai@gmail.com</a></p>
+                <p class="text-sm text-gray-500 mt-1"><a href="mailto:support.yieldai@gmail.com"
+                        class="hover:text-white transition-colors">support.yieldai@gmail.com</a></p>
             </div>
 
             <div class="flex flex-col gap-2.5 text-sm text-gray-500 md:text-right">
@@ -821,7 +1013,8 @@
                 <a href="/terms" class="hover:text-white transition-colors">Terms of Service</a>
             </div>
         </div>
-        <div class="max-w-7xl mx-auto border-t border-white/[0.06] pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-600">
+        <div
+            class="max-w-7xl mx-auto border-t border-white/[0.06] pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-600">
             <div class="flex items-center gap-6">
                 © 2026 YIELD AI. Built for revenue.
             </div>
@@ -849,11 +1042,11 @@
 
             if (loginBtn) {
                 loginBtn.textContent = isLoggedIn ? 'Dashboard' : 'Login';
-                loginBtn.href = '/dashboard';
+                loginBtn.href = '/dashboard/';
             }
             if (mobileLoginBtn) {
                 mobileLoginBtn.textContent = isLoggedIn ? 'Dashboard' : 'Login';
-                mobileLoginBtn.href = '/dashboard';
+                mobileLoginBtn.href = '/dashboard/';
             }
 
             if (logoutBtn) logoutBtn.style.display = isLoggedIn ? 'block' : 'none';
@@ -898,7 +1091,7 @@
         }
 
         // Sync icon and nav to current state on load
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             updateNavState();
             const savedTheme = localStorage.getItem('yieldai_theme');
             const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -907,5 +1100,5 @@
         });
     </script>
 </body>
-</html>
 
+</html>

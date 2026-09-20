@@ -1,6 +1,13 @@
 {
   "version": 2,
   "outputDirectory": ".",
+  "redirects": [
+    {
+      "source": "/dashboard",
+      "destination": "/dashboard/",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     {
       "source": "/api/:path*",

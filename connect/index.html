@@ -345,40 +345,46 @@
             </a>
             <div class="hidden md:flex items-center space-x-6 text-sm font-medium text-gray-400">
                 <a href="/" class="hover:text-white transition-colors">Home</a>
-                <a href="/dashboard" class="hover:text-white transition-colors">Dashboard</a>
+                <a href="/dashboard/" class="hover:text-white transition-colors">Dashboard</a>
                 <a href="/properties" class="hover:text-white transition-colors">Properties</a>
                 <a href="/connect" class="text-white font-semibold">Connect WhatsApp</a>
                 <a href="/setup-guide" class="hover:text-white transition-colors">Setup Guide</a>
                 <a href="/bayut" class="hover:text-white transition-colors">Bayut Tool</a>
             </div>
+
+            <!-- CTA Cluster -->
             <div class="hidden md:flex items-center gap-3">
-                <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+                <button class="theme-toggle" id="theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle theme">
                     <i data-lucide="sun" class="w-4 h-4" id="theme-icon"></i>
                 </button>
                 <a href="/connect" id="nav-connect-btn" class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-full text-brand-accent hover:text-brand-accentLight transition-colors">
                     Connect
                 </a>
-                <a href="/dashboard" id="client-login-btn" class="inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium rounded-full btn-glass">
+                <a href="/dashboard/" id="client-login-btn" class="inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium rounded-full btn-glass">
                     Login
                 </a>
                 <button onclick="handleLogout()" id="nav-logout-btn" class="hidden text-sm font-medium text-gray-500 hover:text-white transition-colors" style="display: none;">
                     Logout
                 </button>
             </div>
+
+            <!-- Mobile menu button -->
             <button class="md:hidden text-gray-400 hover:text-white" id="mobile-menu-btn" aria-label="Menu">
                 <i data-lucide="menu"></i>
             </button>
         </div>
-        <div id="mobile-menu" class="hidden md:hidden bg-[#080808] border-b border-[#1a1a1a] pb-5 px-6">
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-[#080808] border-b border-[#1a1a1a] pb-5 px-6 shadow-xl">
             <div class="flex flex-col space-y-4 pt-3">
-                <a href="/#features" class="text-sm font-medium text-gray-400 hover:text-white">Features</a>
-                <a href="/#platform" class="text-sm font-medium text-gray-400 hover:text-white">Platform</a>
-                <a href="/#book-demo" class="text-sm font-medium text-gray-400 hover:text-white">Book a Demo</a>
+                <a href="/#features" class="text-sm font-medium text-gray-400 hover:text-white transition-colors">Features</a>
+                <a href="/#platform" class="text-sm font-medium text-gray-400 hover:text-white transition-colors">Platform</a>
+                <a href="/#book-demo" class="text-sm font-medium text-gray-400 hover:text-white transition-colors">Book a Demo</a>
                 <div class="flex flex-col gap-3 pt-1">
                     <a href="/connect" class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-full text-brand-accent hover:text-brand-accentLight transition-colors">
                         Connect
                     </a>
-                    <a href="/dashboard" id="mobile-client-login-btn" class="inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium rounded-full btn-glass">
+                    <a href="/dashboard/" id="mobile-client-login-btn" class="inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium rounded-full btn-glass">
                         Login
                     </a>
                     <button onclick="handleLogout()" id="mobile-nav-logout-btn" class="hidden text-sm font-medium text-gray-500 hover:text-white transition-colors" style="display: none;">
@@ -940,7 +946,7 @@
 
                     // Auto-redirect to dashboard after successful signup
                     setTimeout(function() {
-                        window.location.href = '/dashboard';
+                        window.location.href = '/dashboard/';
                     }, 2000);
                 } else {
                     const errText = await res.text().catch(() => String(res.status));
@@ -991,11 +997,11 @@
 
             if (loginBtn) {
                 loginBtn.textContent = isLoggedIn ? 'Dashboard' : 'Login';
-                loginBtn.href = '/dashboard';
+                loginBtn.href = '/dashboard/';
             }
             if (mobileLoginBtn) {
                 mobileLoginBtn.textContent = isLoggedIn ? 'Dashboard' : 'Login';
-                mobileLoginBtn.href = '/dashboard';
+                mobileLoginBtn.href = '/dashboard/';
             }
 
             if (logoutBtn) logoutBtn.style.display = isLoggedIn ? 'block' : 'none';
