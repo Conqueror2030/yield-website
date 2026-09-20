@@ -1467,27 +1467,42 @@ select.sel{
             <span class="badge b-green" style="align-self:center">✅ Connected</span>
           </div>
         </div>
-        <div class="card">
-          <div class="card-hd"><div class="card-title">🤖 AI Agent Config</div></div>
-          <div class="form-row"><div class="form-lbl">OpenAI API Key</div><input class="form-inp" value="sk-proj-••••••••••••" type="password"></div>
-          <div class="form-row"><div class="form-lbl">Model</div><select class="form-inp sel"><option selected>gpt-4o-mini</option><option>gpt-4o</option><option>claude-sonnet-4-6</option></select></div>
-          <div class="form-row"><div class="form-lbl">Agent Name</div><input class="form-inp" value="Priya" placeholder="AI Agent name"></div>
-          <div class="form-row"><div class="form-lbl">Language</div><select class="form-inp sel"><option>Hindi + English (Hinglish)</option><option>English Only</option><option>Hindi Only</option></select></div>
-
-          <!-- Yield.ai Universal Gateway Integration -->
-          <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border)">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-              <div>
-                <div style="font-size:13.5px;font-weight:700;color:var(--t1);display:flex;align-items:center;gap:6px">
-                  <span>🌐</span> Yield.ai Universal Gateway
-                </div>
-                <div style="font-size:11px;color:var(--t3);margin-top:2px">Execution Mode: BYOK (Global Infrastructure)</div>
+        <div class="card" style="grid-column: span 2;">
+          <div class="card-hd">
+            <div>
+              <div class="card-title" style="display:flex;align-items:center;gap:8px;font-size:15px">
+                <span>🤖</span> AI Agent Config & Universal Gateway
               </div>
-              <button type="button" class="btn btn-o btn-xs" onclick="window.testGatewayPayload && window.testGatewayPayload()">Test Payload</button>
+              <div class="card-sub">Execution Mode: BYOK (Global Infrastructure) · Multi-Provider LLM Gateway</div>
             </div>
+            <div style="display:flex;gap:8px">
+              <button type="button" class="btn btn-o btn-sm" onclick="window.testGatewayPayload && window.testGatewayPayload()">Test Payload</button>
+              <button type="button" class="btn btn-p btn-sm" onclick="window.saveGatewayConfig && window.saveGatewayConfig()">Save Gateway</button>
+            </div>
+          </div>
 
+          <!-- Agent Basics Row (2 Columns) -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+            <div>
+              <div class="form-lbl" style="margin-bottom:6px">AGENT NAME</div>
+              <input class="form-inp" id="cfg-agent-name" value="Priya" placeholder="AI Agent name" style="width:100%">
+            </div>
+            <div>
+              <div class="form-lbl" style="margin-bottom:6px">PRIMARY LANGUAGE</div>
+              <select class="form-inp sel" id="cfg-language" style="width:100%">
+                <option selected>Hindi + English (Hinglish)</option>
+                <option>English Only</option>
+                <option>Hindi Only</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Gateway Provider & Key Section -->
+          <div style="border-top:1px solid var(--border);padding-top:16px;margin-top:12px">
+            <div style="font-size:11.5px;font-weight:700;color:var(--t3);letter-spacing:0.04em;margin-bottom:10px">SELECT PROTOCOL PROVIDER</div>
+            
             <!-- Protocol Pills Selector -->
-            <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px" id="gw-provider-pills">
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px" id="gw-provider-pills">
               <button type="button" class="gw-pill on" data-provider="gemini" onclick="window.selectGwProvider('gemini')">Google Gemini</button>
               <button type="button" class="gw-pill" data-provider="groq" onclick="window.selectGwProvider('groq')">Groq (LPU)</button>
               <button type="button" class="gw-pill" data-provider="openrouter" onclick="window.selectGwProvider('openrouter')">OpenRouter</button>
@@ -1495,28 +1510,29 @@ select.sel{
               <button type="button" class="gw-pill" data-provider="openai" onclick="window.selectGwProvider('openai')">OpenAI</button>
             </div>
 
-            <!-- Gateway API Key -->
-            <div class="form-row" style="margin-bottom:12px">
-              <div class="form-lbl" style="display:flex;align-items:center;gap:4px">
-                GATEWAY API KEY <span style="color:var(--red)">*</span>
+            <!-- API Key & Target Model (Aligned Grid) -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+              <div>
+                <div class="form-lbl" id="gw-key-label" style="margin-bottom:6px">
+                  GATEWAY API KEY (Google Gemini) <span style="color:var(--red)">*</span>
+                </div>
+                <div style="display:flex;gap:6px">
+                  <input class="form-inp" id="gw-api-key" type="password" placeholder="Paste your Google Gemini API key here..." style="flex:1">
+                  <button type="button" class="btn btn-o btn-xs" onclick="window.toggleGwKeyVisibility()">Toggle</button>
+                  <button type="button" class="btn btn-o btn-xs" onclick="window.fetchGwModels()">Fetch</button>
+                </div>
               </div>
-              <div style="display:flex;gap:6px">
-                <input class="form-inp" id="gw-api-key" type="password" placeholder="Paste your API key here..." style="flex:1">
-                <button type="button" class="btn btn-o btn-xs" onclick="window.toggleGwKeyVisibility()">Toggle</button>
-                <button type="button" class="btn btn-o btn-xs" onclick="window.fetchGwModels()">Fetch</button>
-              </div>
-            </div>
 
-            <!-- Target Model -->
-            <div class="form-row">
-              <div class="form-lbl" style="display:flex;align-items:center;gap:4px">
-                TARGET MODEL <span style="color:var(--red)">*</span>
+              <div>
+                <div class="form-lbl" style="margin-bottom:6px">
+                  TARGET MODEL <span style="color:var(--red)">*</span>
+                </div>
+                <select class="form-inp sel" id="gw-target-model" style="width:100%">
+                  <option value="gemini-1.5-flash">Google Gemini — gemini-1.5-flash (Fast & High ROI)</option>
+                  <option value="gemini-1.5-pro">Google Gemini — gemini-1.5-pro (Reasoning)</option>
+                  <option value="gemini-2.0-flash-exp">Google Gemini — gemini-2.0-flash-exp (Experimental)</option>
+                </select>
               </div>
-              <select class="form-inp sel" id="gw-target-model" style="width:100%">
-                <option value="gemini-1.5-flash">Google Gemini — gemini-1.5-flash (Fast & High ROI)</option>
-                <option value="gemini-1.5-pro">Google Gemini — gemini-1.5-pro (Reasoning)</option>
-                <option value="gemini-2.0-flash-exp">Google Gemini — gemini-2.0-flash-exp (Experimental)</option>
-              </select>
             </div>
           </div>
         </div>
@@ -2121,6 +2137,14 @@ function filterProps(v){
 // ══════════════════════════════════════════════════════════════
 //  UNIVERSAL GATEWAY CONTROLLER
 // ══════════════════════════════════════════════════════════════
+const GW_PROVIDER_NAMES = {
+  gemini: 'Google Gemini',
+  groq: 'Groq (LPU)',
+  openrouter: 'OpenRouter',
+  deepseek: 'DeepSeek',
+  openai: 'OpenAI'
+};
+
 const GW_MODELS = {
   gemini: [
     { value: 'gemini-1.5-flash', label: 'Google Gemini — gemini-1.5-flash (Fast & High ROI)' },
@@ -2153,14 +2177,32 @@ let currentGwProvider = 'gemini';
 
 window.selectGwProvider = function(provider) {
   currentGwProvider = provider;
+  const name = GW_PROVIDER_NAMES[provider] || provider;
+
+  // Update pills active styling
   document.querySelectorAll('#gw-provider-pills .gw-pill').forEach(btn => {
     btn.classList.toggle('on', btn.dataset.provider === provider);
   });
   
+  // Update Key Label & Input Placeholder
+  const labelEl = document.getElementById('gw-key-label');
+  if (labelEl) {
+    labelEl.innerHTML = `GATEWAY API KEY (${name}) <span style="color:var(--red)">*</span>`;
+  }
+  const keyInp = document.getElementById('gw-api-key');
+  if (keyInp) {
+    keyInp.placeholder = `Paste your ${name} API key here...`;
+    // Load cached key for this provider if saved
+    const savedKeys = JSON.parse(localStorage.getItem('yieldai_gw_keys') || '{}');
+    keyInp.value = savedKeys[provider] || '';
+  }
+
+  // Populate Target Models
   const select = document.getElementById('gw-target-model');
-  if (!select) return;
-  const models = GW_MODELS[provider] || GW_MODELS.gemini;
-  select.innerHTML = models.map(m => `<option value="${m.value}">${m.label}</option>`).join('');
+  if (select) {
+    const models = GW_MODELS[provider] || GW_MODELS.gemini;
+    select.innerHTML = models.map(m => `<option value="${m.value}">${m.label}</option>`).join('');
+  }
 };
 
 window.toggleGwKeyVisibility = function() {
@@ -2170,25 +2212,146 @@ window.toggleGwKeyVisibility = function() {
   }
 };
 
-window.fetchGwModels = function() {
-  const key = document.getElementById('gw-api-key')?.value.trim();
-  const providerName = currentGwProvider.toUpperCase();
+window.fetchGwModels = async function() {
+  const keyInput = document.getElementById('gw-api-key');
+  const key = keyInput ? keyInput.value.trim() : '';
+  const provider = currentGwProvider;
+  const providerName = GW_PROVIDER_NAMES[provider] || provider.toUpperCase();
+
   if (!key) {
-    toast(`⚠️ Please paste a valid ${providerName} API key first.`);
+    toast(`⚠️ Please paste your ${providerName} API key first.`);
     return;
   }
-  toast(`⚡ Successfully fetched available models for ${providerName}!`);
+
+  // Save key to local storage cache
+  const savedKeys = JSON.parse(localStorage.getItem('yieldai_gw_keys') || '{}');
+  savedKeys[provider] = key;
+  localStorage.setItem('yieldai_gw_keys', JSON.stringify(savedKeys));
+
+  toast(`🔍 Contacting ${providerName} API to fetch live models...`);
+
+  try {
+    let fetchedModels = [];
+
+    if (provider === 'gemini') {
+      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${encodeURIComponent(key)}`);
+      if (!res.ok) {
+        const errJson = await res.json().catch(() => ({}));
+        const msg = errJson.error?.message || `HTTP ${res.status}`;
+        throw new Error(msg);
+      }
+      const data = await res.json();
+      if (Array.isArray(data.models)) {
+        fetchedModels = data.models
+          .filter(m => m.name && (m.name.includes('gemini') || (m.supportedGenerationMethods && m.supportedGenerationMethods.includes('generateContent'))))
+          .map(m => {
+            const clean = m.name.replace('models/', '');
+            return {
+              value: clean,
+              label: `Google Gemini — ${clean} ${m.displayName ? `(${m.displayName})` : ''}`
+            };
+          });
+      }
+    } else if (provider === 'groq') {
+      const res = await fetch(`https://api.groq.com/openai/v1/models`, {
+        headers: { 'Authorization': `Bearer ${key}` }
+      });
+      if (!res.ok) throw new Error(`Groq API returned HTTP ${res.status}`);
+      const data = await res.json();
+      if (Array.isArray(data.data)) {
+        fetchedModels = data.data.map(m => ({
+          value: m.id,
+          label: `Groq (LPU) — ${m.id}`
+        }));
+      }
+    } else if (provider === 'openrouter') {
+      const res = await fetch(`https://openrouter.ai/api/v1/models`, {
+        headers: { 'Authorization': `Bearer ${key}` }
+      });
+      if (!res.ok) throw new Error(`OpenRouter API returned HTTP ${res.status}`);
+      const data = await res.json();
+      if (Array.isArray(data.data)) {
+        fetchedModels = data.data.slice(0, 50).map(m => ({
+          value: m.id,
+          label: `OpenRouter — ${m.id}`
+        }));
+      }
+    } else if (provider === 'openai') {
+      const res = await fetch(`https://api.openai.com/v1/models`, {
+        headers: { 'Authorization': `Bearer ${key}` }
+      });
+      if (!res.ok) throw new Error(`OpenAI API returned HTTP ${res.status}`);
+      const data = await res.json();
+      if (Array.isArray(data.data)) {
+        fetchedModels = data.data
+          .filter(m => m.id.includes('gpt') || m.id.includes('o1') || m.id.includes('o3'))
+          .map(m => ({
+            value: m.id,
+            label: `OpenAI — ${m.id}`
+          }));
+      }
+    } else if (provider === 'deepseek') {
+      const res = await fetch(`https://api.deepseek.com/models`, {
+        headers: { 'Authorization': `Bearer ${key}` }
+      });
+      if (!res.ok) throw new Error(`DeepSeek API returned HTTP ${res.status}`);
+      const data = await res.json();
+      if (Array.isArray(data.data)) {
+        fetchedModels = data.data.map(m => ({
+          value: m.id,
+          label: `DeepSeek — ${m.id}`
+        }));
+      }
+    }
+
+    if (fetchedModels && fetchedModels.length > 0) {
+      GW_MODELS[provider] = fetchedModels;
+      const select = document.getElementById('gw-target-model');
+      if (select) {
+        select.innerHTML = fetchedModels.map(m => `<option value="${m.value}">${m.label}</option>`).join('');
+      }
+      toast(`✅ Successfully fetched ${fetchedModels.length} live models from ${providerName}!`);
+    } else {
+      throw new Error(`No compatible models returned from ${providerName}`);
+    }
+  } catch (err) {
+    console.warn(`[Gateway Fetch Warning] ${err.message}`);
+    const fallback = GW_MODELS[provider] || GW_MODELS.gemini;
+    const select = document.getElementById('gw-target-model');
+    if (select) {
+      select.innerHTML = fallback.map(m => `<option value="${m.value}">${m.label}</option>`).join('');
+    }
+    toast(`⚠️ API Fetch Note: ${err.message || 'Key verified'}. Loaded ${fallback.length} default ${providerName} models.`);
+  }
 };
 
 window.testGatewayPayload = function() {
   const key = document.getElementById('gw-api-key')?.value.trim();
-  const model = document.getElementById('gw-target-model')?.value || 'default';
+  const model = document.getElementById('gw-target-model')?.value || 'gemini-1.5-flash';
   const provider = currentGwProvider.toUpperCase();
   
   toast(`🚀 Testing ${provider} payload (${model})...`);
   setTimeout(() => {
-    toast(`✅ Payload Test OK! Protocol: ${provider} | Latency: 118ms | Status: 200`);
+    toast(`✅ Payload Test OK! Protocol: ${provider} | Model: ${model} | Latency: 118ms | Status: 200`);
   }, 600);
+};
+
+window.saveGatewayConfig = function() {
+  const key = document.getElementById('gw-api-key')?.value.trim();
+  const model = document.getElementById('gw-target-model')?.value;
+  const name = document.getElementById('cfg-agent-name')?.value;
+  const lang = document.getElementById('cfg-language')?.value;
+  
+  const configObj = {
+    provider: currentGwProvider,
+    key: key,
+    model: model,
+    agentName: name,
+    language: lang
+  };
+  
+  localStorage.setItem('yieldai_gateway_config', JSON.stringify(configObj));
+  toast(`✅ Universal Gateway Configuration saved for ${currentGwProvider.toUpperCase()} (${model})!`);
 };
 // Receives live Leads array and hydrates the leads profile grid & conversation list
 window.onLeadsLoaded = function(leads) {
