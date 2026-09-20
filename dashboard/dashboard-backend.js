@@ -1378,11 +1378,63 @@
         }
     };
 
+    // ── BI-DIRECTIONAL POCKETBASE TENANTS DB READ & WRITE SYNC ──
     window.saveAllSettings = async function() {
-        if (typeof toast === 'function') toast(`💾 Syncing all Settings to PocketBase database...`);
-        if (typeof window.saveGatewayConfig === 'function') await window.saveGatewayConfig();
-        if (typeof window.saveSystemPrompt === 'function') await window.saveSystemPrompt();
-        if (typeof toast === 'function') toast(`✅ All Settings successfully saved & synced to PocketBase database!`);
+        if (!currentTenant) return;
+
+        const wabaPhoneId = document.getElementById('cfg-waba-phone-id')?.value.trim();
+        const wabaToken = document.getElementById('cfg-waba-token')?.value.trim();
+        const apiKey = document.getElementById('gw-api-key')?.value.trim();
+        const agentName = document.getElementById('cfg-agent-name')?.value.trim();
+        const companyName = document.getElementById('cfg-company-name')?.value.trim();
+        const tgChat1 = document.getElementById('cfg-tg-chat-1')?.value.trim();
+        const modelSelect = document.getElementById('gw-target-model')?.value;
+        const languageSelect = document.getElementById('cfg-language')?.value;
+        const systemPrompt = document.getElementById('system-prompt-input')?.value;
+
+        const updatePayload = {};
+
+        if (apiKey !== undefined) updatePayload.API_Key = apiKey;
+        if (wabaPhoneId) updatePayload.phone_id = wabaPhoneId;
+        if (wabaToken) updatePayload.access_token = wabaToken;
+        if (agentName) updatePayload.agency_name = agentName;
+        if (companyName) updatePayload.Client_Badge = companyName;
+        if (tgChat1) updatePayload.telegram_chat_id = tgChat1;
+        if (systemPrompt !== undefined) updatePayload.system_prompt = systemPrompt;
+
+        // Sync local memory state
+        currentTenant = { ...currentTenant, ...updatePayload };
+        window.currentTenant = currentTenant;
+        localStorage.setItem('dashboard_tenant', JSON.stringify(currentTenant));
+
+        if (typeof toast === 'function') toast(`💾 Syncing all Settings directly to PocketBase Tenants database...`);
+
+        let updateSuccess = false;
+        if (pb && currentTenant.id) {
+            try {
+                await pb.collection('Tenants').update(currentTenant.id, updatePayload);
+                updateSuccess = true;
+            } catch (err) {
+                console.warn('[saveAllSettings] PocketBase Tenants update failed:', err.message);
+                if (currentTenant.phone_id) {
+                    try {
+                        const list = await pb.collection('Tenants').getFullList({
+                            filter: `phone_id = "${currentTenant.phone_id}"`
+                        });
+                        if (list && list.length > 0) {
+                            await pb.collection('Tenants').update(list[0].id, updatePayload);
+                            updateSuccess = true;
+                        }
+                    } catch (e2) {}
+                }
+            }
+        }
+
+        if (updateSuccess) {
+            if (typeof toast === 'function') toast(`✅ All Settings successfully saved & synced to PocketBase database!`);
+        } else {
+            if (typeof toast === 'function') toast(`✅ Settings saved locally!`);
+        }
     };
 
     // Real PocketBase Persistence for Adding Properties
@@ -1586,13 +1638,20 @@
             settingsSub.textContent = `Configure your ${clientBadge} automation system`;
         }
 
-        // 8. Hydrate API Key from PocketBase Tenants collection into Gateway Key Field
-        if (currentTenant.API_Key) {
-            const keyInp = document.getElementById('gw-api-key');
-            if (keyInp && !keyInp.value) {
-                keyInp.value = currentTenant.API_Key;
-            }
-        }
+        // 8. Hydrate Settings Form Inputs from Live PocketBase Tenant Record
+        const setVal = (id, val) => {
+            if (val === undefined || val === null || val === '') return;
+            const el = document.getElementById(id);
+            if (el) el.value = val;
+        };
+
+        setVal('gw-api-key', currentTenant.API_Key);
+        setVal('cfg-waba-phone-id', currentTenant.phone_id || currentTenant.waba_id);
+        setVal('cfg-waba-token', currentTenant.access_token);
+        setVal('cfg-agent-name', currentTenant.agency_name || currentTenant.Leads_Name);
+        setVal('cfg-company-name', currentTenant.Client_Badge || currentTenant.agency_name);
+        setVal('cfg-tg-chat-1', currentTenant.telegram_chat_id);
+        setVal('system-prompt-input', currentTenant.system_prompt);
     }
 
     // ══════════════════════════════════════════════════════════════════

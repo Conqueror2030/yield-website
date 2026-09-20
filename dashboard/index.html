@@ -1459,9 +1459,9 @@ select.sel{
       <div class="g2">
         <div class="card">
           <div class="card-hd"><div class="card-title">🔗 WhatsApp / Meta API</div></div>
-          <div class="form-row"><div class="form-lbl">Phone Number ID</div><input class="form-inp" value="1234567890123456" placeholder="Meta Phone Number ID"></div>
-          <div class="form-row"><div class="form-lbl">Access Token</div><input class="form-inp" value="EAABs...••••••" type="password" placeholder="Meta Access Token"></div>
-          <div class="form-row"><div class="form-lbl">Webhook Verify Token</div><input class="form-inp" value="prime_realty_webhook_2026" placeholder="Verify Token"></div>
+          <div class="form-row"><div class="form-lbl">Phone Number ID</div><input class="form-inp" id="cfg-waba-phone-id" value="1273961709129952" placeholder="Meta Phone Number ID"></div>
+          <div class="form-row"><div class="form-lbl">Access Token</div><input class="form-inp" id="cfg-waba-token" value="EAABs...••••••" type="password" placeholder="Meta Access Token"></div>
+          <div class="form-row"><div class="form-lbl">Webhook Verify Token</div><input class="form-inp" id="cfg-waba-verify-token" value="prime_realty_webhook_2026" placeholder="Verify Token"></div>
           <div style="display:flex;gap:8px;margin-top:6px">
             <button class="btn btn-o btn-sm" onclick="toast('🔍 Testing WhatsApp connection...')">Test Connection</button>
             <span class="badge b-green" style="align-self:center">✅ Connected</span>
@@ -1538,17 +1538,17 @@ select.sel{
         </div>
         <div class="card">
           <div class="card-hd"><div class="card-title">📱 Telegram Broker Notifications</div></div>
-          <div class="form-row"><div class="form-lbl">Bot Token</div><input class="form-inp" value="7123456789:AAE••••••••" type="password"></div>
-          <div class="form-row"><div class="form-lbl">Rajesh Kumar Chat ID</div><input class="form-inp" value="-1001234567890"></div>
-          <div class="form-row"><div class="form-lbl">Sunil Sharma Chat ID</div><input class="form-inp" value="-1009876543210"></div>
-          <div class="form-row"><div class="form-lbl">Meena Verma Chat ID</div><input class="form-inp" value="-1005555555555"></div>
+          <div class="form-row"><div class="form-lbl">Bot Token</div><input class="form-inp" id="cfg-tg-bot-token" value="7123456789:AAE••••••••" type="password"></div>
+          <div class="form-row"><div class="form-lbl">Rajesh Kumar Chat ID</div><input class="form-inp" id="cfg-tg-chat-1" value="-1001234567890"></div>
+          <div class="form-row"><div class="form-lbl">Sunil Sharma Chat ID</div><input class="form-inp" id="cfg-tg-chat-2" value="-1009876543210"></div>
+          <div class="form-row"><div class="form-lbl">Meena Verma Chat ID</div><input class="form-inp" id="cfg-tg-chat-3" value="-1005555555555"></div>
           <button class="btn btn-o btn-sm" onclick="toast('📨 Test message sent to all brokers!')">Send Test Message</button>
         </div>
         <div class="card">
           <div class="card-hd"><div class="card-title">📊 Google Sheets</div></div>
-          <div class="form-row"><div class="form-lbl">Sheet ID</div><input class="form-inp" value="1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgVE2upms"></div>
-          <div class="form-row"><div class="form-lbl">Bookings Tab Name</div><input class="form-inp" value="Bookings"></div>
-          <div class="form-row"><div class="form-lbl">Follow-up Queue Tab</div><input class="form-inp" value="Follow_Up_Queue"></div>
+          <div class="form-row"><div class="form-lbl">Sheet ID</div><input class="form-inp" id="cfg-gsheet-id" value="1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgVE2upms"></div>
+          <div class="form-row"><div class="form-lbl">Bookings Tab Name</div><input class="form-inp" id="cfg-gsheet-bookings" value="Bookings"></div>
+          <div class="form-row"><div class="form-lbl">Follow-up Queue Tab</div><input class="form-inp" id="cfg-gsheet-followups" value="Follow_Up_Queue"></div>
           <div style="display:flex;gap:8px;margin-top:6px">
             <button class="btn btn-o btn-sm" onclick="toast('✅ Sheet connection verified!')">Verify Sheet</button>
             <span class="badge b-green">✅ Connected</span>
@@ -1556,9 +1556,9 @@ select.sel{
         </div>
         <div class="card">
           <div class="card-hd"><div class="card-title">⏰ Follow-up Scheduler</div></div>
-          <div class="form-row"><div class="form-lbl">Run Every (hours)</div><input class="form-inp" value="4" type="number" min="1" max="24"></div>
-          <div class="form-row"><div class="form-lbl">Max Follow-ups per Lead</div><input class="form-inp" value="3" type="number" min="1" max="10"></div>
-          <div class="form-row"><div class="form-lbl">Follow-up Delay (hours after no reply)</div><input class="form-inp" value="24" type="number"></div>
+          <div class="form-row"><div class="form-lbl">Run Every (hours)</div><input class="form-inp" id="cfg-sched-interval" value="4" type="number" min="1" max="24"></div>
+          <div class="form-row"><div class="form-lbl">Max Follow-ups per Lead</div><input class="form-inp" id="cfg-sched-max" value="3" type="number" min="1" max="10"></div>
+          <div class="form-row"><div class="form-lbl">Follow-up Delay (hours after no reply)</div><input class="form-inp" id="cfg-sched-delay" value="24" type="number"></div>
           <div class="form-row"><div class="form-lbl">Status</div>
             <div style="display:flex;align-items:center;gap:10px;margin-top:6px">
               <div style="width:44px;height:24px;background:var(--green);border-radius:12px;cursor:pointer;display:flex;align-items:center;padding:2px 3px" onclick="toast('⏸ Scheduler paused')"><div style="width:18px;height:18px;background:#fff;border-radius:50%;margin-left:auto"></div></div>
@@ -1568,11 +1568,11 @@ select.sel{
         </div>
         <div class="card">
           <div class="card-hd"><div class="card-title">🏢 Company Info</div></div>
-          <div class="form-row"><div class="form-lbl">Company Name</div><input class="form-inp" value="Prime Realty India"></div>
-          <div class="form-row"><div class="form-lbl">Office Phone</div><input class="form-inp" value="+91 755 400 0000"></div>
-          <div class="form-row"><div class="form-lbl">Email</div><input class="form-inp" value="info@primerealty.in"></div>
-          <div class="form-row"><div class="form-lbl">City</div><input class="form-inp" value="Bhopal, Madhya Pradesh"></div>
-          <div class="form-row"><div class="form-lbl">RERA Number</div><input class="form-inp" value="MP/2022/RERA/001234"></div>
+          <div class="form-row"><div class="form-lbl">Company Name</div><input class="form-inp" id="cfg-company-name" value="Prime Realty India"></div>
+          <div class="form-row"><div class="form-lbl">Office Phone</div><input class="form-inp" id="cfg-company-phone" value="+91 755 400 0000"></div>
+          <div class="form-row"><div class="form-lbl">Email</div><input class="form-inp" id="cfg-company-email" value="info@primerealty.in"></div>
+          <div class="form-row"><div class="form-lbl">City</div><input class="form-inp" id="cfg-company-city" value="Bhopal, Madhya Pradesh"></div>
+          <div class="form-row"><div class="form-lbl">RERA Number</div><input class="form-inp" id="cfg-company-rera" value="MP/2022/RERA/001234"></div>
         </div>
       </div>
     </div>
