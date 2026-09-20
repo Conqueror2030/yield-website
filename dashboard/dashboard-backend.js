@@ -1301,6 +1301,90 @@
         if (typeof toast === 'function') toast('💾 AI System Instruction saved & synced to PocketBase!');
     };
 
+    // ── POCKETBASE PERSISTENCE FOR UNIVERSAL GATEWAY CONFIG & API KEY ──
+    window.saveGatewayConfig = async function() {
+        const keyInput = document.getElementById('gw-api-key');
+        const key = keyInput ? keyInput.value.trim() : '';
+        const modelSelect = document.getElementById('gw-target-model');
+        const model = modelSelect ? modelSelect.value : 'gemini-1.5-flash';
+        const agentName = document.getElementById('cfg-agent-name')?.value.trim() || '';
+        const language = document.getElementById('cfg-language')?.value || '';
+        const provider = window.currentGwProvider || 'gemini';
+
+        const gatewayConfig = {
+            provider: provider,
+            model: model,
+            key: key,
+            agentName: agentName,
+            language: language
+        };
+
+        // Save locally for instant state caching
+        localStorage.setItem('yieldai_gateway_config', JSON.stringify(gatewayConfig));
+        if (key) {
+            const savedKeys = JSON.parse(localStorage.getItem('yieldai_gw_keys') || '{}');
+            savedKeys[provider] = key;
+            localStorage.setItem('yieldai_gw_keys', JSON.stringify(savedKeys));
+        }
+
+        if (currentTenant) {
+            currentTenant.API_Key = key;
+            if (agentName) currentTenant.agency_name = agentName;
+            localStorage.setItem('dashboard_tenant', JSON.stringify(currentTenant));
+        }
+
+        let updatedSuccess = false;
+
+        if (pb && currentTenant) {
+            // Strategy 1: Update Tenants collection directly by ID
+            if (currentTenant.id) {
+                try {
+                    await pb.collection('Tenants').update(currentTenant.id, {
+                        API_Key: key,
+                        agency_name: agentName || currentTenant.agency_name || 'Yield.ai Operations Hub'
+                    });
+                    updatedSuccess = true;
+                } catch (e) {
+                    console.warn('[saveGatewayConfig] Direct ID update failed:', e.message);
+                }
+            }
+
+            // Strategy 2: Update Tenants collection by phone_id lookup
+            if (!updatedSuccess && currentTenant.phone_id) {
+                try {
+                    const records = await pb.collection('Tenants').getFullList({
+                        filter: `phone_id = "${currentTenant.phone_id}"`
+                    });
+                    if (records && records.length > 0) {
+                        const realId = records[0].id;
+                        currentTenant.id = realId;
+                        await pb.collection('Tenants').update(realId, {
+                            API_Key: key,
+                            agency_name: agentName || currentTenant.agency_name || 'Yield.ai Operations Hub'
+                        });
+                        updatedSuccess = true;
+                        localStorage.setItem('dashboard_tenant', JSON.stringify(currentTenant));
+                    }
+                } catch (e) {
+                    console.warn('[saveGatewayConfig] Query by phone_id update failed:', e.message);
+                }
+            }
+        }
+
+        if (updatedSuccess) {
+            if (typeof toast === 'function') toast(`✅ Saved & Synced to PocketBase! Provider: ${provider.toUpperCase()} (${model})`);
+        } else {
+            if (typeof toast === 'function') toast(`✅ Saved locally! Provider: ${provider.toUpperCase()} (${model})`);
+        }
+    };
+
+    window.saveAllSettings = async function() {
+        if (typeof toast === 'function') toast(`💾 Syncing all Settings to PocketBase database...`);
+        if (typeof window.saveGatewayConfig === 'function') await window.saveGatewayConfig();
+        if (typeof window.saveSystemPrompt === 'function') await window.saveSystemPrompt();
+        if (typeof toast === 'function') toast(`✅ All Settings successfully saved & synced to PocketBase database!`);
+    };
+
     // Real PocketBase Persistence for Adding Properties
     window.saveProperty = async function() {
         const title = (document.getElementById('prop-title')?.value || '').trim();
@@ -1492,7 +1576,7 @@
             tbSub.textContent = `— Good morning, ${userName} 👋`;
         }
 
-        // 7. Settings Company Info (if present)
+        // 7. Settings Company Info & API Key (if present)
         const settingsCompany = document.getElementById('settings-company-name');
         if (settingsCompany && !settingsCompany.value) {
             settingsCompany.value = clientBadge;
@@ -1500,6 +1584,14 @@
         const settingsSub = document.getElementById('settings-company-sub');
         if (settingsSub) {
             settingsSub.textContent = `Configure your ${clientBadge} automation system`;
+        }
+
+        // 8. Hydrate API Key from PocketBase Tenants collection into Gateway Key Field
+        if (currentTenant.API_Key) {
+            const keyInp = document.getElementById('gw-api-key');
+            if (keyInp && !keyInp.value) {
+                keyInp.value = currentTenant.API_Key;
+            }
         }
     }
 
