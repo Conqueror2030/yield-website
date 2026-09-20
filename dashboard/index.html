@@ -2048,16 +2048,26 @@ function filterProps(v){
 }
 
 // ── LIVE DATA CALLBACKS (called by dashboard-backend.js) ──
-// Receives live Leads array and hydrates the leads profile grid
+// Receives live Leads array and hydrates the leads profile grid & conversation list
 window.onLeadsLoaded = function(leads) {
   liveLeads = Array.isArray(leads) ? leads : [];
   renderLeads();
+  renderConvList();
 };
 
-// Receives live Appointments array and hydrates the dashboard bookings table
+// Receives live Appointments array and hydrates the dashboard bookings table & follow-ups
 window.onAppointmentsLoaded = function(apts) {
   liveAppointments = Array.isArray(apts) ? apts : [];
   renderDashBookings();
+  if (window.FollowupsController && typeof window.FollowupsController.renderAppointments === 'function') {
+    window.FollowupsController.renderAppointments();
+  }
+};
+
+// Receives live Properties array and hydrates the property inventory grid
+window.onPropertiesLoaded = function(props) {
+  liveProperties = Array.isArray(props) ? props : [];
+  renderProps();
 };
 
 
@@ -2272,6 +2282,20 @@ function nav(page){
 
   // Scroll to top
   document.getElementById('content').scrollTop=0;
+
+  // Trigger tab-specific view re-renders with live data
+  if (page === 'inbox' && typeof renderConvList === 'function') {
+    renderConvList();
+  } else if (page === 'inventory' && typeof renderProps === 'function') {
+    renderProps();
+  } else if (page === 'leads' && typeof renderLeads === 'function') {
+    renderLeads();
+  } else if (page === 'followups' && window.FollowupsController) {
+    if (typeof window.FollowupsController.renderAppointments === 'function') window.FollowupsController.renderAppointments();
+    if (typeof window.FollowupsController.renderFollowupQueue === 'function') window.FollowupsController.renderFollowupQueue();
+  } else if ((page === 'dashboard' || page === 'overview') && typeof renderDashBookings === 'function') {
+    renderDashBookings();
+  }
 }
 
 // Attach nav to all sidebar items

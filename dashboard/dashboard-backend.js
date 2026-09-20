@@ -1553,17 +1553,21 @@
         }
 
         // Immediately hydrate DOM with tenant identity & initial badge state
-        hydrateTenantIdentity();
-        updateSidebarBadges();
+        try {
+            hydrateTenantIdentity();
+            updateSidebarBadges();
 
-        if (typeof lucide !== 'undefined') lucide.createIcons();
+            if (typeof lucide !== 'undefined') lucide.createIcons();
 
-        const logoutBtn = document.getElementById('logout-btn');
-        if (logoutBtn) {
-            logoutBtn.addEventListener('click', () => {
-                localStorage.removeItem('dashboard_tenant');
-                window.location.href = '/dashboard/';
-            });
+            const logoutBtn = document.getElementById('logout-btn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', () => {
+                    localStorage.removeItem('dashboard_tenant');
+                    window.location.href = '/dashboard/';
+                });
+            }
+        } catch (e) {
+            console.warn('[Dashboard] Pre-fetch UI init warning:', e);
         }
 
         await refreshAllData();
@@ -1739,12 +1743,17 @@
             }
         }
 
+        currentLeads = leadsData || [];
+        window.currentLeads = currentLeads;
+        window.liveLeads = currentLeads;
+
         // Hydrate Inbox Module & Global Leads View
         InboxController.setLeads(currentLeads);
         FollowupsController.renderFollowupQueue();
         renderDynamicAgents(currentLeads, currentAppointments);
         updateMetricsCards();
         updateSidebarBadges();
+        if (typeof renderConvList === 'function') renderConvList();
         if (typeof renderLeads === 'function') renderLeads(currentLeads);
         if (typeof window.onLeadsLoaded === 'function') window.onLeadsLoaded(currentLeads);
     }
@@ -1819,12 +1828,16 @@
             }
         }
 
-        currentAppointments = aptsData;
+        currentAppointments = aptsData || [];
+        window.currentAppointments = currentAppointments;
+        window.liveAppointments = currentAppointments;
+
         FollowupsController.setAppointments(currentAppointments);
         renderDynamicAgents(currentLeads, currentAppointments);
         updateMetricsCards();
         updateSidebarBadges();
         // Notify index.html bookings table
+        if (typeof renderDashBookings === 'function') renderDashBookings();
         if (typeof window.onAppointmentsLoaded === 'function') window.onAppointmentsLoaded(currentAppointments);
     }
 
@@ -1882,9 +1895,14 @@
         }
 
         currentProperties = propsData || [];
+        window.currentProperties = currentProperties;
+        window.liveProperties = currentProperties;
+
         InventoryController.setProperties(currentProperties);
         updateMetricsCards();
         updateSidebarBadges();
+        if (typeof renderProps === 'function') renderProps();
+        if (typeof window.onPropertiesLoaded === 'function') window.onPropertiesLoaded(currentProperties);
     }
 
     // ---- AUTO-REFRESH ------------------------------------------------
