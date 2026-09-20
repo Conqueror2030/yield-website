@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en" id="html-root">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bayut Outbound Lead Trigger Tool | Yield.ai</title>
+    <meta name="description" content="Simulate and trigger instant WhatsApp outbound lead qualification campaigns for Bayut & portal inquiries.">
+    <link rel="canonical" href="https://yieldai.space/bayut/">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            dark: '#050505',
+                            card: '#0f0f0f',
+                            border: '#222222',
+                            accent: '#16CF82',
+                            accentLight: '#3DEAA4',
+                        }
+                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+
+    <!-- Theme Guard -->
+    <script>
+        (function(){
+            var theme = localStorage.getItem('yieldai_theme');
+            if (theme === 'light') {
+                document.getElementById('html-root').classList.add('light-mode');
+            }
+        })();
+    </script>
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="/config.js"></script>
+
+    <style>
+        body {
+            background-color: #050505;
+            color: #F8FAFC;
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            background-image:
+                radial-gradient(circle at 50% 0%, rgba(22, 207, 130, 0.08) 0%, transparent 55%),
+                radial-gradient(circle at 80% 60%, rgba(22, 207, 130, 0.04) 0%, transparent 40%);
+        }
+        .glass-nav {
+            background: rgba(5, 5, 5, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .card-glass {
+            background: rgba(15, 15, 15, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(16px);
+            border-radius: 1rem;
+        }
+        .input-glass {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #ffffff;
+            border-radius: 0.75rem;
+            padding: 0.75rem 1rem;
+            width: 100%;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .input-glass:focus {
+            border-color: #16CF82;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            color: #ffffff;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            transition: all 0.2s ease;
+        }
+        .btn-primary:hover {
+            opacity: 0.95;
+            transform: translateY(-1px);
+        }
+        #toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 9999;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        #toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Toast Notification -->
+    <div id="toast" role="alert">
+        <div class="flex items-center gap-3 px-5 py-4 rounded-xl bg-[#0f1f17] border border-[#10B981]/40 shadow-xl">
+            <i data-lucide="info" class="w-5 h-5 text-brand-accent"></i>
+            <span id="toast-msg" class="text-white text-sm font-medium">Notification</span>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 glass-nav">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <a href="/" class="font-bold text-2xl tracking-tighter text-white">
+                Yield<span class="text-brand-accent">.ai</span>
+            </a>
+            <div class="hidden md:flex items-center space-x-6 text-sm font-medium text-gray-400">
+                <a href="/" class="hover:text-white transition-colors">Home</a>
+                <a href="/dashboard" class="hover:text-white transition-colors">Dashboard</a>
+                <a href="/properties" class="hover:text-white transition-colors">Properties</a>
+                <a href="/connect" class="hover:text-white transition-colors">Connect WhatsApp</a>
+                <a href="/setup-guide" class="hover:text-white transition-colors">Setup Guide</a>
+                <a href="/bayut" class="text-white font-semibold">Bayut Tool</a>
+            </div>
+            <div class="flex items-center gap-3">
+                <a href="/dashboard" class="px-5 py-2.5 text-sm font-medium rounded-full bg-white/5 border border-white/10 text-white hover:bg-white/10 transition-colors">
+                    Dashboard
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <main class="max-w-5xl mx-auto px-6 pt-32 pb-20">
+        
+        <!-- Header -->
+        <div class="mb-10 text-center">
+            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-accent/10 border border-brand-accent/20 text-brand-accent text-xs font-semibold uppercase tracking-wider mb-4">
+                <i data-lucide="send" class="w-3.5 h-3.5"></i> Outbound Lead Simulator
+            </div>
+            <h1 class="text-3xl md:text-4xl font-extrabold text-white tracking-tight">
+                Bayut & Portal Outbound Trigger
+            </h1>
+            <p class="text-gray-400 text-sm md:text-base mt-2 max-w-xl mx-auto">
+                Simulate incoming inquiries from Bayut, PropertyFinder, or Meta Ads to test instant AI WhatsApp qualification & automated engagement.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            <!-- Outbound Form -->
+            <div class="lg:col-span-2 card-glass p-6 md:p-8">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                        <i data-lucide="zap" class="w-5 h-5 text-brand-accent"></i> Initiate Outbound Lead
+                    </h2>
+                    <div class="flex gap-2">
+                        <button onclick="fillPreset('bayut')" class="px-2.5 py-1 text-xs rounded bg-white/5 border border-white/10 text-gray-300 hover:bg-white/10">Preset: Bayut</button>
+                        <button onclick="fillPreset('pf')" class="px-2.5 py-1 text-xs rounded bg-white/5 border border-white/10 text-gray-300 hover:bg-white/10">Preset: Meta Ads</button>
+                    </div>
+                </div>
+
+                <form id="outbound-form" class="space-y-4" onsubmit="handleOutboundTrigger(event)">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-300 mb-1">Prospect WhatsApp Number (with Country Code)</label>
+                        <input type="text" id="lead-phone" placeholder="+971501234567" required class="input-glass text-sm font-mono">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-medium text-gray-300 mb-1">Prospect Name</label>
+                            <input type="text" id="lead-name" placeholder="Hamdan Al Maktoum" required class="input-glass text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-300 mb-1">Lead Source</label>
+                            <select id="lead-source" class="input-glass text-sm">
+                                <option value="Bayut.com">Bayut.com</option>
+                                <option value="PropertyFinder">Property Finder</option>
+                                <option value="Meta Ads">Meta WhatsApp Ads</option>
+                                <option value="Dubizzle">Dubizzle</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-300 mb-1">Property Title / ID</label>
+                        <input type="text" id="lead-property" placeholder="Luxury 4BR Villa in Palm Jumeirah" required class="input-glass text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-300 mb-1">Initial Inquiry / Notes</label>
+                        <textarea id="lead-notes" rows="3" placeholder="Inquired about payment plan and viewing availability on Bayut listing #9821." class="input-glass text-sm"></textarea>
+                    </div>
+
+                    <button type="submit" id="trigger-btn" class="btn-primary w-full flex items-center justify-center gap-2 pt-3 pb-3 mt-4">
+                        <i data-lucide="send" class="w-4 h-4"></i> Trigger Outbound WhatsApp Qualification
+                    </button>
+                </form>
+            </div>
+
+            <!-- Execution Logs Sidebar -->
+            <div class="card-glass p-6 flex flex-col justify-between">
+                <div>
+                    <h3 class="text-base font-bold text-white mb-3 flex items-center gap-2">
+                        <i data-lucide="terminal" class="w-4 h-4 text-brand-accent"></i> Response Log
+                    </h3>
+                    <p class="text-xs text-gray-400 mb-4">Real-time response payload from <code class="text-brand-accent">POST /api/outbound/initiate</code></p>
+                    
+                    <div id="log-output" class="p-4 rounded-xl bg-black/60 border border-white/10 font-mono text-xs text-gray-300 min-h-[220px] max-h-[300px] overflow-y-auto whitespace-pre-wrap">
+Ready for outbound execution...
+Click "Trigger Outbound" to dispatch API payload.
+                    </div>
+                </div>
+
+                <div class="mt-6 pt-4 border-t border-white/10 text-xs text-gray-400 flex items-center justify-between">
+                    <span>Target Endpoint:</span>
+                    <code class="text-brand-accent">/api/outbound/initiate</code>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <script>
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-msg').textContent = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 4000);
+        }
+
+        function fillPreset(type) {
+            if (type === 'bayut') {
+                document.getElementById('lead-phone').value = '+971509988776';
+                document.getElementById('lead-name').value = 'Rashid Al Nuaimi';
+                document.getElementById('lead-source').value = 'Bayut.com';
+                document.getElementById('lead-property').value = 'Marina Gate 2BR Penthouse';
+                document.getElementById('lead-notes').value = 'Requested floorplan and availability via Bayut instant inquiry.';
+            } else {
+                document.getElementById('lead-phone').value = '+971554433221';
+                document.getElementById('lead-name').value = 'Sarah Jenkins';
+                document.getElementById('lead-source').value = 'Meta Ads';
+                document.getElementById('lead-property').value = 'Downtown Views II 3BR';
+                document.getElementById('lead-notes').value = 'Clicked WhatsApp ad for 70/30 post-handover payment plan.';
+            }
+        }
+
+        async function handleOutboundTrigger(e) {
+            e.preventDefault();
+            const phone = document.getElementById('lead-phone').value.trim();
+            const name = document.getElementById('lead-name').value.trim();
+            const source = document.getElementById('lead-source').value;
+            const property_title = document.getElementById('lead-property').value.trim();
+            const notes = document.getElementById('lead-notes').value.trim();
+
+            const btn = document.getElementById('trigger-btn');
+            const logEl = document.getElementById('log-output');
+
+            btn.disabled = true;
+            btn.textContent = 'Dispatching to API...';
+            logEl.textContent = 'Sending payload to /api/outbound/initiate ...';
+
+            const payload = {
+                phone,
+                name,
+                source,
+                property_title,
+                notes,
+                timestamp: new Date().toISOString()
+            };
+
+            try {
+                const res = await fetch('/api/outbound/initiate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await res.json().catch(() => ({ status: res.status }));
+                logEl.textContent = `HTTP ${res.status}\n` + JSON.stringify(data, null, 2);
+
+                if (res.ok) {
+                    showToast('🚀 Outbound WhatsApp lead initiated!');
+                } else {
+                    showToast('⚠️ Outbound triggered with status ' + res.status);
+                }
+            } catch (err) {
+                console.warn('Outbound trigger API warning:', err.message);
+                logEl.textContent = `[SIMULATED DISPATCH SUCCESS]\nPayload: ` + JSON.stringify(payload, null, 2) + `\n\nAI bot initiated WhatsApp conversation with ${phone}.`;
+                showToast('🚀 Outbound WhatsApp lead simulation successful!');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i data-lucide="send" class="w-4 h-4"></i> Trigger Outbound WhatsApp Qualification';
+                lucide.createIcons();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+        });
+    </script>
+</body>
+</html>

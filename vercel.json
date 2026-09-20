@@ -1,117 +1,18 @@
 {
   "version": 2,
-  "builds": [
+  "outputDirectory": ".",
+  "rewrites": [
     {
-      "src": "index.html",
-      "use": "@vercel/static"
+      "source": "/api/:path*",
+      "destination": "https://api.yieldai.space/api/:path*"
     },
     {
-      "src": "connect/index.html",
-      "use": "@vercel/static"
+      "source": "/webhook/:path*",
+      "destination": "https://api.yieldai.space/webhook/:path*"
     },
     {
-      "src": "privacy/index.html",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "terms/index.html",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "dashboard/index.html",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "dashboard/dashboard.html",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "dashboard/dashboard-backend.js",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "config.js",
-      "use": "@vercel/static"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/connect",
-      "dest": "/connect/index.html"
-    },
-    {
-      "src": "/connect/",
-      "dest": "/connect/index.html"
-    },
-    {
-      "src": "/privacy",
-      "dest": "/privacy/index.html"
-    },
-    {
-      "src": "/privacy/",
-      "dest": "/privacy/index.html"
-    },
-    {
-      "src": "/terms",
-      "dest": "/terms/index.html"
-    },
-    {
-      "src": "/terms/",
-      "dest": "/terms/index.html"
-    },
-    {
-      "src": "/dashboard/dashboard(\\.html)?",
-      "status": 301,
-      "headers": {
-        "Location": "/dashboard/"
-      }
-    },
-    {
-      "src": "/dashboard/v2/?",
-      "status": 301,
-      "headers": {
-        "Location": "/dashboard/"
-      }
-    },
-    {
-      "src": "/realstate-dashboard-v2",
-      "status": 301,
-      "headers": {
-        "Location": "/dashboard/"
-      }
-    },
-    {
-      "src": "/dashboard/",
-      "dest": "/dashboard/index.html"
-    },
-    {
-      "src": "/dashboard",
-      "dest": "/dashboard/index.html"
-    },
-    {
-      "src": "/api/(.*)",
-      "dest": "https://api.yieldai.space/api/$1",
-      "headers": {
-        "Cache-Control": "s-maxage=0, no-store, must-revalidate"
-      }
-    },
-    {
-      "src": "/(index|connect/index|privacy/index|terms/index|dashboard/index)\\.html",
-      "headers": {
-        "Cache-Control": "s-maxage=0, no-store, must-revalidate"
-      }
-    },
-    {
-      "src": "/dashboard/dashboard-backend.js",
-      "headers": {
-        "Cache-Control": "s-maxage=0, no-store, must-revalidate"
-      }
-    },
-    {
-      "src": "/config.js",
-      "headers": {
-        "Cache-Control": "s-maxage=0, no-store, must-revalidate"
-      }
+      "source": "/auth/:path*",
+      "destination": "https://api.yieldai.space/auth/:path*"
     }
   ]
 }

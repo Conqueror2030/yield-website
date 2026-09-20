@@ -1,10 +1,5 @@
 {
   "name": "yieldai-website",
   "version": "1.0.0",
-  "description": "Yield.ai WhatsApp Business Platform Frontend",
-  "scripts": {
-    "build": "echo 'Static site - no build step required'",
-    "vercel-build": "echo 'Static site - no build step required'"
-  },
-  "devDependencies": {}
+  "description": "Yield.ai WhatsApp Business Platform Frontend"
 }

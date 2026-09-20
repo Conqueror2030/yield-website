@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en" id="html-root">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp Setup Guide | Yield.ai</title>
+    <meta name="description" content="Step-by-step onboarding documentation for connecting your WhatsApp Business Account to Yield.ai.">
+    <link rel="canonical" href="https://yieldai.space/setup-guide/">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            dark: '#050505',
+                            card: '#0f0f0f',
+                            border: '#222222',
+                            accent: '#16CF82',
+                            accentLight: '#3DEAA4',
+                        }
+                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+
+    <!-- Theme Guard -->
+    <script>
+        (function(){
+            var theme = localStorage.getItem('yieldai_theme');
+            if (theme === 'light') {
+                document.getElementById('html-root').classList.add('light-mode');
+            }
+        })();
+    </script>
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="/config.js"></script>
+
+    <style>
+        body {
+            background-color: #050505;
+            color: #F8FAFC;
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            background-image:
+                radial-gradient(circle at 50% 0%, rgba(22, 207, 130, 0.08) 0%, transparent 55%),
+                radial-gradient(circle at 80% 60%, rgba(22, 207, 130, 0.04) 0%, transparent 40%);
+        }
+        .glass-nav {
+            background: rgba(5, 5, 5, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .card-glass {
+            background: rgba(15, 15, 15, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(16px);
+            border-radius: 1rem;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 glass-nav">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <a href="/" class="font-bold text-2xl tracking-tighter text-white">
+                Yield<span class="text-brand-accent">.ai</span>
+            </a>
+            <div class="hidden md:flex items-center space-x-6 text-sm font-medium text-gray-400">
+                <a href="/" class="hover:text-white transition-colors">Home</a>
+                <a href="/dashboard" class="hover:text-white transition-colors">Dashboard</a>
+                <a href="/properties" class="hover:text-white transition-colors">Properties</a>
+                <a href="/connect" class="hover:text-white transition-colors">Connect WhatsApp</a>
+                <a href="/setup-guide" class="text-white font-semibold">Setup Guide</a>
+                <a href="/bayut" class="hover:text-white transition-colors">Bayut Tool</a>
+            </div>
+            <div class="flex items-center gap-3">
+                <a href="/connect" class="px-5 py-2.5 text-sm font-semibold rounded-full bg-brand-accent text-white hover:bg-brand-accentLight transition-colors">
+                    Start Onboarding
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto px-6 pt-32 pb-20">
+
+        <!-- Header -->
+        <div class="mb-12 text-center">
+            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-accent/10 border border-brand-accent/20 text-brand-accent text-xs font-semibold uppercase tracking-wider mb-4">
+                <i data-lucide="book-open" class="w-3.5 h-3.5"></i> Setup Documentation
+            </div>
+            <h1 class="text-4xl md:text-5xl font-extrabold text-white tracking-tight">
+                WhatsApp Business Integration Guide
+            </h1>
+            <p class="text-gray-400 text-base md:text-lg mt-3 max-w-xl mx-auto">
+                Connect your Meta WhatsApp Business Account (WABA) to Yield.ai in 5 simple steps.
+            </p>
+        </div>
+
+        <!-- Steps Stack -->
+        <div class="space-y-8">
+
+            <!-- Step 1 -->
+            <div class="card-glass p-6 md:p-8 relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-brand-accent/5 rounded-full blur-2xl pointer-events-none"></div>
+                <div class="flex items-start gap-4">
+                    <div class="w-10 h-10 rounded-xl bg-brand-accent/20 text-brand-accent font-bold text-lg flex items-center justify-center flex-shrink-0">
+                        1
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-white mb-2">Meta Business Manager Verification</h2>
+                        <p class="text-sm text-gray-300 leading-relaxed mb-4">
+                            Ensure you have an active Facebook/Meta Business Suite account with administrator access. Meta requires business verification to send unlimited WhatsApp messages to new leads.
+                        </p>
+                        <ul class="space-y-2 text-xs text-gray-400">
+                            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-brand-accent"></i> Business Tax ID or Registration Document</li>
+                            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-brand-accent"></i> Official Business Website or Domain Email</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="card-glass p-6 md:p-8 relative overflow-hidden">
+                <div class="flex items-start gap-4">
+                    <div class="w-10 h-10 rounded-xl bg-brand-accent/20 text-brand-accent font-bold text-lg flex items-center justify-center flex-shrink-0">
+                        2
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-white mb-2">Meta Embedded Signup Flow</h2>
+                        <p class="text-sm text-gray-300 leading-relaxed mb-4">
+                            Navigate to the <a href="/connect" class="text-brand-accent hover:underline">Connect WhatsApp</a> page and click <strong>"Log in with Facebook"</strong>. This launches Meta's official Embedded Signup modal.
+                        </p>
+                        <div class="p-4 rounded-xl bg-white/5 border border-white/10 text-xs text-gray-300 space-y-2">
+                            <p class="font-semibold text-white">Permissions Requested by Yield.ai:</p>
+                            <p>• <code class="text-brand-accent">whatsapp_business_management</code> — Configure webhooks and business profile</p>
+                            <p>• <code class="text-brand-accent">whatsapp_business_messaging</code> — Receive incoming buyer inquiries and send AI responses</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="card-glass p-6 md:p-8 relative overflow-hidden">
+                <div class="flex items-start gap-4">
+                    <div class="w-10 h-10 rounded-xl bg-brand-accent/20 text-brand-accent font-bold text-lg flex items-center justify-center flex-shrink-0">
+                        3
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-white mb-2">Phone Number Registration</h2>
+                        <p class="text-sm text-gray-300 leading-relaxed mb-4">
+                            Select an existing WhatsApp Business Phone Number or register a dedicated new number. You will receive an SMS or Voice OTP code from Meta to verify ownership.
+                        </p>
+                        <div class="p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-300">
+                            <strong>Note:</strong> If the phone number is currently active on standard WhatsApp Mobile App, you must delete the account from the phone before linking to the Business Cloud API.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4 -->
+            <div class="card-glass p-6 md:p-8 relative overflow-hidden">
+                <div class="flex items-start gap-4">
+                    <div class="w-10 h-10 rounded-xl bg-brand-accent/20 text-brand-accent font-bold text-lg flex items-center justify-center flex-shrink-0">
+                        4
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-white mb-2">Customize AI Broker Identity & System Prompt</h2>
+                        <p class="text-sm text-gray-300 leading-relaxed mb-4">
+                            In your <a href="/dashboard" class="text-brand-accent hover:underline">Client Dashboard</a> under AI Settings, set your AI persona details (Agent Name, Brokerage Brand, Tone of Voice, Qualification Guidelines, and Viewing Scheduler Rules).
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 5 -->
+            <div class="card-glass p-6 md:p-8 relative overflow-hidden">
+                <div class="flex items-start gap-4">
+                    <div class="w-10 h-10 rounded-xl bg-brand-accent/20 text-brand-accent font-bold text-lg flex items-center justify-center flex-shrink-0">
+                        5
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-white mb-2">Live Test & Outbound Simulation</h2>
+                        <p class="text-sm text-gray-300 leading-relaxed mb-4">
+                            Once connected, visit the <a href="/bayut" class="text-brand-accent hover:underline">Bayut Outbound Tool</a> to simulate incoming leads and verify instant WhatsApp auto-responses and CRM lead tracking.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- CTA Box -->
+        <div class="mt-12 text-center card-glass p-8 bg-gradient-to-r from-brand-accent/10 via-transparent to-brand-accent/5 border border-brand-accent/20">
+            <h3 class="text-2xl font-bold text-white mb-2">Ready to Connect Your Account?</h3>
+            <p class="text-sm text-gray-400 mb-6">Launch your 24/7 AI real estate qualification engine today.</p>
+            <a href="/connect" class="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-brand-accent text-white font-semibold hover:bg-brand-accentLight transition-all">
+                Launch Connect Portal <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </a>
+        </div>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+        });
+    </script>
+</body>
+</html>
