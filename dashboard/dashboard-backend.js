@@ -606,11 +606,45 @@
             tbody.innerHTML = queue.map(l => {
                 const phone = String(l.Phone_No || l.phone_no || 'Lead');
                 const targetId = l.id || phone;
-                const isSent = !!(l.last_followup || l.follow_up_status === 'sent' || (l.follow_up_count && l.follow_up_count > 0));
-                const timeStr = l.last_followup ? timeAgo(l.last_followup) : (l.updated ? timeAgo(l.updated) : 'Scheduled Today');
-                const preview = String(l.Chat_Summary || l.chat_summary || 'Follow-up on property inquiry');
-                const badgeClass = isSent ? 'b-green' : 'b-blue';
-                const statusLabel = isSent ? 'Sent' : (l.follow_up_status || 'Queued');
+
+                // Determine true status
+                const rawStatus = String(l.follow_up_status || '').toLowerCase();
+                let statusLabel = 'Queued';
+                let badgeClass = 'b-blue';
+
+                if (rawStatus === 'sent' || (l.last_followup && rawStatus !== 'queued' && rawStatus !== 'scheduled' && rawStatus !== 'pending')) {
+                    statusLabel = 'Sent';
+                    badgeClass = 'b-green';
+                } else if (rawStatus === 'failed' || rawStatus === 'error') {
+                    statusLabel = 'Failed';
+                    badgeClass = 'b-red';
+                } else if (rawStatus === 'queued' || rawStatus === 'scheduled' || rawStatus === 'pending') {
+                    statusLabel = 'Queued';
+                    badgeClass = 'b-blue';
+                } else {
+                    statusLabel = 'Queued';
+                    badgeClass = 'b-blue';
+                }
+
+                // Timing display
+                let timeStr = 'Next Run';
+                if (statusLabel === 'Sent' && l.last_followup) {
+                    timeStr = timeAgo(l.last_followup);
+                } else if (l.scheduled_followup) {
+                    timeStr = timeAgo(l.scheduled_followup);
+                } else if (l.updated) {
+                    timeStr = 'Scheduled Today';
+                }
+
+                // Dynamic message preview
+                let preview = l.Chat_Summary || l.chat_summary || '';
+                if (!preview && Array.isArray(l.Chat_History) && l.Chat_History.length > 0) {
+                    const lastMsg = l.Chat_History[l.Chat_History.length - 1];
+                    preview = (lastMsg && (lastMsg.content || lastMsg.text)) ? String(lastMsg.content || lastMsg.text).replace(/\[DEPLOY_FILE:[^\]]+\]/g, '').trim() : '';
+                }
+                if (!preview) {
+                    preview = statusLabel === 'Sent' ? 'Automated follow-up sent' : 'Automated follow-up queued';
+                }
 
                 return `
                     <tr>
@@ -841,8 +875,8 @@
         }).length;
 
         const followupsQueued = leadsList.filter(l => 
-            (l.follow_up_status && l.follow_up_status !== 'completed') || 
-            (l.last_followup && !l.ai_paused)
+            !l.ai_paused && 
+            (l.follow_up_status === 'queued' || l.follow_up_status === 'scheduled' || (!l.last_followup && l.follow_up_status !== 'sent' && l.follow_up_status !== 'completed'))
         ).length;
 
         // 2. Follow-up Scheduler Metrics
