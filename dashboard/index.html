@@ -1040,31 +1040,31 @@ select.sel{
             <div class="card-title">💰 Ad Spend vs Revenue — ROI Tracker</div>
             <div class="card-sub">How much you spent vs how much you earned, by channel</div>
           </div>
-          <select class="sel" style="font-size:12px" onchange="toast('📊 ROI period updated')">
-            <option>August 2026</option><option>July 2026</option><option>Last 90 Days</option>
+          <select class="sel" id="roi-period-sel" style="font-size:12px" onchange="if(window.renderDynamicROI) window.renderDynamicROI(window.currentLeads, window.currentAppointments, window.currentTenant, this.value)">
+            <option value="this_month">This Month</option><option value="last_month">Last Month</option><option value="all_time">All Time</option>
           </select>
         </div>
         <div class="roi-grid" style="grid-template-columns:repeat(2,1fr)">
           <div class="roi-card">
             <div class="roi-src">📱 Meta / Instagram Ads</div>
-            <div class="roi-row"><span class="roi-lbl">Ad Spend</span><span class="roi-val">₹18,000</span></div>
-            <div class="roi-row"><span class="roi-lbl">Leads Generated</span><span class="roi-val">67 leads</span></div>
-            <div class="roi-row"><span class="roi-lbl">Bookings Closed</span><span class="roi-val">18 deals</span></div>
-            <div class="roi-row"><span class="roi-lbl">Revenue Earned</span><span class="roi-val" style="color:var(--green)">₹1.84Cr</span></div>
+            <div class="roi-row"><span class="roi-lbl">Ad Spend</span><span class="roi-val" id="roi-meta-spend">₹0</span></div>
+            <div class="roi-row"><span class="roi-lbl">Leads Generated</span><span class="roi-val" id="roi-meta-leads">0 leads</span></div>
+            <div class="roi-row"><span class="roi-lbl">Bookings Closed</span><span class="roi-val" id="roi-meta-bookings">0 deals</span></div>
+            <div class="roi-row"><span class="roi-lbl">Revenue Earned</span><span class="roi-val" id="roi-meta-rev" style="color:var(--green)">₹0</span></div>
             <div class="roi-ratio">
-              <div><div class="roi-ratio-val" style="color:var(--green)">102x</div><div class="roi-ratio-lbl">Return on Ad Spend</div></div>
-              <span class="badge b-green">↑ Best Channel</span>
+              <div><div class="roi-ratio-val" id="roi-meta-ratio" style="color:var(--green)">—</div><div class="roi-ratio-lbl">Return on Ad Spend</div></div>
+              <span class="badge b-gray" id="roi-meta-badge">Organic / No Spend</span>
             </div>
           </div>
           <div class="roi-card">
             <div class="roi-src">💬 WhatsApp Direct</div>
-            <div class="roi-row"><span class="roi-lbl">Ad Spend</span><span class="roi-val">₹0</span></div>
-            <div class="roi-row"><span class="roi-lbl">Leads Generated</span><span class="roi-val">48 leads</span></div>
-            <div class="roi-row"><span class="roi-lbl">Bookings Closed</span><span class="roi-val">14 deals</span></div>
-            <div class="roi-row"><span class="roi-lbl">Revenue Earned</span><span class="roi-val" style="color:var(--green)">₹1.12Cr</span></div>
+            <div class="roi-row"><span class="roi-lbl">Ad Spend</span><span class="roi-val" id="roi-wa-spend">₹0</span></div>
+            <div class="roi-row"><span class="roi-lbl">Leads Generated</span><span class="roi-val" id="roi-wa-leads">0 leads</span></div>
+            <div class="roi-row"><span class="roi-lbl">Bookings Closed</span><span class="roi-val" id="roi-wa-bookings">0 deals</span></div>
+            <div class="roi-row"><span class="roi-lbl">Revenue Earned</span><span class="roi-val" id="roi-wa-rev" style="color:var(--green)">₹0</span></div>
             <div class="roi-ratio">
-              <div><div class="roi-ratio-val" style="color:var(--blue)">∞</div><div class="roi-ratio-lbl">Organic (Free)</div></div>
-              <span class="badge b-blue">Free Channel</span>
+              <div><div class="roi-ratio-val" id="roi-wa-ratio" style="color:var(--blue)">∞</div><div class="roi-ratio-lbl">Organic (Free)</div></div>
+              <span class="badge b-blue" id="roi-wa-badge">Free Channel</span>
             </div>
           </div>
         </div>
@@ -1102,39 +1102,39 @@ select.sel{
         <div class="card">
           <div class="card-hd">
             <div>
-              <div class="card-title">Lead Funnel — August 2026</div>
-              <div class="card-sub">From Meta Ads + WhatsApp</div>
+              <div class="card-title" id="funnel-title">Lead Funnel</div>
+              <div class="card-sub" id="funnel-sub">Live conversion stages from database</div>
             </div>
-            <select class="sel" style="font-size:12px" onchange="toast('📊 Updating chart...')">
-              <option>This Month</option><option>Last Month</option><option>Last 90 Days</option>
+            <select class="sel" id="funnel-period-sel" style="font-size:12px" onchange="if(window.renderDynamicLeadFunnel) window.renderDynamicLeadFunnel(window.currentLeads, window.currentAppointments, this.value)">
+              <option value="this_month">This Month</option><option value="last_month">Last Month</option><option value="all_time">All Time</option>
             </select>
           </div>
           <div style="display:flex;flex-direction:column;gap:13px">
             <div>
-              <div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--t2)">📥 Total Leads</span><strong>142</strong></div>
-              <div class="pbar"><div class="pfill" style="width:100%"></div></div>
+              <div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--t2)">📥 Total Leads</span><strong id="funnel-total-leads">0</strong></div>
+              <div class="pbar"><div class="pfill" id="funnel-bar-total" style="width:0%"></div></div>
             </div>
             <div>
-              <div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--t2)">💬 Engaged with AI Agent</span><strong>118 (83%)</strong></div>
-              <div class="pbar"><div class="pfill" style="width:83%"></div></div>
+              <div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--t2)">💬 Engaged with AI Agent</span><strong id="funnel-engaged">0 (0%)</strong></div>
+              <div class="pbar"><div class="pfill" id="funnel-bar-engaged" style="width:0%"></div></div>
             </div>
             <div>
-              <div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--t2)">🏠 Requested Property Details</span><strong>76 (54%)</strong></div>
-              <div class="pbar"><div class="pfill" style="width:54%"></div></div>
+              <div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--t2)">🏠 Requested Property Details</span><strong id="funnel-requested">0 (0%)</strong></div>
+              <div class="pbar"><div class="pfill" id="funnel-bar-requested" style="width:0%"></div></div>
             </div>
             <div>
-              <div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--t2)">📅 Site Visit Scheduled</span><strong>54 (38%)</strong></div>
-              <div class="pbar"><div class="pfill o" style="width:38%"></div></div>
+              <div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--t2)">📅 Site Visit Scheduled</span><strong id="funnel-scheduled">0 (0%)</strong></div>
+              <div class="pbar"><div class="pfill o" id="funnel-bar-scheduled" style="width:0%"></div></div>
             </div>
             <div>
-              <div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--t2)">✅ Booking Confirmed</span><strong>38 (27%)</strong></div>
-              <div class="pbar"><div class="pfill g" style="width:27%"></div></div>
+              <div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--t2)">✅ Booking Confirmed</span><strong id="funnel-confirmed">0 (0%)</strong></div>
+              <div class="pbar"><div class="pfill g" id="funnel-bar-confirmed" style="width:0%"></div></div>
             </div>
           </div>
           <div class="div"></div>
           <div style="font-size:12px;color:var(--t3);font-weight:700;margin-bottom:10px">Daily Leads — Last 10 Days</div>
           <div class="mbar-wrap" id="dash-bars"></div>
-          <div style="display:flex;justify-content:space-between;font-size:10.5px;color:var(--t4);margin-top:4px"><span>Jul 27</span><span>Today</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:10.5px;color:var(--t4);margin-top:4px"><span id="dash-bars-start-date">10 days ago</span><span>Today</span></div>
         </div>
 
         <!-- Right column -->
@@ -1143,12 +1143,12 @@ select.sel{
             <div class="card-hd"><div class="card-title">Lead Sources</div></div>
             <div style="display:flex;flex-direction:column;gap:11px">
               <div>
-                <div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:4px"><span style="color:var(--t2)">📱 Meta / Instagram Ads</span><strong>67 (47%)</strong></div>
-                <div class="pbar"><div class="pfill" style="width:47%"></div></div>
+                <div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:4px"><span style="color:var(--t2)">📱 Meta / Instagram Ads</span><strong id="source-meta-val">0 (0%)</strong></div>
+                <div class="pbar"><div class="pfill" id="source-meta-bar" style="width:0%"></div></div>
               </div>
               <div>
-                <div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:4px"><span style="color:var(--t2)">💬 WhatsApp Direct</span><strong>48 (34%)</strong></div>
-                <div class="pbar"><div class="pfill o" style="width:34%"></div></div>
+                <div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:4px"><span style="color:var(--t2)">💬 WhatsApp Direct</span><strong id="source-wa-val">0 (0%)</strong></div>
+                <div class="pbar"><div class="pfill o" id="source-wa-bar" style="width:0%"></div></div>
               </div>
 
             </div>
@@ -1289,10 +1289,7 @@ select.sel{
           <table>
             <thead><tr><th>Phone Number</th><th>Lead Summary</th><th>Interested In</th><th>Status</th><th>Time</th></tr></thead>
             <tbody id="leads-tbody">
-              <tr><td><a href="#" onclick="nav('leads')" style="color:var(--blue);text-decoration:none;font-weight:600">+91 84594 77871</a></td><td style="color:var(--t3);font-size:12px">Enquired about 3BHK in Kolar Road area, budget ₹65-70L</td><td>3BHK Kolar Road</td><td><select class="status-sel warm"><option value="hot">🔥 Hot</option><option value="warm" selected>🌡️ Warm</option><option value="cold">❄️ Cold</option><option value="dead">💀 Dead</option></select></td><td>Sep 8, 11:01 AM</td></tr>
-              <tr><td><a href="#" onclick="nav('leads')" style="color:var(--blue);text-decoration:none;font-weight:600">+971 50 987 6543</a></td><td style="color:var(--t3);font-size:12px">Dubai-based investor interested in Marevа The Oasis villas</td><td>Mareva The Oasis</td><td><select class="status-sel hot"><option value="hot" selected>🔥 Hot</option><option value="warm">🌡️ Warm</option><option value="cold">❄️ Cold</option><option value="dead">💀 Dead</option></select></td><td>Sep 5, 10:17 PM</td></tr>
-              <tr><td><a href="#" onclick="nav('leads')" style="color:var(--blue);text-decoration:none;font-weight:600">+971 50 123 4567</a></td><td style="color:var(--t3);font-size:12px">Looking for ready-to-move property under ₹50L</td><td>2BHK Habibganj</td><td><select class="status-sel cold"><option value="hot">🔥 Hot</option><option value="warm">🌡️ Warm</option><option value="cold" selected>❄️ Cold</option><option value="dead">💀 Dead</option></select></td><td>Sep 5, 10:02 PM</td></tr>
-              <tr><td><a href="#" onclick="nav('leads')" style="color:var(--blue);text-decoration:none;font-weight:600">+91 75881 64676</a></td><td style="color:var(--t3);font-size:12px">Plot investment inquiry, Misrod area, budget ₹20L</td><td>Plot Misrod</td><td><select class="status-sel warm"><option value="hot">🔥 Hot</option><option value="warm" selected>🌡️ Warm</option><option value="cold">❄️ Cold</option><option value="dead">💀 Dead</option></select></td><td>Aug 9, 06:23 PM</td></tr>
+              <tr><td colspan="5" style="padding:24px;text-align:center;color:var(--t3);font-size:13px">Loading leads from database...</td></tr>
             </tbody>
           </table>
         </div>
@@ -1867,131 +1864,15 @@ let liveAppointments = [];
 
 
 
-const BROKERS = [
-  { name:'Rajesh Kumar', init:'RK', color:'#1A6BFF', spec:'Residential Expert',   phone:'+91 98001 11001', tg:'@rajesh_realty',    exp:'8 Years', leads:24, closed:14, rev:'₹1.8Cr', rating:'4.8', status:'active' },
-  { name:'Sunil Sharma', init:'SS', color:'#12B76A', spec:'Commercial Specialist', phone:'+91 98001 22002', tg:'@sunil_commercial', exp:'6 Years', leads:18, closed:10, rev:'₹95L',   rating:'4.6', status:'active' },
-  { name:'Meena Verma',  init:'MV', color:'#F79009', spec:'Plots & Land Expert',  phone:'+91 98001 33003', tg:'@meena_plots',      exp:'5 Years', leads:16, closed:8,  rev:'₹62L',   rating:'4.5', status:'active' },
-];
-
-const BROKER_LOG = [
-  { date:'Aug 6',  client:'Ramesh Gupta',   prop:'3BHK Kolar Road',   broker:'Rajesh Kumar', tg:'✅ Delivered', status:'confirmed',  comm:'₹72,000' },
-  { date:'Aug 5',  client:'Priya Sharma',   prop:'2BHK Habibganj',    broker:'Meena Verma',  tg:'✅ Delivered', status:'confirmed',  comm:'₹45,000' },
-  { date:'Aug 5',  client:'Sunita Verma',   prop:'Commercial Shop',    broker:'Sunil Sharma', tg:'✅ Delivered', status:'confirmed',  comm:'₹28,000' },
-  { date:'Aug 4',  client:'Kavita Rao',     prop:'3BHK Kolar Road',   broker:'Rajesh Kumar', tg:'✅ Delivered', status:'confirmed',  comm:'₹68,000' },
-  { date:'Aug 3',  client:'Deepak Singh',   prop:'Plot Misrod',        broker:'Meena Verma',  tg:'✅ Delivered', status:'site_visit', comm:'—' },
-  { date:'Aug 2',  client:'Aman Tiwari',    prop:'2BHK Habibganj',    broker:'Meena Verma',  tg:'✅ Delivered', status:'cancelled',  comm:'—' },
-  { date:'Aug 2',  client:'Vikas Malhotra', prop:'Commercial Shop',    broker:'Sunil Sharma', tg:'✅ Delivered', status:'confirmed',  comm:'₹32,000' },
-  { date:'Aug 1',  client:'Neha Gupta',     prop:'Plot Misrod',        broker:'Meena Verma',  tg:'✅ Delivered', status:'confirmed',  comm:'₹19,000' },
-];
-
-const AGENTS = [
-  {
-    ico:'💬', name:'WhatsApp Chat Agent', type:'AI Agent Node · GPT-4o Mini',
-    badge:'b-green', btext:'Online',
-    desc:'Handles all incoming WhatsApp & Meta Ads leads. Shares property details, collects requirements, schedules site visits, and flags bookings.',
-    metrics:[
-      { k:'Conversations Today', v:'47' },
-      { k:'Avg Response Time', v:'< 2 sec' },
-      { k:'Bookings Generated', v:'12 today' },
-      { k:'Follow-ups Queued', v:'18 leads' },
-      { k:'Memory Window', v:'20 turns' },
-      { k:'Active Tools', v:'3 (Properties, Booking, Follow-up)' },
-    ]
-  },
-
-  {
-    ico:'🔔', name:'Follow-up Scheduler', type:'Schedule Trigger · Every 4 Hours',
-    badge:'b-green', btext:'Running',
-    desc:'Automatically sends personalized follow-up messages to unresponsive leads. Stops after 3 follow-ups and marks lead as completed.',
-    metrics:[
-      { k:'Last Run', v:'2h 14m ago' },
-      { k:'Leads in Queue', v:'23 pending' },
-      { k:'Messages Sent Today', v:'31' },
-      { k:'Re-engagement Rate', v:'28%' },
-      { k:'Max Follow-ups', v:'3 per lead' },
-      { k:'Next Run', v:'In 1h 46m' },
-    ]
-  },
-];
-
-const EXEC_LOG = [
-  { id:'exec_a1b2c3', wf:'WhatsApp Chat Agent', trigger:'Webhook POST', dur:'1.2s', nodes:8,  time:'2m ago',     status:'success' },
-  { id:'exec_b2c3d4', wf:'Follow-up Scheduler', trigger:'Schedule',    dur:'3.8s', nodes:14, time:'4m ago',     status:'success' },
-  { id:'exec_c3d4e5', wf:'WhatsApp Chat Agent', trigger:'Webhook POST', dur:'0.9s', nodes:7,  time:'8m ago',     status:'success' },
-  { id:'exec_d4e5f6', wf:'Voice Call Agent',    trigger:'Webhook POST', dur:'2.1s', nodes:9,  time:'23m ago',    status:'success' },
-  { id:'exec_e5f6g7', wf:'WhatsApp Chat Agent', trigger:'Webhook POST', dur:'1.4s', nodes:8,  time:'31m ago',    status:'success' },
-  { id:'exec_f6g7h8', wf:'WhatsApp Chat Agent', trigger:'Webhook POST', dur:'—',    nodes:3,  time:'44m ago',    status:'error' },
-  { id:'exec_g7h8i9', wf:'Follow-up Scheduler', trigger:'Schedule',    dur:'4.1s', nodes:14, time:'1h ago',     status:'success' },
-  { id:'exec_h8i9j0', wf:'Voice Call Agent',    trigger:'Webhook POST', dur:'1.8s', nodes:9,  time:'1h 12m ago', status:'success' },
-  { id:'exec_i9j0k1', wf:'Meta Lead Handler',   trigger:'Webhook POST', dur:'0.7s', nodes:5,  time:'1h 28m ago', status:'success' },
-  { id:'exec_j0k1l2', wf:'WhatsApp Chat Agent', trigger:'Webhook POST', dur:'1.1s', nodes:8,  time:'1h 45m ago', status:'success' },
-];
-
-const RECORDINGS = [
-  {
-    id:'CALL-089', caller:'Mohit Jain',    phone:'+91 76543 21098', color:'#1A6BFF', init:'MJ',
-    date:'Aug 6, 2026', time:'11:24 AM', dur:'4m 22s', outcome:'booking',
-    prop:'4BHK Villa, Chinar Park',
-    waves:[30,50,70,40,60,80,55,45,65,90,75,60,40,70,85,50,65,30,55,70,45,80,60,40,75,90,55,65,30,50,45,70,85,60,40,75,55,80,40,65],
-    transcript:[
-      { ai:true,  spk:'AI Agent (Priya)', txt:'Namaste! Prime Realty se Priya bol rahi hoon. Aap kisi property mein interested hain?' },
-      { ai:false, spk:'Mohit Jain',       txt:'Haan, mujhe 4BHK villa chahiye, budget 1.3 crore ke around.' },
-      { ai:true,  spk:'AI Agent (Priya)', txt:'Bilkul sir! Chinar Park mein premium 4BHK villa — ₹1.2Cr to ₹1.5Cr. Private pool, 3 parking, smart home. Site visit karein?' },
-      { ai:false, spk:'Mohit Jain',       txt:'Haan zaroor, Sunday ko available hoon.' },
-      { ai:true,  spk:'AI Agent (Priya)', txt:'Sunday August 10 ko 11 AM confirm. WhatsApp pe details aayegi. Broker Sunil Sharma aapko guide karenge. Thank you! 🙏' },
-    ]
-  },
-  {
-    id:'CALL-088', caller:'Kavita Rao',    phone:'+91 65432 10987', color:'#F79009', init:'KR',
-    date:'Aug 5, 2026', time:'3:45 PM', dur:'2m 58s', outcome:'followup',
-    prop:'3BHK Kolar Road',
-    waves:[20,40,60,80,50,70,30,60,90,45,65,75,55,40,70,80,60,40,50,70,85,45,60,30,70,55,80,40,65,50,35,60,75,55,40,70,80,50,65,45],
-    transcript:[
-      { ai:true,  spk:'AI Agent (Priya)', txt:'Namaste! Prime Realty se Priya. Property ke baare mein baat karni hai?' },
-      { ai:false, spk:'Kavita Rao',       txt:'Haan, 3BHK flat chahiye Kolar Road area mein.' },
-      { ai:true,  spk:'AI Agent (Priya)', txt:'₹65L-75L range mein ek excellent 3BHK hai. Kya aap abhi baat kar sakti hain?' },
-      { ai:false, spk:'Kavita Rao',       txt:'Abhi thodi busy hoon, kal call karna.' },
-      { ai:true,  spk:'AI Agent (Priya)', txt:'Bilkul ji! Kal follow-up karenge. Kya WhatsApp pe property details bhejun abhi?' },
-    ]
-  },
-  {
-    id:'CALL-087', caller:'Deepak Singh',  phone:'+91 54321 09876', color:'#12B76A', init:'DS',
-    date:'Aug 5, 2026', time:'10:12 AM', dur:'6m 01s', outcome:'booking',
-    prop:'Plot 200sq.yd, Misrod',
-    waves:[60,80,40,70,90,55,65,45,75,30,60,85,50,70,40,80,60,45,70,90,55,65,40,80,60,50,75,30,60,85,40,70,55,80,65,45,60,75,50,70],
-    transcript:[
-      { ai:true,  spk:'AI Agent (Priya)', txt:'Namaste! Prime Realty ki taraf se. Aap plot khareedna chahte hain?' },
-      { ai:false, spk:'Deepak Singh',     txt:'Haan, Misrod area mein 200 gaj plot chahiye, investment ke liye.' },
-      { ai:true,  spk:'AI Agent (Priya)', txt:'Sir! Misrod mein corner plot — ₹18L-22L. RERA approved. Excellent investment zone. Site visit karein?' },
-      { ai:false, spk:'Deepak Singh',     txt:'Haan main interested hoon.' },
-      { ai:true,  spk:'AI Agent (Priya)', txt:'August 7, 11 AM confirm kiya. Broker Meena Verma call karengi. Location WhatsApp pe bhej rahi hoon. 🙏' },
-    ]
-  },
-];
-
-const NOTIFS = [
-  { icon:'✅', title:'Booking Confirmed!', sub:'Ramesh Gupta — 3BHK Kolar Road', time:'2 min ago', new:true },
-  { icon:'💬', title:'New WhatsApp Lead', sub:'Priya Singh asking about 2BHK Habibganj', time:'8 min ago', new:true },
-  { icon:'📞', title:'Voice Call Completed', sub:'Mohit Jain — 4m 22s · Site visit booked', time:'23 min ago', new:true },
-  { icon:'🔔', title:'Follow-up Sent', sub:'12 cold leads re-engaged automatically', time:'1 hr ago', new:false },
-  { icon:'🤖', title:'AI Agent responded', sub:'Ankit Sharma — 3BHK inquiry handled', time:'2 hr ago', new:false },
-];
-
-const ACTIVITIES = [
-  { ico:'✅', bg:'var(--green-l)',  color:'var(--green)',  txt:'<strong>Booking confirmed</strong> — Ramesh Gupta, 3BHK Kolar Road', time:'2 min ago' },
-  { ico:'💬', bg:'var(--blue-l)',   color:'var(--blue)',   txt:'<strong>New WhatsApp lead</strong> — Priya Singh asking about 2BHK', time:'8 min ago' },
-  { ico:'📞', bg:'var(--purple-l)', color:'var(--purple)', txt:'<strong>Voice call completed</strong> — Mohit Jain, 4m 22s', time:'23 min ago' },
-  { ico:'📣', bg:'var(--orange-l)', color:'var(--orange)', txt:'<strong>Follow-up sent</strong> — 12 cold leads re-engaged', time:'1 hr ago' },
-];
-
-const LIVE_ACTS = [
-  { ico:'💬', bg:'var(--blue-l)',   color:'var(--blue)',   txt:'<strong>New WhatsApp message</strong> — Ravi Kumar asking about plots' },
-  { ico:'✅', bg:'var(--green-l)',  color:'var(--green)',  txt:'<strong>Site visit confirmed</strong> — Priya Singh, Aug 8 at 11 AM' },
-  { ico:'📞', bg:'var(--purple-l)', color:'var(--purple)', txt:'<strong>Incoming voice call</strong> — +91 87654 32109 connected' },
-  { ico:'🔔', bg:'var(--orange-l)', color:'var(--orange)', txt:'<strong>Follow-up sent</strong> — 5 cold leads messaged by AI' },
-  { ico:'🏡', bg:'var(--teal-l)',   color:'var(--teal)',   txt:'<strong>Property shared</strong> — 2BHK Habibganj sent to Kavita Patel' },
-  { ico:'🤖', bg:'var(--purple-l)', color:'var(--purple)', txt:'<strong>AI booking created</strong> — Commercial Shop assigned to Sunil' },
-];
+// ── DATA STORES (hydrated dynamically from PocketBase) ──
+const BROKERS = [];
+const BROKER_LOG = [];
+const AGENTS = [];
+const EXEC_LOG = [];
+const RECORDINGS = [];
+const NOTIFS = [];
+const ACTIVITIES = [];
+const LIVE_ACTS = [];
 
 // ══════════════════════════════════════════════════════════════
 //  BADGE HELPERS
@@ -2025,23 +1906,25 @@ function outBadge(o){
 //  RENDER FUNCTIONS
 // ══════════════════════════════════════════════════════════════
 function renderDashBars(){
-  const vals=[8,10,6,13,9,11,7,12,10,15];
-  const max=Math.max(...vals);
-  document.getElementById('dash-bars').innerHTML=vals.map((v,i)=>
-    `<div class="mbar ${i===vals.length-1?'hi':''}" style="height:${Math.round(v/max*100)}%" title="${v} leads" onclick="toast('📊 ${v} leads on this day')"></div>`
-  ).join('');
+  if (typeof window.renderDynamicDashBars === 'function') {
+    window.renderDynamicDashBars(window.currentLeads || []);
+  } else {
+    const dashBars = document.getElementById('dash-bars');
+    if (dashBars) {
+      dashBars.innerHTML = '<div style="width:100%;text-align:center;padding:12px;color:var(--t3);font-size:11px">Loading lead activity...</div>';
+    }
+  }
 }
 
 function renderActivity(){
-  document.getElementById('activity-feed').innerHTML=ACTIVITIES.map(a=>
-    `<div class="act-item">
-       <div class="act-dot" style="background:${a.bg};color:${a.color}">${a.ico}</div>
-       <div>
-         <div class="act-txt">${a.txt}</div>
-         <div class="act-time">${a.time}</div>
-       </div>
-     </div>`
-  ).join('');
+  if (typeof window.renderDynamicActivityAndNotifs === 'function') {
+    window.renderDynamicActivityAndNotifs(window.currentLeads || [], window.currentAppointments || []);
+  } else {
+    const feed = document.getElementById('activity-feed');
+    if (feed) {
+      feed.innerHTML = '<div style="padding:24px;text-align:center;color:var(--t3);font-size:12.5px">Loading live activity...</div>';
+    }
+  }
 }
 
 function renderDashBookings(){
@@ -2382,145 +2265,46 @@ window.onPropertiesLoaded = function(props) {
 
 
 function renderBrokers(){
-  const brokerGrid = document.getElementById('broker-grid');
-  if (brokerGrid && typeof BROKERS !== 'undefined') {
-    brokerGrid.innerHTML = BROKERS.map(b=>`
-      <div class="broker-card">
-        <div style="display:flex;gap:14px;align-items:flex-start">
-          <div class="bavi" style="background:${b.color}">${b.init}</div>
-          <div style="flex:1">
-            <div style="display:flex;justify-content:space-between;align-items:start">
-              <div>
-                <div class="bname">${b.name}</div>
-                <div class="brole">${b.spec} · ${b.exp}</div>
-              </div>
-              <span class="badge b-green">${b.status}</span>
-            </div>
-            <div class="bstats">
-              <div><div class="bstat-v">${b.leads}</div><div class="bstat-l">Leads</div></div>
-              <div><div class="bstat-v">${b.closed}</div><div class="bstat-l">Closed</div></div>
-              <div><div class="bstat-v">${b.rev}</div><div class="bstat-l">Revenue</div></div>
-            </div>
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px">
-              <div class="brating">⭐ ${b.rating}</div>
-              <span style="font-size:11.5px;color:var(--t3)">${b.tg}</span>
-              <button class="btn btn-o btn-xs" onclick="toast('📱 Opening Telegram for ${b.name}...')">Telegram ↗</button>
-            </div>
-          </div>
-        </div>
-      </div>`).join('');
+  if (typeof window.renderDynamicBrokers === 'function') {
+    window.renderDynamicBrokers(window.currentLeads || [], window.currentAppointments || [], window.currentTenant);
+    return;
   }
-
-  const brokerTbl = document.getElementById('broker-log-tbl');
-  if (brokerTbl && typeof BROKER_LOG !== 'undefined') {
-    brokerTbl.innerHTML = `
-      <thead><tr><th>Date</th><th>Client</th><th>Property</th><th>Assigned To</th><th>Telegram</th><th>Status</th><th>Commission</th></tr></thead>
-      <tbody>${BROKER_LOG.map(l=>`<tr>
-        <td style="color:var(--t3)">${l.date}</td>
-        <td><strong>${l.client}</strong></td>
-        <td>${l.prop}</td>
-        <td style="font-weight:600">${l.broker}</td>
-        <td><span class="badge b-green">${l.tg}</span></td>
-        <td>${stBadge(l.status)}</td>
-        <td style="font-weight:800;color:var(--t1)">${l.comm}</td>
-      </tr>`).join('')}</tbody>`;
+  const brokerGrid = document.getElementById('broker-grid');
+  if (brokerGrid) {
+    brokerGrid.innerHTML = '<div style="grid-column:1/-1;padding:32px;text-align:center;color:var(--t3);font-size:13px">Loading broker team from database...</div>';
   }
 }
 
 function renderAgents(){
   if (typeof window.renderDynamicAgents === 'function') {
-    window.renderDynamicAgents();
+    window.renderDynamicAgents(window.currentLeads || [], window.currentAppointments || []);
     return;
   }
   const agentGrid = document.getElementById('agent-grid');
-  if (agentGrid && typeof AGENTS !== 'undefined') {
-    agentGrid.innerHTML = AGENTS.map(a=>`
-    <div class="agent-card">
-      <div class="agent-hd" style="background:linear-gradient(135deg,var(--blue-l),#F5F0FF)">
-        <div class="agent-ico">${a.ico}</div>
-        <div style="flex:1">
-          <div class="agent-name">${a.name}</div>
-          <div class="agent-type">${a.type}</div>
-        </div>
-        <span class="badge ${a.badge}"><span class="dot p" style="width:5px;height:5px"></span> ${a.btext}</span>
-      </div>
-      <div class="agent-body">
-        <div style="font-size:12.5px;color:var(--t3);margin-bottom:12px;line-height:1.6">${a.desc}</div>
-        ${a.metrics.map(m=>`<div class="ametric"><span class="amk">${m.k}</span><span class="amv">${m.v}</span></div>`).join('')}
-        <div style="display:flex;gap:8px;margin-top:14px">
-          <button class="btn btn-o btn-sm" style="flex:1" onclick="toast('📊 ${a.name} logs opened...')">View Logs</button>
-          <button class="btn btn-p btn-sm" style="flex:1" onclick="toast('⚙️ ${a.name} config...')">Configure</button>
-        </div>
-      </div>
-    </div>`).join('');
-  }
-
-  const execTbl = document.getElementById('exec-tbl');
-  if (execTbl && typeof EXEC_LOG !== 'undefined') {
-    execTbl.innerHTML = `
-    <thead><tr><th>Execution ID</th><th>Workflow</th><th>Trigger</th><th>Duration</th><th>Nodes Run</th><th>Started</th><th>Status</th><th>Action</th></tr></thead>
-    <tbody>${EXEC_LOG.map(e=>`<tr>
-      <td class="mono" style="color:var(--t3)">${e.id}</td>
-      <td style="font-weight:600">${e.wf}</td>
-      <td>${srcBadge(e.trigger==='Webhook POST'?'whatsapp':e.trigger==='Schedule'?'meta':'voice')}</td>
-      <td class="mono">${e.dur}</td>
-      <td style="color:var(--t3)">${e.nodes} nodes</td>
-      <td style="color:var(--t3)">${e.time}</td>
-      <td>${execStBadge(e.status)}</td>
-      <td><button class="btn btn-o btn-xs" onclick="toast('🔍 Inspecting ${e.id}...')">Inspect</button></td>
-    </tr>`).join('')}</tbody>`;
+  if (agentGrid) {
+    agentGrid.innerHTML = '<div style="grid-column:1/-1;padding:32px;text-align:center;color:var(--t3);font-size:13px">Loading AI agent nodes...</div>';
   }
 }
 
 function renderRecordings(){
+  if (typeof window.renderDynamicRecordings === 'function') {
+    window.renderDynamicRecordings(window.currentTenant);
+    return;
+  }
   const recList = document.getElementById('rec-list');
-  if (recList && typeof RECORDINGS !== 'undefined') {
-    recList.innerHTML = RECORDINGS.map((r,i)=>`
-      <div class="rec-card">
-        <div class="rec-hd">
-          <div class="ravi" style="background:${r.color}">${r.init}</div>
-          <div style="flex:1">
-            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-              <strong style="font-size:14px">${r.caller}</strong>
-              <span class="mono" style="font-size:11px;color:var(--t3)">${r.phone}</span>
-              ${outBadge(r.outcome)}
-            </div>
-            <div style="font-size:11.5px;color:var(--t3);margin-top:3px">${r.id} · ${r.date} · ${r.time} · ⏱️ ${r.dur} · 🏡 ${r.prop}</div>
-          </div>
-          <div style="display:flex;gap:8px">
-            <button class="btn btn-o btn-sm" onclick="toast('📋 Transcript copied for ${r.caller}')">📋 Transcript</button>
-            <button class="btn btn-o btn-sm" onclick="toast('💾 Downloading ${r.id}.mp3...')">💾 MP3</button>
-          </div>
-        </div>
-        <div style="display:flex;align-items:center;gap:10px">
-          <button class="play-btn" data-playing="0" onclick="togglePlay(this,'${r.id}')">▶</button>
-          <div class="waveform" style="flex:1" onclick="seekWave(event,this,'${r.dur}')">
-            <div class="wbars">${r.waves.map(h=>`<div class="wb" style="height:${h}%"></div>`).join('')}</div>
-          </div>
-          <span style="font-size:12px;color:var(--t3);font-family:monospace;flex-shrink:0">${r.dur}</span>
-        </div>
-        <div class="transcript-box">
-          ${r.transcript.map(t=>`<div style="margin-bottom:8px"><span class="${t.ai?'ts-ai':'ts-human'}">${t.spk}: </span>${t.txt}</div>`).join('')}
-        </div>
-      </div>`).join('');
+  if (recList) {
+    recList.innerHTML = '<div style="padding:40px;text-align:center;color:var(--t3);font-size:13px">No call recordings found in database. Inbound AI calls will be logged here.</div>';
   }
 }
 
 function renderNotifs(){
+  if (typeof window.renderDynamicActivityAndNotifs === 'function') {
+    window.renderDynamicActivityAndNotifs(window.currentLeads || [], window.currentAppointments || []);
+    return;
+  }
   const notifList = document.getElementById('notif-list');
-  if (notifList && typeof NOTIFS !== 'undefined') {
-    notifList.innerHTML = NOTIFS.map(n=>`
-      <div class="notif-item" onclick="toast('${n.icon} ${n.title}')">
-        <div style="display:flex;gap:10px;align-items:flex-start">
-          <div style="font-size:20px">${n.icon}</div>
-          <div style="flex:1">
-            <div class="notif-title">${n.title}</div>
-            <div class="notif-sub">${n.sub}</div>
-            <div class="notif-time">${n.time}</div>
-          </div>
-          ${n.new?'<div class="notif-dot"></div>':''}
-        </div>
-      </div>`).join('');
+  if (notifList) {
+    notifList.innerHTML = '<div style="padding:20px;text-align:center;color:var(--t3);font-size:12px">No notifications yet.</div>';
   }
 }
 
@@ -2907,26 +2691,6 @@ function toast(msg){
   t._t = setTimeout(()=>t.classList.remove('show'), 2800);
 }
 
-// ── LIVE ACTIVITY FEED ──
-function addLiveAct(){
-  const feed = document.getElementById('activity-feed');
-  if(!feed) return;
-  const a = LIVE_ACTS[Math.floor(Math.random()*LIVE_ACTS.length)];
-  const el = document.createElement('div');
-  el.className='act-item';
-  el.style.cssText='opacity:0;transform:translateX(-8px);transition:all .35s';
-  el.innerHTML=`
-    <div class="act-dot" style="background:${a.bg};color:${a.color}">${a.ico}</div>
-    <div>
-      <div class="act-txt">${a.txt}</div>
-      <div class="act-time">Just now</div>
-    </div>`;
-  feed.insertBefore(el, feed.firstChild);
-  requestAnimationFrame(()=>{ el.style.opacity='1'; el.style.transform='translateX(0)'; });
-  const all = feed.querySelectorAll('.act-item');
-  if(all.length>5) all[all.length-1].remove();
-}
-
 // ══════════════════════════════════════════════════════════════
 //  INIT
 // ══════════════════════════════════════════════════════════════
@@ -2941,7 +2705,6 @@ document.addEventListener('DOMContentLoaded', ()=>{
   renderAgents();
   renderRecordings();
   renderNotifs();
-  setInterval(addLiveAct, 9000);
 
   const logoutBtn = document.getElementById('logout-btn');
   if (logoutBtn) {

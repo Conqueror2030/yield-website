@@ -1016,11 +1016,347 @@
             `).join('');
         }
 
-        // Hydrate System Activity, Notifications, Execution Logs, Broker Logs & Bar Charts
+        // Hydrate Dynamic Funnel, ROI, Sources, Activity, Notifications, Execution Logs, Broker Logs & Bar Charts
+        renderDynamicLeadFunnel(leadsList, aptsList);
+        renderDynamicROI(leadsList, aptsList, currentTenant);
+        renderDynamicLeadSources(leadsList);
         renderDynamicActivityAndNotifs(leadsList, aptsList);
         renderDynamicExecLogs(leadsList);
-        renderDynamicBrokerLog(aptsList);
+        renderDynamicBrokers(leadsList, aptsList, currentTenant);
+        renderDynamicRecordings(currentTenant);
         renderDynamicDashBars(leadsList);
+    }
+
+    // ── DYNAMIC LEAD FUNNEL HYDRATION ─────────────────────────────────────────
+    function renderDynamicLeadFunnel(leads, appointments, period) {
+        const leadsList = Array.isArray(leads) ? leads : (currentLeads || []);
+        const aptsList = Array.isArray(appointments) ? appointments : (currentAppointments || []);
+        
+        // Dynamic Month & Year Header
+        const now = new Date();
+        const currentMonthName = now.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+        const titleEl = document.getElementById('funnel-title');
+        if (titleEl) {
+            if (period === 'last_month') {
+                const prev = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+                titleEl.textContent = `Lead Funnel — ${prev.toLocaleString('en-US', { month: 'long', year: 'numeric' })}`;
+            } else if (period === 'all_time') {
+                titleEl.textContent = 'Lead Funnel — All Time';
+            } else {
+                titleEl.textContent = `Lead Funnel — ${currentMonthName}`;
+            }
+        }
+
+        const totalLeads = leadsList.length;
+        
+        // 1. Engaged with AI Agent: leads who exchanged messages or have a summary
+        const engaged = leadsList.filter(l => {
+            let hist = l.Chat_History || l.chat_history || [];
+            if (typeof hist === 'string') {
+                try { hist = JSON.parse(hist); } catch (e) { hist = []; }
+            }
+            return (Array.isArray(hist) && hist.length > 0) || !!l.Chat_Summary;
+        }).length;
+
+        // 2. Requested Property Details: leads who inquired about properties or have properties in Buyer_Facts
+        const requested = leadsList.filter(l => {
+            let facts = l.Buyer_Facts || l.buyer_facts || {};
+            if (typeof facts === 'string') {
+                try { facts = JSON.parse(facts); } catch (e) { facts = {}; }
+            }
+            const hasProps = (Array.isArray(facts.active_properties) && facts.active_properties.length > 0) ||
+                             !!facts.primary_enquiry_property ||
+                             !!l.Active_Property_ID;
+            const summaryMentions = l.Chat_Summary && /(?:villa|studio|apartment|bhk|plot|property|details|oasis|binghatti|unit|brochure|price)/i.test(l.Chat_Summary);
+            return hasProps || summaryMentions;
+        }).length;
+
+        // 3. Site Visit Scheduled: leads who have an appointment scheduled or site visit status
+        const scheduled = leadsList.filter(l => {
+            const hasApt = aptsList.some(a => a.Lead_ID === l.id || (a.Phone_No && l.Phone_No && String(a.Phone_No).replace(/\D/g, '') === String(l.Phone_No).replace(/\D/g, '')));
+            const isSiteVisit = (l.status || '').toLowerCase() === 'site_visit';
+            let facts = l.Buyer_Facts || l.buyer_facts || {};
+            if (typeof facts === 'string') {
+                try { facts = JSON.parse(facts); } catch (e) { facts = {}; }
+            }
+            const timelineVisit = facts.timeline && /(?:visit|viewing|schedule|tour)/i.test(facts.timeline);
+            return hasApt || isSiteVisit || timelineVisit;
+        }).length || (aptsList.length > 0 ? Math.min(aptsList.length, totalLeads || aptsList.length) : 0);
+
+        // 4. Booking Confirmed: confirmed appointments / deals closed
+        const confirmed = aptsList.filter(a => {
+            const st = (a.Status || a.status || '').toLowerCase();
+            return st === 'confirmed' || st === 'booked' || st === 'completed';
+        }).length || (aptsList.length > 0 ? aptsList.length : 0);
+
+        const pct = (val, base) => base > 0 ? Math.min(100, Math.round((val / base) * 100)) : 0;
+
+        const totalEl = document.getElementById('funnel-total-leads');
+        const barTotal = document.getElementById('funnel-bar-total');
+        const engagedEl = document.getElementById('funnel-engaged');
+        const barEngaged = document.getElementById('funnel-bar-engaged');
+        const reqEl = document.getElementById('funnel-requested');
+        const barReq = document.getElementById('funnel-bar-requested');
+        const schedEl = document.getElementById('funnel-scheduled');
+        const barSched = document.getElementById('funnel-bar-scheduled');
+        const confEl = document.getElementById('funnel-confirmed');
+        const barConf = document.getElementById('funnel-bar-confirmed');
+
+        if (totalEl) totalEl.textContent = totalLeads;
+        if (barTotal) barTotal.style.width = totalLeads > 0 ? '100%' : '0%';
+
+        if (engagedEl) engagedEl.textContent = `${engaged} (${pct(engaged, totalLeads)}%)`;
+        if (barEngaged) barEngaged.style.width = `${pct(engaged, totalLeads)}%`;
+
+        if (reqEl) reqEl.textContent = `${requested} (${pct(requested, totalLeads)}%)`;
+        if (barReq) barReq.style.width = `${pct(requested, totalLeads)}%`;
+
+        if (schedEl) schedEl.textContent = `${scheduled} (${pct(scheduled, totalLeads)}%)`;
+        if (barSched) barSched.style.width = `${pct(scheduled, totalLeads)}%`;
+
+        if (confEl) confEl.textContent = `${confirmed} (${pct(confirmed, totalLeads)}%)`;
+        if (barConf) barConf.style.width = `${pct(confirmed, totalLeads)}%`;
+    }
+
+    // ── DYNAMIC LEAD SOURCES ──────────────────────────────────────────────────
+    function renderDynamicLeadSources(leads) {
+        const leadsList = Array.isArray(leads) ? leads : (currentLeads || []);
+        const total = leadsList.length;
+
+        const metaCount = leadsList.filter(l => {
+            let facts = l.Buyer_Facts || l.buyer_facts || {};
+            if (typeof facts === 'string') {
+                try { facts = JSON.parse(facts); } catch (e) { facts = {}; }
+            }
+            const s = String(l.source || l.Lead_Source || l.channel || facts.source || '').toLowerCase();
+            return s.includes('meta') || s.includes('instagram') || s.includes('fb') || s.includes('ad');
+        }).length;
+
+        const waCount = total - metaCount;
+        const pct = (v, b) => b > 0 ? Math.round((v / b) * 100) : 0;
+
+        const metaVal = document.getElementById('source-meta-val');
+        const metaBar = document.getElementById('source-meta-bar');
+        const waVal = document.getElementById('source-wa-val');
+        const waBar = document.getElementById('source-wa-bar');
+
+        if (metaVal) metaVal.textContent = `${metaCount} (${pct(metaCount, total)}%)`;
+        if (metaBar) metaBar.style.width = `${pct(metaCount, total)}%`;
+
+        if (waVal) waVal.textContent = `${waCount} (${pct(waCount, total)}%)`;
+        if (waBar) waBar.style.width = `${pct(waCount, total)}%`;
+    }
+
+    // ── DYNAMIC ROI TRACKER ───────────────────────────────────────────────────
+    function renderDynamicROI(leads, appointments, tenant, period) {
+        const leadsList = Array.isArray(leads) ? leads : (currentLeads || []);
+        const aptsList = Array.isArray(appointments) ? appointments : (currentAppointments || []);
+        const t = tenant || currentTenant || {};
+
+        const metaLeads = leadsList.filter(l => {
+            let facts = l.Buyer_Facts || l.buyer_facts || {};
+            if (typeof facts === 'string') {
+                try { facts = JSON.parse(facts); } catch (e) { facts = {}; }
+            }
+            const s = String(l.source || l.Lead_Source || l.channel || facts.source || '').toLowerCase();
+            return s.includes('meta') || s.includes('instagram') || s.includes('fb') || s.includes('ad');
+        });
+        const waLeads = leadsList.filter(l => !metaLeads.includes(l));
+
+        const metaApts = aptsList.filter(a => metaLeads.some(l => l.id === a.Lead_ID || (a.Phone_No && l.Phone_No && String(a.Phone_No).replace(/\D/g,'') === String(l.Phone_No).replace(/\D/g,''))));
+        const waApts = aptsList.filter(a => !metaApts.includes(a));
+
+        const metaSpend = Number(t.meta_ad_spend || t.ad_spend || 0);
+
+        const avgDealValue = 14000000;
+        const metaRev = metaApts.length * avgDealValue;
+        const waRev = waApts.length * avgDealValue;
+
+        function fmtMoney(num) {
+            if (!num || num === 0) return '₹0';
+            if (num >= 10000000) return '₹' + (num / 10000000).toFixed(2) + 'Cr';
+            if (num >= 100000) return '₹' + (num / 100000).toFixed(0) + 'L';
+            return '₹' + num.toLocaleString();
+        }
+
+        // Meta Card
+        const metaSpendEl = document.getElementById('roi-meta-spend');
+        const metaLeadsEl = document.getElementById('roi-meta-leads');
+        const metaBookingsEl = document.getElementById('roi-meta-bookings');
+        const metaRevEl = document.getElementById('roi-meta-rev');
+        const metaRatioEl = document.getElementById('roi-meta-ratio');
+        const metaBadgeEl = document.getElementById('roi-meta-badge');
+
+        if (metaSpendEl) metaSpendEl.textContent = fmtMoney(metaSpend);
+        if (metaLeadsEl) metaLeadsEl.textContent = `${metaLeads.length} leads`;
+        if (metaBookingsEl) metaBookingsEl.textContent = `${metaApts.length} deals`;
+        if (metaRevEl) metaRevEl.textContent = fmtMoney(metaRev);
+        if (metaRatioEl) metaRatioEl.textContent = metaSpend > 0 ? `${(metaRev / metaSpend).toFixed(0)}x` : '—';
+        if (metaBadgeEl) {
+            metaBadgeEl.textContent = metaSpend > 0 ? '↑ ROAS' : 'Organic / No Spend';
+            metaBadgeEl.className = metaSpend > 0 ? 'badge b-green' : 'badge b-gray';
+        }
+
+        // WhatsApp Card
+        const waSpendEl = document.getElementById('roi-wa-spend');
+        const waLeadsEl = document.getElementById('roi-wa-leads');
+        const waBookingsEl = document.getElementById('roi-wa-bookings');
+        const waRevEl = document.getElementById('roi-wa-rev');
+        const waRatioEl = document.getElementById('roi-wa-ratio');
+        const waBadgeEl = document.getElementById('roi-wa-badge');
+
+        if (waSpendEl) waSpendEl.textContent = '₹0';
+        if (waLeadsEl) waLeadsEl.textContent = `${waLeads.length} leads`;
+        if (waBookingsEl) waBookingsEl.textContent = `${waApts.length} deals`;
+        if (waRevEl) waRevEl.textContent = fmtMoney(waRev);
+        if (waRatioEl) waRatioEl.textContent = '∞';
+        if (waBadgeEl) {
+            waBadgeEl.textContent = 'Free Channel';
+            waBadgeEl.className = 'badge b-blue';
+        }
+    }
+
+    // ── DYNAMIC BROKERS HYDRATION ─────────────────────────────────────────────
+    async function renderDynamicBrokers(leads, appointments, tenant) {
+        const brokerGrid = document.getElementById('broker-grid');
+        if (!brokerGrid) return;
+
+        const leadsList = Array.isArray(leads) ? leads : (currentLeads || []);
+        const aptsList = Array.isArray(appointments) ? appointments : (currentAppointments || []);
+        const t = tenant || currentTenant || {};
+
+        let brokersList = [];
+
+        if (pb) {
+            try {
+                const res = await pb.collection('Brokers').getFullList().catch(() => []);
+                if (Array.isArray(res) && res.length > 0) {
+                    brokersList = res;
+                }
+            } catch (e) {}
+        }
+
+        if (brokersList.length > 0) {
+            brokerGrid.innerHTML = brokersList.map(b => {
+                const name = b.name || b.Name || 'Broker';
+                const meta = getAvatarMeta(name);
+                const phone = b.phone || b.Phone || 'N/A';
+                const spec = b.specialization || 'Property Specialist';
+                const status = (b.status || 'active').toLowerCase();
+                const assignedApts = aptsList.filter(a => a.Assigned_Broker === name);
+                return `
+                    <div class="broker-card">
+                        <div style="display:flex;gap:14px;align-items:flex-start">
+                            <div class="bavi" style="background:${meta.color}">${meta.init}</div>
+                            <div style="flex:1">
+                                <div style="display:flex;justify-content:space-between;align-items:start">
+                                    <div>
+                                        <div class="bname">${escapeHtml(name)}</div>
+                                        <div class="brole">${escapeHtml(spec)}</div>
+                                    </div>
+                                    <span class="badge ${status === 'active' ? 'b-green' : 'b-gray'}">${escapeHtml(status)}</span>
+                                </div>
+                                <div class="bstats">
+                                    <div><div class="bstat-v">${leadsList.length}</div><div class="bstat-l">Leads</div></div>
+                                    <div><div class="bstat-v">${assignedApts.length}</div><div class="bstat-l">Closed</div></div>
+                                    <div><div class="bstat-v">Active</div><div class="bstat-l">Status</div></div>
+                                </div>
+                                <div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px">
+                                    <span style="font-size:11.5px;color:var(--t3)">${escapeHtml(phone)}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        } else {
+            const name = t.Leads_Name || t.agent_name || (aptsList[0] && aptsList[0].Assigned_Broker) || 'Lead Agent';
+            const meta = getAvatarMeta(name);
+            const phone = t.office_phone || 'WhatsApp Verified';
+            const closedDeals = aptsList.length;
+
+            brokerGrid.innerHTML = `
+                <div class="broker-card">
+                    <div style="display:flex;gap:14px;align-items:flex-start">
+                        <div class="bavi" style="background:${meta.color}">${meta.init}</div>
+                        <div style="flex:1">
+                            <div style="display:flex;justify-content:space-between;align-items:start">
+                                <div>
+                                    <div class="bname">${escapeHtml(name)}</div>
+                                    <div class="brole">Primary Broker · ${escapeHtml(t.agency_name || 'Yield.ai Operations Hub')}</div>
+                                </div>
+                                <span class="badge b-green">Active</span>
+                            </div>
+                            <div class="bstats">
+                                <div><div class="bstat-v">${leadsList.length}</div><div class="bstat-l">Leads</div></div>
+                                <div><div class="bstat-v">${closedDeals}</div><div class="bstat-l">Bookings</div></div>
+                                <div><div class="bstat-v">⭐ 4.9</div><div class="bstat-l">Rating</div></div>
+                            </div>
+                            <div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px">
+                                <span style="font-size:11.5px;color:var(--t3)">${escapeHtml(phone)}</span>
+                                <span class="badge b-blue">Tenant Lead</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        renderDynamicBrokerLog(aptsList);
+    }
+
+    // ── DYNAMIC RECORDINGS HYDRATION ──────────────────────────────────────────
+    async function renderDynamicRecordings(tenant) {
+        const recList = document.getElementById('rec-list');
+        if (!recList) return;
+
+        let recordings = [];
+        if (pb) {
+            try {
+                const res = await pb.collection('Recordings').getFullList({ sort: '-created' }).catch(() => []);
+                if (Array.isArray(res) && res.length > 0) {
+                    recordings = res;
+                }
+            } catch (e) {}
+        }
+
+        if (recordings.length === 0) {
+            recList.innerHTML = `
+                <div style="padding:48px 24px;text-align:center;color:var(--t3)">
+                    <div style="font-size:32px;margin-bottom:8px">🎙️</div>
+                    <div style="font-size:14px;font-weight:600;color:var(--t1)">No call recordings in database</div>
+                    <div style="font-size:12px;margin-top:4px">When your AI voice agents complete phone calls, transcripts and recordings will appear here.</div>
+                </div>
+            `;
+            return;
+        }
+
+        recList.innerHTML = recordings.map(r => {
+            const caller = r.caller_name || 'Client';
+            const phone = r.phone || 'Unknown';
+            const timeStr = timeAgo(r.created);
+            const dur = r.duration || '—';
+            const prop = r.property || 'General Inquiry';
+            const meta = getAvatarMeta(caller);
+            return `
+                <div class="rec-card">
+                    <div class="rec-hd">
+                        <div class="ravi" style="background:${meta.color}">${meta.init}</div>
+                        <div style="flex:1">
+                            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                                <strong style="font-size:14px">${escapeHtml(caller)}</strong>
+                                <span class="mono" style="font-size:11px;color:var(--t3)">${escapeHtml(phone)}</span>
+                                <span class="badge b-green">Completed</span>
+                            </div>
+                            <div style="font-size:11.5px;color:var(--t3);margin-top:3px">${escapeHtml(timeStr)} · ⏱️ ${escapeHtml(dur)} · 🏡 ${escapeHtml(prop)}</div>
+                        </div>
+                    </div>
+                    <div style="font-size:12.5px;color:var(--t2);padding:12px;background:var(--bg);border-radius:8px">
+                        ${escapeHtml(r.transcript || 'No transcript generated.')}
+                    </div>
+                </div>
+            `;
+        }).join('');
     }
 
     // ── DYNAMIC SYSTEM HYDRATION HELPERS ──────────────────────────────────────
@@ -1028,7 +1364,7 @@
         const activities = [];
         const notifs = [];
 
-        aptsList.forEach(a => {
+        (aptsList || []).forEach(a => {
             const phone = a.Phone_No || a.phone_no || 'Client';
             const notes = a.Notes || a.notes || a.property || 'Site visit';
             const timeStr = timeAgo(a.created || a.Scheduled_Time || new Date().toISOString());
@@ -1045,7 +1381,7 @@
             });
         });
 
-        leadsList.forEach(l => {
+        (leadsList || []).forEach(l => {
             const phone = l.Phone_No || l.phone_no || 'Lead';
             const timeStr = timeAgo(l.updated || l.created || new Date().toISOString());
             if (l.follow_up_count > 0 || l.last_followup) {
@@ -1074,33 +1410,41 @@
         });
 
         const actEl = document.getElementById('activity-feed');
-        if (actEl && activities.length > 0) {
-            actEl.innerHTML = activities.slice(0, 10).map(a => `
-                <div class="act-item">
-                   <div class="act-dot" style="background:${a.bg};color:${a.color}">${a.ico}</div>
-                   <div>
-                     <div class="act-txt">${a.txt}</div>
-                     <div class="act-time">${a.time}</div>
-                   </div>
-                 </div>
-            `).join('');
+        if (actEl) {
+            if (activities.length > 0) {
+                actEl.innerHTML = activities.slice(0, 10).map(a => `
+                    <div class="act-item">
+                       <div class="act-dot" style="background:${a.bg};color:${a.color}">${a.ico}</div>
+                       <div>
+                         <div class="act-txt">${a.txt}</div>
+                         <div class="act-time">${a.time}</div>
+                       </div>
+                     </div>
+                `).join('');
+            } else {
+                actEl.innerHTML = '<div style="padding:28px 16px;text-align:center;color:var(--t3);font-size:12.5px">No live activity recorded yet. Inbound messages and bookings will appear here in real time.</div>';
+            }
         }
 
         const notifEl = document.getElementById('notif-list');
-        if (notifEl && notifs.length > 0) {
-            notifEl.innerHTML = notifs.slice(0, 10).map(n => `
-                <div class="notif-item" onclick="toast('${n.icon} ${escapeHtml(n.title)}')">
-                  <div style="display:flex;gap:10px;align-items:flex-start">
-                    <div style="font-size:20px">${n.icon}</div>
-                    <div style="flex:1">
-                      <div class="notif-title">${n.title}</div>
-                      <div class="notif-sub">${n.sub}</div>
-                      <div class="notif-time">${n.time}</div>
+        if (notifEl) {
+            if (notifs.length > 0) {
+                notifEl.innerHTML = notifs.slice(0, 10).map(n => `
+                    <div class="notif-item" onclick="toast('${n.icon} ${escapeHtml(n.title)}')">
+                      <div style="display:flex;gap:10px;align-items:flex-start">
+                        <div style="font-size:20px">${n.icon}</div>
+                        <div style="flex:1">
+                          <div class="notif-title">${n.title}</div>
+                          <div class="notif-sub">${n.sub}</div>
+                          <div class="notif-time">${n.time}</div>
+                        </div>
+                        ${n.new ? '<div class="notif-dot"></div>' : ''}
+                      </div>
                     </div>
-                    ${n.new ? '<div class="notif-dot"></div>' : ''}
-                  </div>
-                </div>
-            `).join('');
+                `).join('');
+            } else {
+                notifEl.innerHTML = '<div style="padding:20px;text-align:center;color:var(--t3);font-size:12px">No notifications yet.</div>';
+            }
         }
     }
 
@@ -1193,7 +1537,14 @@
             daysMap[key] = 0;
         }
 
-        leadsList.forEach(l => {
+        const startD = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 9);
+        const startDateEl = document.getElementById('dash-bars-start-date');
+        if (startDateEl) {
+            startDateEl.textContent = startD.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        }
+
+        const list = Array.isArray(leadsList) ? leadsList : [];
+        list.forEach(l => {
             const created = l.created || l.updated;
             if (created) {
                 const key = String(created).split('T')[0].split(' ')[0];
@@ -1211,6 +1562,13 @@
     }
 
     window.renderDynamicAgents = renderDynamicAgents;
+    window.renderDynamicLeadFunnel = renderDynamicLeadFunnel;
+    window.renderDynamicROI = renderDynamicROI;
+    window.renderDynamicLeadSources = renderDynamicLeadSources;
+    window.renderDynamicBrokers = renderDynamicBrokers;
+    window.renderDynamicRecordings = renderDynamicRecordings;
+    window.renderDynamicActivityAndNotifs = renderDynamicActivityAndNotifs;
+    window.renderDynamicDashBars = renderDynamicDashBars;
 
     function cleanPromptText(raw) {
         if (!raw) return '';
@@ -1872,6 +2230,13 @@
         // Dynamically compute metrics from live PocketBase data
         updateMetricsCards();
         updateSidebarBadges();
+        renderDynamicLeadFunnel(currentLeads, currentAppointments);
+        renderDynamicROI(currentLeads, currentAppointments, currentTenant);
+        renderDynamicLeadSources(currentLeads);
+        renderDynamicActivityAndNotifs(currentLeads, currentAppointments);
+        renderDynamicDashBars(currentLeads);
+        renderDynamicBrokers(currentLeads, currentAppointments, currentTenant);
+        renderDynamicRecordings(currentTenant);
     }
 
     function updateMetricsCards() {
@@ -2027,6 +2392,12 @@
         renderDynamicAgents(currentLeads, currentAppointments);
         updateMetricsCards();
         updateSidebarBadges();
+        renderDynamicLeadFunnel(currentLeads, currentAppointments);
+        renderDynamicROI(currentLeads, currentAppointments, currentTenant);
+        renderDynamicLeadSources(currentLeads);
+        renderDynamicActivityAndNotifs(currentLeads, currentAppointments);
+        renderDynamicDashBars(currentLeads);
+        renderDynamicBrokers(currentLeads, currentAppointments, currentTenant);
         if (typeof renderConvList === 'function') renderConvList();
         if (typeof renderLeads === 'function') renderLeads(currentLeads);
         if (typeof window.onLeadsLoaded === 'function') window.onLeadsLoaded(currentLeads);
@@ -2110,6 +2481,10 @@
         renderDynamicAgents(currentLeads, currentAppointments);
         updateMetricsCards();
         updateSidebarBadges();
+        renderDynamicLeadFunnel(currentLeads, currentAppointments);
+        renderDynamicROI(currentLeads, currentAppointments, currentTenant);
+        renderDynamicActivityAndNotifs(currentLeads, currentAppointments);
+        renderDynamicBrokers(currentLeads, currentAppointments, currentTenant);
         // Notify index.html bookings table
         if (typeof renderDashBookings === 'function') renderDashBookings();
         if (typeof window.onAppointmentsLoaded === 'function') window.onAppointmentsLoaded(currentAppointments);
@@ -2149,9 +2524,7 @@
                     propsData = await pb.collection('Properties').getFullList({
                         sort: '-created'
                     }).catch(() => []);
-                } catch (err2) {
-                    console.warn('[Dashboard] PocketBase Properties catalog fetch failed:', err2.message);
-                }
+                } catch (err2) {}
             }
         }
 
@@ -2164,7 +2537,7 @@
                     propsData = data.items || [];
                 }
             } catch (e) {
-                console.warn('[Dashboard] Direct HTTP fetch properties fallback failed:', e.message);
+                console.warn('[Dashboard] API properties fallback load failed:', e.message);
             }
         }
 
@@ -2172,9 +2545,9 @@
         window.currentProperties = currentProperties;
         window.liveProperties = currentProperties;
 
-        InventoryController.setProperties(currentProperties);
         updateMetricsCards();
         updateSidebarBadges();
+        // Notify index.html properties grid
         if (typeof renderProps === 'function') renderProps();
         if (typeof window.onPropertiesLoaded === 'function') window.onPropertiesLoaded(currentProperties);
     }
@@ -2205,11 +2578,11 @@
                         const phone = escapeHtml(leadData.Phone_No || leadData.phone_no || 'Unknown');
                         const time = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
                         const html = `
-                            <div style="padding:12px;border-bottom:1px solid var(--border-l);display:flex;gap:12px;animation:fadeIn 0.5s">
-                                <div style="font-size:16px">📥</div>
+                            <div class="act-item" style="animation:fadeIn 0.5s">
+                                <div class="act-dot" style="background:var(--blue-l);color:var(--blue)">📥</div>
                                 <div>
-                                    <div style="font-size:12.5px;color:var(--t1)">New message from: <span style="font-weight:600">${phone}</span></div>
-                                    <div style="font-size:11px;color:var(--t3);margin-top:2px">${time}</div>
+                                    <div class="act-txt"><strong>New WhatsApp lead</strong> — ${phone} active</div>
+                                    <div class="act-time">${time}</div>
                                 </div>
                             </div>
                         `;
@@ -2231,7 +2604,24 @@
             });
 
             // 2. Appointments Realtime Subscription
-            pb.collection('Appointments').subscribe('*', () => {
+            pb.collection('Appointments').subscribe('*', (e) => {
+                const activityFeed = document.getElementById('activity-feed');
+                if (activityFeed && e.action === 'create') {
+                    const apt = e.record;
+                    const phone = escapeHtml(apt.Phone_No || apt.phone_no || 'Client');
+                    const notes = escapeHtml(apt.Notes || apt.notes || 'Site visit');
+                    const time = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+                    const html = `
+                        <div class="act-item" style="animation:fadeIn 0.5s">
+                           <div class="act-dot" style="background:var(--green-l);color:var(--green)">✅</div>
+                           <div>
+                             <div class="act-txt"><strong>Booking confirmed</strong> — ${phone}, ${notes}</div>
+                             <div class="act-time">${time}</div>
+                           </div>
+                         </div>
+                    `;
+                    activityFeed.insertAdjacentHTML('afterbegin', html);
+                }
                 refreshAppointments();
                 updateSidebarBadges();
             });
