@@ -1553,9 +1553,9 @@ select.sel{
         </div>
         <div class="card">
           <div class="card-hd"><div class="card-title">⏰ Follow-up Scheduler</div></div>
-          <div class="form-row"><div class="form-lbl">Run Every (hours)</div><input class="form-inp" id="cfg-sched-interval" value="4" type="number" min="1" max="24"></div>
+          <div class="form-row"><div class="form-lbl">Run Every</div><div style="display:flex;gap:8px"><input class="form-inp" id="cfg-sched-interval" value="4" type="number" min="1" style="flex:1;min-width:0"><select class="form-inp sel" id="settings-scheduler-every-unit" style="width:110px;flex-shrink:0"><option value="minutes">Minutes</option><option value="hours" selected>Hours</option></select></div></div>
           <div class="form-row"><div class="form-lbl">Max Follow-ups per Lead</div><input class="form-inp" id="cfg-sched-max" value="3" type="number" min="1" max="10"></div>
-          <div class="form-row"><div class="form-lbl">Follow-up Delay (hours after no reply)</div><input class="form-inp" id="cfg-sched-delay" value="24" type="number"></div>
+          <div class="form-row"><div class="form-lbl">Follow-up Delay (after no reply)</div><div style="display:flex;gap:8px"><input class="form-inp" id="cfg-sched-delay" value="24" type="number" style="flex:1;min-width:0"><select class="form-inp sel" id="settings-scheduler-delay-unit" style="width:110px;flex-shrink:0"><option value="minutes">Minutes</option><option value="hours" selected>Hours</option></select></div></div>
           <div class="form-row"><div class="form-lbl">Status</div>
             <div style="display:flex;align-items:center;gap:10px;margin-top:6px">
               <div style="width:44px;height:24px;background:var(--green);border-radius:12px;cursor:pointer;display:flex;align-items:center;padding:2px 3px" onclick="toast('⏸ Scheduler paused')"><div style="width:18px;height:18px;background:#fff;border-radius:50%;margin-left:auto"></div></div>

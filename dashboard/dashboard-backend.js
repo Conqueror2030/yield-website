@@ -1835,11 +1835,17 @@
         const intervalVal = getVal('cfg-sched-interval');
         if (intervalVal) setPayloadField('scheduler_run_every', parseInt(intervalVal, 10) || 4);
 
+        const everyUnitVal = getVal('settings-scheduler-every-unit');
+        if (everyUnitVal) setPayloadField('scheduler_run_every_unit', everyUnitVal);
+
         const maxVal = getVal('cfg-sched-max');
         if (maxVal) setPayloadField('scheduler_max_followups', parseInt(maxVal, 10) || 3);
 
         const delayVal = getVal('cfg-sched-delay');
         if (delayVal) setPayloadField('scheduler_delay_hours', parseInt(delayVal, 10) || 24);
+
+        const delayUnitVal = getVal('settings-scheduler-delay-unit');
+        if (delayUnitVal) setPayloadField('scheduler_delay_unit', delayUnitVal);
 
         // Company Info
         const companyName = getVal('cfg-company-name');
@@ -2154,8 +2160,10 @@
 
         // Follow-up Scheduler
         setVal('cfg-sched-interval', currentTenant.scheduler_run_every);
+        setVal('settings-scheduler-every-unit', (currentTenant.scheduler_run_every_unit || 'hours').toLowerCase());
         setVal('cfg-sched-max', currentTenant.scheduler_max_followups);
         setVal('cfg-sched-delay', currentTenant.scheduler_delay_hours);
+        setVal('settings-scheduler-delay-unit', (currentTenant.scheduler_delay_unit || 'hours').toLowerCase());
 
         // Company Info
         setVal('cfg-company-name', currentTenant.Client_Badge || currentTenant.company_name || currentTenant.agency_name);
